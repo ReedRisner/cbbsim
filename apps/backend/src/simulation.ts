@@ -160,7 +160,7 @@ const createBracket = (
     return null;
   }
 
-  const matchup = (homeSeedEntry: (typeof seeded)[number], awaySeedEntry: (typeof seeded)[number], round: BracketMatchup["round"]) => {
+  const matchup = (homeSeedEntry: { teamId: string; seed: number }, awaySeedEntry: { teamId: string; seed: number }, round: BracketMatchup["round"]) => {
     const homeTeam = teamMap.get(homeSeedEntry.teamId);
     const awayTeam = teamMap.get(awaySeedEntry.teamId);
 
@@ -255,6 +255,7 @@ export const initializeSeason = (input: SeasonSimulationInput): ActiveSeasonStat
     autoBidTeamId: "",
     storylines: [],
     bracket: null,
+    offseason: null,
   };
 };
 
