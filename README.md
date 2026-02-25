@@ -9,7 +9,7 @@ Full-stack college basketball coaching simulation foundation with complete verti
 - **Database**: PostgreSQL + Prisma (`apps/backend/prisma/schema.prisma`)
 - **Shared Contracts**: typed DTO models (`packages/shared`)
 
-## Phase 1 features implemented
+## Implemented features
 
 - Generate a full league universe (`POST /api/universe/bootstrap`)
 - Persist generated teams into PostgreSQL (Prisma upsert)
@@ -18,6 +18,7 @@ Full-stack college basketball coaching simulation foundation with complete verti
 - Build simplified conference postseason bracket from top-8 standings
 - Basic rankings with NET-like composite and poll score
 - Frontend pages: dashboard, team profile, standings, game log
+- Phase 2 offseason systems: recruit generation + scouting uncertainty, transfer portal decisions, NIL budgets, scholarship enforcement
 
 ## Quick start
 
@@ -42,3 +43,5 @@ npm run dev
 - `GET /api/season`
 - `POST /api/season/progress`
 - `POST /api/season/simulate`
+- `GET /api/offseason`
+- `POST /api/offseason/run`

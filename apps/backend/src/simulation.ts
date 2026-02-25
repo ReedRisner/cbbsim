@@ -26,40 +26,307 @@ const expectedPoints = (attackStrength: number, defenseStrength: number) => {
   return clamp(Math.round(base), 50, 96);
 };
 
-const buildRoundRobinSchedule = (teams: TeamProfile[]) => {
-  const schedule: ActiveSeasonState["schedule"] = [];
-  let gameId = 1;
-  let day = 1;
+const REGULAR_SEASON_GAMES = 32;
+const CONFERENCE_GAMES_TARGET = 18;
+const NON_CONFERENCE_GAMES_TARGET = 14;
 
-  for (let i = 0; i < teams.length; i += 1) {
-    for (let j = i + 1; j < teams.length; j += 1) {
-      const first = teams[i];
-      const second = teams[j];
-      const sameConference = first.conference === second.conference;
+type PlannedGame = {
+  homeTeamId: string;
+  awayTeamId: string;
+  conferenceGame: boolean;
+};
 
-      schedule.push({
-        gameId: `g-${gameId}`,
-        day,
-        homeTeamId: first.id,
-        awayTeamId: second.id,
-        conferenceGame: sameConference,
-      });
-      gameId += 1;
-      day += 1;
+const chooseHomeTeam = (
+  firstTeamId: string,
+  secondTeamId: string,
+  homeCounts: Map<string, number>,
+) => {
+  const firstHomeGames = homeCounts.get(firstTeamId) ?? 0;
+  const secondHomeGames = homeCounts.get(secondTeamId) ?? 0;
 
-      schedule.push({
-        gameId: `g-${gameId}`,
-        day,
-        homeTeamId: second.id,
-        awayTeamId: first.id,
-        conferenceGame: sameConference,
-      });
-      gameId += 1;
-      day += 1;
+  if (firstHomeGames === secondHomeGames) {
+    return firstTeamId.localeCompare(secondTeamId) <= 0 ? firstTeamId : secondTeamId;
+  }
+
+  return firstHomeGames < secondHomeGames ? firstTeamId : secondTeamId;
+};
+
+const shuffle = <T>(items: T[]) => {
+  for (let index = items.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    const temp = items[index];
+    items[index] = items[swapIndex];
+    items[swapIndex] = temp;
+  }
+  return items;
+};
+
+const pairTeamsForTarget = (
+  teamIds: string[],
+  gamesPerTeam: number,
+  canPair: (a: string, b: string) => boolean,
+  conferenceGame: boolean,
+  homeCounts: Map<string, number>,
+): PlannedGame[] => {
+  const maxAttempts = 500;
+  const baseStubs = teamIds.flatMap((teamId) => Array.from({ length: gamesPerTeam }, () => teamId));
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const stubs = shuffle([...baseStubs]);
+    const plannedGames: PlannedGame[] = [];
+    const attemptHomeCounts = new Map(homeCounts);
+    let failed = false;
+
+    while (stubs.length > 0) {
+      const firstTeamId = stubs.pop();
+      if (!firstTeamId) {
+        break;
+      }
+
+      const candidateIndexes: number[] = [];
+      for (let index = 0; index < stubs.length; index += 1) {
+        if (canPair(firstTeamId, stubs[index])) {
+          candidateIndexes.push(index);
+        }
+      }
+
+      if (candidateIndexes.length === 0 && !conferenceGame) {
+        for (let index = 0; index < stubs.length; index += 1) {
+          if (stubs[index] !== firstTeamId) {
+            candidateIndexes.push(index);
+          }
+        }
+      }
+
+      if (candidateIndexes.length === 0) {
+        failed = true;
+        break;
+      }
+
+      const selectedIndex = candidateIndexes[Math.floor(Math.random() * candidateIndexes.length)];
+      const [secondTeamId] = stubs.splice(selectedIndex, 1);
+      const homeTeamId = chooseHomeTeam(firstTeamId, secondTeamId, attemptHomeCounts);
+      const awayTeamId = homeTeamId === firstTeamId ? secondTeamId : firstTeamId;
+
+      plannedGames.push({ homeTeamId, awayTeamId, conferenceGame });
+      attemptHomeCounts.set(homeTeamId, (attemptHomeCounts.get(homeTeamId) ?? 0) + 1);
+    }
+
+    if (!failed && stubs.length === 0) {
+      attemptHomeCounts.forEach((value, key) => homeCounts.set(key, value));
+      return plannedGames;
     }
   }
 
-  return schedule;
+  throw new Error(`Unable to build schedule for target games (${conferenceGame ? "conference" : "non-conference"}) after retries.`);
+};
+
+const seasonStartDate = () => new Date(new Date().getFullYear(), 10, 5);
+
+const dayOffset = (start: Date, target: Date) =>
+  Math.floor((target.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+const schedulePhaseGames = (
+  games: PlannedGame[],
+  teams: TeamProfile[],
+  startDay: number,
+  endDay: number,
+  previousLastPlayed?: Map<string, number>,
+) => {
+  const unscheduled = [...games];
+  const byTeamRemaining = new Map<string, number>();
+  teams.forEach((team) => byTeamRemaining.set(team.id, 0));
+  unscheduled.forEach((game) => {
+    byTeamRemaining.set(game.homeTeamId, (byTeamRemaining.get(game.homeTeamId) ?? 0) + 1);
+    byTeamRemaining.set(game.awayTeamId, (byTeamRemaining.get(game.awayTeamId) ?? 0) + 1);
+  });
+
+  const lastPlayed = new Map(previousLastPlayed ?? teams.map((team) => [team.id, -10]));
+  const scheduled: Array<PlannedGame & { day: number }> = [];
+
+  for (let day = startDay; day <= endDay && unscheduled.length > 0; day += 1) {
+    const usedToday = new Set<string>();
+
+    while (true) {
+      let bestIndex = -1;
+      let bestScore = Number.NEGATIVE_INFINITY;
+
+      for (let index = 0; index < unscheduled.length; index += 1) {
+        const game = unscheduled[index];
+        if (usedToday.has(game.homeTeamId) || usedToday.has(game.awayTeamId)) {
+          continue;
+        }
+
+        const homeLast = lastPlayed.get(game.homeTeamId) ?? -10;
+        const awayLast = lastPlayed.get(game.awayTeamId) ?? -10;
+        if (day - homeLast < 2 || day - awayLast < 2) {
+          continue;
+        }
+
+        const urgency = (byTeamRemaining.get(game.homeTeamId) ?? 0) + (byTeamRemaining.get(game.awayTeamId) ?? 0);
+        const rest = Math.min(day - homeLast, day - awayLast);
+        const score = urgency * 10 + rest;
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestIndex = index;
+        }
+      }
+
+      if (bestIndex === -1) {
+        break;
+      }
+
+      const [picked] = unscheduled.splice(bestIndex, 1);
+      scheduled.push({ ...picked, day });
+      usedToday.add(picked.homeTeamId);
+      usedToday.add(picked.awayTeamId);
+      lastPlayed.set(picked.homeTeamId, day);
+      lastPlayed.set(picked.awayTeamId, day);
+      byTeamRemaining.set(picked.homeTeamId, (byTeamRemaining.get(picked.homeTeamId) ?? 1) - 1);
+      byTeamRemaining.set(picked.awayTeamId, (byTeamRemaining.get(picked.awayTeamId) ?? 1) - 1);
+    }
+  }
+
+  if (unscheduled.length > 0) {
+    throw new Error(`Unable to place all ${games[0]?.conferenceGame ? "conference" : "non-conference"} games in calendar window.`);
+  }
+
+  return { scheduled, lastPlayed };
+};
+
+const validateScheduleShape = (schedule: ActiveSeasonState["schedule"], teams: TeamProfile[]) => {
+  const totals = new Map<string, { total: number; conference: number; nonConference: number }>();
+  teams.forEach((team) => totals.set(team.id, { total: 0, conference: 0, nonConference: 0 }));
+
+  schedule.forEach((game) => {
+    const home = totals.get(game.homeTeamId);
+    const away = totals.get(game.awayTeamId);
+    if (!home || !away) {
+      return;
+    }
+
+    home.total += 1;
+    away.total += 1;
+
+    if (game.conferenceGame) {
+      home.conference += 1;
+      away.conference += 1;
+    } else {
+      home.nonConference += 1;
+      away.nonConference += 1;
+    }
+  });
+
+  const invalid = [...totals.entries()].filter(([, count]) =>
+    count.total !== REGULAR_SEASON_GAMES ||
+    count.conference !== CONFERENCE_GAMES_TARGET ||
+    count.nonConference !== NON_CONFERENCE_GAMES_TARGET,
+  );
+
+  if (invalid.length > 0) {
+    const detail = invalid
+      .map(([teamId, count]) => `${teamId}=T${count.total}/C${count.conference}/N${count.nonConference}`)
+      .join("; ");
+    throw new Error(`Schedule validation failed: ${detail}`);
+  }
+
+  const firstConferenceDay = Math.min(
+    ...schedule.filter((game) => game.conferenceGame).map((game) => game.day),
+  );
+  const lastNonConferenceDay = Math.max(
+    ...schedule.filter((game) => !game.conferenceGame).map((game) => game.day),
+  );
+
+  if (lastNonConferenceDay >= firstConferenceDay) {
+    throw new Error("Schedule validation failed: non-conference games must finish before conference games begin.");
+  }
+};
+
+const buildStructuredSchedule = (teams: TeamProfile[]) => {
+  const teamIds = teams.map((team) => team.id);
+  const teamMap = new Map(teams.map((team) => [team.id, team]));
+  const homeCounts = new Map<string, number>();
+  teams.forEach((team) => homeCounts.set(team.id, 0));
+
+  const byConference = new Map<string, string[]>();
+  teams.forEach((team) => {
+    const list = byConference.get(team.conference) ?? [];
+    list.push(team.id);
+    byConference.set(team.conference, list);
+  });
+
+  const conferenceGames: PlannedGame[] = [];
+  byConference.forEach((conferenceTeamIds) => {
+    conferenceGames.push(
+      ...pairTeamsForTarget(
+        conferenceTeamIds,
+        CONFERENCE_GAMES_TARGET,
+        (a, b) => a !== b,
+        true,
+        homeCounts,
+      ),
+    );
+  });
+
+  const nonConferenceGames = pairTeamsForTarget(
+    teamIds,
+    NON_CONFERENCE_GAMES_TARGET,
+    (a, b) => {
+      if (a === b) {
+        return false;
+      }
+
+      const first = teamMap.get(a);
+      const second = teamMap.get(b);
+      if (!first || !second) {
+        return false;
+      }
+
+      if (first.conference !== second.conference) {
+        return true;
+      }
+
+      const uniqueConferences = new Set(teams.map((team) => team.conference));
+      return uniqueConferences.size === 1;
+    },
+    false,
+    homeCounts,
+  );
+
+  const start = seasonStartDate();
+  const nonConferenceStartDay = 1;
+  const nonConferenceEndDay = dayOffset(start, new Date(start.getFullYear(), 11, 20));
+  const conferenceStartDay = dayOffset(start, new Date(start.getFullYear() + 1, 0, 20));
+  const conferenceEndDay = dayOffset(start, new Date(start.getFullYear() + 1, 2, 25));
+
+  const nonConferencePhase = schedulePhaseGames(
+    nonConferenceGames,
+    teams,
+    nonConferenceStartDay,
+    nonConferenceEndDay,
+  );
+
+  const conferencePhase = schedulePhaseGames(
+    conferenceGames,
+    teams,
+    conferenceStartDay,
+    conferenceEndDay,
+    nonConferencePhase.lastPlayed,
+  );
+
+  const combined = [...nonConferencePhase.scheduled, ...conferencePhase.scheduled]
+    .sort((a, b) => a.day - b.day)
+    .map((game, index) => ({
+      gameId: `g-${index + 1}`,
+      day: game.day,
+      homeTeamId: game.homeTeamId,
+      awayTeamId: game.awayTeamId,
+      conferenceGame: game.conferenceGame,
+    }));
+
+  validateScheduleShape(combined, teams);
+  return combined;
 };
 
 const initializeRecords = (teams: TeamProfile[]): Map<string, TeamSeasonRecord> => {
@@ -160,7 +427,7 @@ const createBracket = (
     return null;
   }
 
-  const matchup = (homeSeedEntry: (typeof seeded)[number], awaySeedEntry: (typeof seeded)[number], round: BracketMatchup["round"]) => {
+  const matchup = (homeSeedEntry: { teamId: string; seed: number }, awaySeedEntry: { teamId: string; seed: number }, round: BracketMatchup["round"]) => {
     const homeTeam = teamMap.get(homeSeedEntry.teamId);
     const awayTeam = teamMap.get(awaySeedEntry.teamId);
 
@@ -235,7 +502,7 @@ const finalizeIfComplete = (state: ActiveSeasonState): ActiveSeasonState => {
 
 export const initializeSeason = (input: SeasonSimulationInput): ActiveSeasonState => {
   const standings = applyRankings([...initializeRecords(input.teams).values()]);
-  const schedule = buildRoundRobinSchedule(input.teams);
+  const schedule = buildStructuredSchedule(input.teams);
 
   return {
     teams: input.teams,
@@ -255,6 +522,7 @@ export const initializeSeason = (input: SeasonSimulationInput): ActiveSeasonStat
     autoBidTeamId: "",
     storylines: [],
     bracket: null,
+    offseason: null,
   };
 };
 

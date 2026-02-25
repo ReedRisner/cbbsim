@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { ActiveSeasonState, TeamProfile, UniverseSnapshot } from "@cbbsim/shared";
+import type { ActiveSeasonState, OffseasonState, TeamProfile, UniverseSnapshot } from "@cbbsim/shared";
 
 type SimulationKnobs = {
   injuryVariance: number;
@@ -7,7 +7,7 @@ type SimulationKnobs = {
   fatigueImpact: number;
 };
 
-type View = "dashboard" | "team" | "standings" | "games";
+type View = "dashboard" | "team" | "standings" | "games" | "offseason";
 
 const defaultConferences = ["Atlantic", "Central", "Pacific", "Metro"];
 
@@ -30,6 +30,7 @@ export default function App() {
   const [loadingUniverse, setLoadingUniverse] = useState(false);
   const [runningSeason, setRunningSeason] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [offseason, setOffseason] = useState<OffseasonState | null>(null);
 
   const teamMap = useMemo(
     () => new Map((universe?.teams ?? []).map((team) => [team.id, team])),
@@ -47,6 +48,7 @@ export default function App() {
       const seasonData = await seasonResponse.json();
       setUniverse(universeData.universe);
       setSeason(seasonData.season);
+      setOffseason(seasonData.season?.offseason ?? null);
       setSelectedTeamId(universeData.universe?.teams?.[0]?.id ?? "");
     } catch {
       setError("Failed to load saved league state.");
@@ -75,6 +77,7 @@ export default function App() {
       const data = await response.json();
       setUniverse(data.universe);
       setSeason(null);
+      setOffseason(null);
       setSelectedTeamId(data.universe?.teams?.[0]?.id ?? "");
     } catch {
       setError("Failed to generate new universe.");
@@ -98,6 +101,7 @@ export default function App() {
       });
       const data = await response.json();
       setSeason(data.season);
+      setOffseason(data.season?.offseason ?? null);
       setView("dashboard");
     } catch {
       setError("Season initialization failed.");
@@ -121,8 +125,32 @@ export default function App() {
       });
       const data = await response.json();
       setSeason(data.season);
+      setOffseason(data.season?.offseason ?? null);
     } catch {
       setError("Season simulation step failed.");
+    } finally {
+      setRunningSeason(false);
+    }
+  };
+
+
+  const runOffseason = async () => {
+    if (!season?.isComplete) {
+      return;
+    }
+
+    setRunningSeason(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/offseason/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      setOffseason(data.offseason ?? null);
+      setView("offseason");
+    } catch {
+      setError("Offseason simulation failed.");
     } finally {
       setRunningSeason(false);
     }
@@ -137,7 +165,7 @@ export default function App() {
         <div>
           <p className="text-sm uppercase tracking-[0.2em] text-court">CBBSIM</p>
           <h1 className="text-3xl font-bold">College Basketball Coach Simulator</h1>
-          <p className="text-slate-300">Phase 1 vertical slice: universe + schedule + day/week/season + postseason.</p>
+          <p className="text-slate-300">Phase 2 implemented: recruiting + transfer portal + NIL offseason simulation.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button className="rounded-md border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800" onClick={loadUniverse} type="button">
@@ -157,6 +185,9 @@ export default function App() {
           </button>
           <button className="rounded-md bg-fuchsia-500 px-3 py-2 text-xs font-semibold text-slate-900 disabled:opacity-50" disabled={!season || season.isComplete || runningSeason} onClick={() => progressSeason("season")} type="button">
             Sim Season
+          </button>
+          <button className="rounded-md bg-amber-400 px-3 py-2 text-xs font-semibold text-slate-900 disabled:opacity-50" disabled={!season?.isComplete || runningSeason} onClick={runOffseason} type="button">
+            Run Offseason
           </button>
         </div>
       </header>
@@ -179,7 +210,7 @@ export default function App() {
       </section>
 
       <section className="mb-4 flex flex-wrap gap-2">
-        {(["dashboard", "team", "standings", "games"] as View[]).map((tab) => (
+        {(["dashboard", "team", "standings", "games", "offseason"] as View[]).map((tab) => (
           <button
             className={`rounded-md px-3 py-2 text-sm capitalize ${view === tab ? "bg-court text-slate-900" : "bg-slate-800 text-slate-200"}`}
             key={tab}
@@ -213,7 +244,7 @@ export default function App() {
                   <tbody>
                     {sortedTeams.map((team: TeamProfile) => (
                       <tr className="border-t border-slate-800" key={team.id}>
-                        <td className="py-2 pr-2">{team.name}</td>
+                        <td className="py-2 pr-2">{team.name} <span className="text-xs text-slate-400">({team.abr})</span></td>
                         <td className="text-slate-300">{team.conference}</td>
                         <td>{ratingCell(team.prestige)}</td>
                         <td>{ratingCell(team.rosterTalent)}</td>
@@ -347,6 +378,42 @@ export default function App() {
           )}
         </section>
       ) : null}
+
+      {view === "offseason" ? (
+        <section className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
+          <h2 className="mb-3 text-xl font-semibold">Offseason Center (Recruiting + Portal + NIL)</h2>
+          {!offseason ? (
+            <p className="text-slate-300">Complete a season, then click Run Offseason.</p>
+          ) : (
+            <div className="space-y-4 text-sm">
+              <p>Generated recruits: <strong>{offseason.generatedRecruits.length}</strong> | Signed recruits: <strong>{offseason.signedRecruits.length}</strong></p>
+              <p>Portal entrants: <strong>{offseason.portalEntrants.length}</strong> | Portal commitments: <strong>{offseason.portalCommitments.length}</strong></p>
+              <div className="max-h-[500px] overflow-auto">
+                <table className="w-full text-left">
+                  <thead className="sticky top-0 bg-slate-950">
+                    <tr>
+                      <th className="py-2">Team</th><th>Recruits</th><th>Portal +/-</th><th>NIL Spent</th><th>Ending Roster</th><th>Tampering</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {offseason.teamSummaries.sort((a, b) => b.recruitsSigned + b.portalAdditions - (a.recruitsSigned + a.portalAdditions)).map((entry) => (
+                      <tr className="border-t border-slate-800" key={entry.teamId}>
+                        <td className="py-2">{teamMap.get(entry.teamId)?.name ?? entry.teamId}</td>
+                        <td>{entry.recruitsSigned}</td>
+                        <td>{entry.portalAdditions} / {entry.portalLosses}</td>
+                        <td>${entry.nilSpent.toLocaleString()}</td>
+                        <td>{entry.projectedRosterCount}</td>
+                        <td>{entry.tamperingIncidents}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </section>
+      ) : null}
+
     </main>
   );
 }
