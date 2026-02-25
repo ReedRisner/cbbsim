@@ -186,6 +186,30 @@ const schedulePhaseGames = (
       byTeamRemaining.set(picked.homeTeamId, (byTeamRemaining.get(picked.homeTeamId) ?? 1) - 1);
       byTeamRemaining.set(picked.awayTeamId, (byTeamRemaining.get(picked.awayTeamId) ?? 1) - 1);
     }
+
+    home.total += 1;
+    away.total += 1;
+
+    if (game.conferenceGame) {
+      home.conference += 1;
+      away.conference += 1;
+    } else {
+      home.nonConference += 1;
+      away.nonConference += 1;
+    }
+  });
+
+  const invalid = [...totals.entries()].filter(([, count]) =>
+    count.total !== REGULAR_SEASON_GAMES ||
+    count.conference !== CONFERENCE_GAMES_TARGET ||
+    count.nonConference !== NON_CONFERENCE_GAMES_TARGET,
+  );
+
+  if (invalid.length > 0) {
+    const detail = invalid
+      .map(([teamId, count]) => `${teamId}=T${count.total}/C${count.conference}/N${count.nonConference}`)
+      .join("; ");
+    throw new Error(`Schedule validation failed: ${detail}`);
   }
 
   if (unscheduled.length > 0) {
