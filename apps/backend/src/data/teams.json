@@ -2,134 +2,3614 @@
   {
     "team": "George Washington",
     "abr": "GW",
-    "colors": ["002843", "e8d2a1"],
+    "colors": [
+      "#002843",
+      "#e8d2a1"
+    ],
     "conference": "A-10",
     "mascot": "Revolutionaries"
   },
   {
     "team": "Saint Joseph's",
     "abr": "JOES",
-    "colors": ["C2071B", "101010"],
+    "colors": [
+      "#C2071B",
+      "#101010"
+    ],
     "conference": "A-10",
     "mascot": "Hawks"
   },
   {
     "team": "Rhode Island",
     "abr": "URI",
-    "colors": ["091f3f", "5ab3e8"],
+    "colors": [
+      "#091f3f",
+      "#5ab3e8"
+    ],
     "conference": "A-10",
     "mascot": "Rams"
   },
   {
     "team": "St. Bonaventure",
     "abr": "SBU",
-    "colors": ["70261D"],
+    "colors": [
+      "#70261D"
+    ],
     "conference": "A-10",
     "mascot": "Bonnies"
   },
   {
     "team": "Dayton",
     "abr": "DAY",
-    "colors": ["004B8D", "ffffff"],
+    "colors": [
+      "#004B8D",
+      "#ffffff"
+    ],
     "conference": "A-10",
     "mascot": "Flyers"
   },
   {
     "team": "Richmond",
     "abr": "RICH",
-    "colors": ["9e0712", "b90b2e"],
+    "colors": [
+      "#9e0712",
+      "#b90b2e"
+    ],
     "conference": "A-10",
     "mascot": "Spiders"
   },
   {
     "team": "La Salle",
     "abr": "LAS",
-    "colors": ["003356", "ffce00"],
+    "colors": [
+      "#003356",
+      "#ffce00"
+    ],
     "conference": "A-10",
     "mascot": "Explorers"
   },
   {
     "team": "Saint Louis",
     "abr": "SLU",
-    "colors": ["00539C", "ebebeb"],
+    "colors": [
+      "#00539C",
+      "#ebebeb"
+    ],
     "conference": "A-10",
     "mascot": "Billikens"
   },
   {
     "team": "Fordham",
     "abr": "FOR",
-    "colors": ["830032", "909090"],
+    "colors": [
+      "#830032",
+      "#909090"
+    ],
     "conference": "A-10",
     "mascot": "Rams"
   },
   {
     "team": "VCU",
     "abr": "VCU",
-    "colors": ["ffaf00", "000000"],
+    "colors": [
+      "#ffaf00",
+      "#000000"
+    ],
     "conference": "A-10",
     "mascot": "Rams"
   },
   {
     "team": "Davidson",
     "abr": "DAV",
-    "colors": ["000000", "e51837"],
+    "colors": [
+      "#000000",
+      "#e51837"
+    ],
     "conference": "A-10",
     "mascot": "Wildcats"
   },
   {
     "team": "George Mason",
     "abr": "GMU",
-    "colors": ["016600", "ecb010"],
+    "colors": [
+      "#016600",
+      "#ecb010"
+    ],
     "conference": "A-10",
     "mascot": "Patriots"
   },
   {
     "team": "Loyola Chicago",
     "abr": "LUC",
-    "colors": ["9d1244"],
+    "colors": [
+      "#9d1244"
+    ],
     "conference": "A-10",
     "mascot": "Ramblers"
   },
   {
     "team": "North Carolina",
     "abr": "UNC",
-    "colors": ["7bafd4", "13294b"],
+    "colors": [
+      "#7bafd4",
+      "#13294b"
+    ],
     "conference": "ACC",
     "mascot": "Tar Heels"
   },
   {
     "team": "Duke",
     "abr": "DUKE",
-    "colors": ["013088", "ffffff"],
+    "colors": [
+      "#013088",
+      "#ffffff"
+    ],
     "conference": "ACC",
     "mascot": "Blue Devils"
   },
   {
     "team": "NC State",
     "abr": "NCSU",
-    "colors": ["cc0000", "ffffff"],
+    "colors": [
+      "#cc0000",
+      "#ffffff"
+    ],
     "conference": "ACC",
     "mascot": "Wolfpack"
   },
   {
     "team": "Virginia",
     "abr": "UVA",
-    "colors": ["232d4b", "f84c1e"],
+    "colors": [
+      "#232d4b",
+      "#f84c1e"
+    ],
     "conference": "ACC",
     "mascot": "Cavaliers"
   },
   {
     "team": "Wake Forest",
     "abr": "WAKE",
-    "colors": ["000000", "ceb888"],
+    "colors": [
+      "#000000",
+      "#ceb888"
+    ],
     "conference": "ACC",
     "mascot": "Demon Deacons"
   },
   {
     "team": "Clemson",
     "abr": "CLEM",
-    "colors": ["f56600", "522d80"],
+    "colors": [
+      "#f56600",
+      "#522d80"
+    ],
     "conference": "ACC",
     "mascot": "Tigers"
+  },
+  {
+    "team": "Georgia Tech",
+    "abr": "GT",
+    "colors": [
+      "#003057",
+      "#b3a369"
+    ],
+    "conference": "ACC",
+    "mascot": "Yellow Jackets"
+  },
+  {
+    "team": "Florida State",
+    "abr": "FSU",
+    "colors": [
+      "#782f40",
+      "#ceb888"
+    ],
+    "conference": "ACC",
+    "mascot": "Seminoles"
+  },
+  {
+    "team": "Miami",
+    "abr": "MIA",
+    "colors": [
+      "#005030",
+      "#f47321"
+    ],
+    "conference": "ACC",
+    "mascot": "Hurricanes"
+  },
+  {
+    "team": "Virginia Tech",
+    "abr": "VT",
+    "colors": [
+      "#630031",
+      "#cf4520"
+    ],
+    "conference": "ACC",
+    "mascot": "Hokies"
+  },
+  {
+    "team": "Boston College",
+    "abr": "BC",
+    "colors": [
+      "#8c2232",
+      "#dbcca6"
+    ],
+    "conference": "ACC",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "Syracuse",
+    "abr": "SYR",
+    "colors": [
+      "#ff6500",
+      "#000e54"
+    ],
+    "conference": "ACC",
+    "mascot": "Orange"
+  },
+  {
+    "team": "Notre Dame",
+    "abr": "ND",
+    "colors": [
+      "#0c2340",
+      "#c99700"
+    ],
+    "conference": "ACC",
+    "mascot": "Fighting Irish"
+  },
+  {
+    "team": "Pittsburgh",
+    "abr": "PITT",
+    "colors": [
+      "#003263",
+      "#231f20"
+    ],
+    "conference": "ACC",
+    "mascot": "Panthers"
+  },
+  {
+    "team": "Louisville",
+    "abr": "LOU",
+    "colors": [
+      "#c9001f",
+      "#000000"
+    ],
+    "conference": "ACC",
+    "mascot": "Cardinals"
+  },
+  {
+    "team": "SMU",
+    "abr": "SMU",
+    "colors": [
+      "#354ca1",
+      "#cc0035"
+    ],
+    "conference": "ACC",
+    "mascot": "Mustangs"
+  },
+  {
+    "team": "Stanford",
+    "abr": "STAN",
+    "colors": [
+      "#8c1515",
+      "#ffffff"
+    ],
+    "conference": "ACC",
+    "mascot": "Cardinal"
+  },
+  {
+    "team": "California",
+    "abr": "CAL",
+    "colors": [
+      "#031522",
+      "#ffc423"
+    ],
+    "conference": "ACC",
+    "mascot": "Golden Bears"
+  },
+  {
+    "team": "Stetson",
+    "abr": "STET",
+    "colors": [
+      "#0a5640",
+      "#56854e"
+    ],
+    "conference": "ASUN",
+    "mascot": "Hatters"
+  },
+  {
+    "team": "Jacksonville",
+    "abr": "JAX",
+    "colors": [
+      "#00523e"
+    ],
+    "conference": "ASUN",
+    "mascot": "Dolphins"
+  },
+  {
+    "team": "Lipscomb",
+    "abr": "LIP",
+    "colors": [
+      "#20366C",
+      "#f6b734"
+    ],
+    "conference": "ASUN",
+    "mascot": "Bisons"
+  },
+  {
+    "team": "Florida Gulf Coast",
+    "abr": "FGCU",
+    "colors": [
+      "#00885a",
+      "#076c3b"
+    ],
+    "conference": "ASUN",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "North Florida",
+    "abr": "UNF",
+    "colors": [
+      "#004B8D",
+      "#babcbe"
+    ],
+    "conference": "ASUN",
+    "mascot": "Ospreys"
+  },
+  {
+    "team": "North Alabama",
+    "abr": "UNA",
+    "colors": [
+      "#663399"
+    ],
+    "conference": "ASUN",
+    "mascot": "Lions"
+  },
+  {
+    "team": "Eastern Kentucky",
+    "abr": "EKU",
+    "colors": [
+      "#660819",
+      "#f0f0f0"
+    ],
+    "conference": "ASUN",
+    "mascot": "Colonels"
+  },
+  {
+    "team": "Bellarmine",
+    "abr": "BELL",
+    "colors": [
+      "#000000"
+    ],
+    "conference": "ASUN",
+    "mascot": "Knights"
+  },
+  {
+    "team": "Queens University",
+    "abr": "QUC",
+    "colors": [
+      "#192C66",
+      "#857040"
+    ],
+    "conference": "ASUN",
+    "mascot": "Royals"
+  },
+  {
+    "team": "Austin Peay",
+    "abr": "APSU",
+    "colors": [
+      "#8e0b0b"
+    ],
+    "conference": "ASUN",
+    "mascot": "Governors"
+  },
+  {
+    "team": "Central Arkansas",
+    "abr": "CARK",
+    "colors": [
+      "#a7a9ac",
+      "#8e959a"
+    ],
+    "conference": "ASUN",
+    "mascot": "Bears"
+  },
+  {
+    "team": "West Georgia",
+    "abr": "WGA",
+    "colors": [
+      "#0033a1",
+      "#db1a21"
+    ],
+    "conference": "ASUN",
+    "mascot": "Wolves"
+  },
+  {
+    "team": "Vermont",
+    "abr": "UVM",
+    "colors": [
+      "#154734",
+      "#ffc72c"
+    ],
+    "conference": "Am. East",
+    "mascot": "Catamounts"
+  },
+  {
+    "team": "Maine",
+    "abr": "ME",
+    "colors": [
+      "#127dbe"
+    ],
+    "conference": "Am. East",
+    "mascot": "Black Bears"
+  },
+  {
+    "team": "New Hampshire",
+    "abr": "UNH",
+    "colors": [
+      "#004990",
+      "#c3c4c6"
+    ],
+    "conference": "Am. East",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "UAlbany",
+    "abr": "ALB",
+    "colors": [
+      "#3D2777",
+      "#ffffff"
+    ],
+    "conference": "Am. East",
+    "mascot": "Great Danes"
+  },
+  {
+    "team": "UMBC",
+    "abr": "UMBC",
+    "colors": [
+      "#000000",
+      "#ad860a"
+    ],
+    "conference": "Am. East",
+    "mascot": "Retrievers"
+  },
+  {
+    "team": "Binghamton",
+    "abr": "BING",
+    "colors": [
+      "#00614A",
+      "#f0f0f0"
+    ],
+    "conference": "Am. East",
+    "mascot": "Bearcats"
+  },
+  {
+    "team": "UMass Lowell",
+    "abr": "UML",
+    "colors": [
+      "#00529C",
+      "#cf1f2f"
+    ],
+    "conference": "Am. East",
+    "mascot": "River Hawks"
+  },
+  {
+    "team": "Bryant",
+    "abr": "BRY",
+    "colors": [
+      "#000000",
+      "#9f8343"
+    ],
+    "conference": "Am. East",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "NJIT",
+    "abr": "NJIT",
+    "colors": [
+      "#EE3024",
+      "#df3e2e"
+    ],
+    "conference": "Am. East",
+    "mascot": "Highlanders"
+  },
+  {
+    "team": "Memphis",
+    "abr": "MEM",
+    "colors": [
+      "#004991",
+      "#8e908f"
+    ],
+    "conference": "American",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Temple",
+    "abr": "TEM",
+    "colors": [
+      "#A80532",
+      "#a7a9ac"
+    ],
+    "conference": "American",
+    "mascot": "Owls"
+  },
+  {
+    "team": "Tulsa",
+    "abr": "TLSA",
+    "colors": [
+      "#003595",
+      "#d0b787"
+    ],
+    "conference": "American",
+    "mascot": "Golden Hurricane"
+  },
+  {
+    "team": "South Florida",
+    "abr": "USF",
+    "colors": [
+      "#004A36",
+      "#231f20"
+    ],
+    "conference": "American",
+    "mascot": "Bulls"
+  },
+  {
+    "team": "Wichita State",
+    "abr": "WICH",
+    "colors": [
+      "#0d0a03",
+      "#ffc41e"
+    ],
+    "conference": "American",
+    "mascot": "Shockers"
+  },
+  {
+    "team": "East Carolina",
+    "abr": "ECU",
+    "colors": [
+      "#4b1869",
+      "#f0907b"
+    ],
+    "conference": "American",
+    "mascot": "Pirates"
+  },
+  {
+    "team": "Tulane",
+    "abr": "TULN",
+    "colors": [
+      "#006547",
+      "#468ac9"
+    ],
+    "conference": "American",
+    "mascot": "Green Wave"
+  },
+  {
+    "team": "Florida Atlantic",
+    "abr": "FAU",
+    "colors": [
+      "#00447c",
+      "#d31245"
+    ],
+    "conference": "American",
+    "mascot": "Owls"
+  },
+  {
+    "team": "UAB",
+    "abr": "UAB",
+    "colors": [
+      "#054338",
+      "#ffc845"
+    ],
+    "conference": "American",
+    "mascot": "Blazers"
+  },
+  {
+    "team": "North Texas",
+    "abr": "UNT",
+    "colors": [
+      "#ffffff",
+      "#000000"
+    ],
+    "conference": "American",
+    "mascot": "Mean Green"
+  },
+  {
+    "team": "Charlotte",
+    "abr": "CLT",
+    "colors": [
+      "#ffffff",
+      "#cfab7a"
+    ],
+    "conference": "American",
+    "mascot": "49ers"
+  },
+  {
+    "team": "Rice",
+    "abr": "RICE",
+    "colors": [
+      "#d1d5d8",
+      "#ffffff"
+    ],
+    "conference": "American",
+    "mascot": "Owls"
+  },
+  {
+    "team": "UTSA",
+    "abr": "UTSA",
+    "colors": [
+      "#002A5C",
+      "#f47321"
+    ],
+    "conference": "American",
+    "mascot": "Roadrunners"
+  },
+  {
+    "team": "Kansas",
+    "abr": "KU",
+    "colors": [
+      "#0051ba",
+      "#e8000d"
+    ],
+    "conference": "Big 12",
+    "mascot": "Jayhawks"
+  },
+  {
+    "team": "Oklahoma State",
+    "abr": "OKST",
+    "colors": [
+      "#000000",
+      "#dddddd"
+    ],
+    "conference": "Big 12",
+    "mascot": "Cowboys"
+  },
+  {
+    "team": "Baylor",
+    "abr": "BAY",
+    "colors": [
+      "#154734",
+      "#ffb81c"
+    ],
+    "conference": "Big 12",
+    "mascot": "Bears"
+  },
+  {
+    "team": "Iowa State",
+    "abr": "ISU",
+    "colors": [
+      "#822433",
+      "#fdca2f"
+    ],
+    "conference": "Big 12",
+    "mascot": "Cyclones"
+  },
+  {
+    "team": "Kansas State",
+    "abr": "KSU",
+    "colors": [
+      "#3c0969",
+      "#e2e3e4"
+    ],
+    "conference": "Big 12",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "Texas Tech",
+    "abr": "TTU",
+    "colors": [
+      "#000000",
+      "#da291c"
+    ],
+    "conference": "Big 12",
+    "mascot": "Red Raiders"
+  },
+  {
+    "team": "West Virginia",
+    "abr": "WVU",
+    "colors": [
+      "#002855",
+      "#eaaa00"
+    ],
+    "conference": "Big 12",
+    "mascot": "Mountaineers"
+  },
+  {
+    "team": "TCU",
+    "abr": "TCU",
+    "colors": [
+      "#4d1979",
+      "#f1f2f3"
+    ],
+    "conference": "Big 12",
+    "mascot": "Horned Frogs"
+  },
+  {
+    "team": "Houston",
+    "abr": "HOU",
+    "colors": [
+      "#c92a39",
+      "#ffffff"
+    ],
+    "conference": "Big 12",
+    "mascot": "Cougars"
+  },
+  {
+    "team": "BYU",
+    "abr": "BYU",
+    "colors": [
+      "#003da5",
+      "#ffffff"
+    ],
+    "conference": "Big 12",
+    "mascot": "Cougars"
+  },
+  {
+    "team": "Cincinnati",
+    "abr": "CIN",
+    "colors": [
+      "#000000",
+      "#717073"
+    ],
+    "conference": "Big 12",
+    "mascot": "Bearcats"
+  },
+  {
+    "team": "UCF",
+    "abr": "UCF",
+    "colors": [
+      "#000000",
+      "#b4a269"
+    ],
+    "conference": "Big 12",
+    "mascot": "Knights"
+  },
+  {
+    "team": "Arizona",
+    "abr": "ARIZ",
+    "colors": [
+      "#0c234b",
+      "#ab0520"
+    ],
+    "conference": "Big 12",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "Utah",
+    "abr": "UTAH",
+    "colors": [
+      "#ea002a",
+      "#ffffff"
+    ],
+    "conference": "Big 12",
+    "mascot": "Utes"
+  },
+  {
+    "team": "Arizona State",
+    "abr": "ASU",
+    "colors": [
+      "#8e0c3a",
+      "#ffc72c"
+    ],
+    "conference": "Big 12",
+    "mascot": "Sun Devils"
+  },
+  {
+    "team": "Villanova",
+    "abr": "VILL",
+    "colors": [
+      "#00205b",
+      "#13b5ea"
+    ],
+    "conference": "Big East",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "Georgetown",
+    "abr": "GTWN",
+    "colors": [
+      "#110E42",
+      "#001c58"
+    ],
+    "conference": "Big East",
+    "mascot": "Hoyas"
+  },
+  {
+    "team": "St. John's",
+    "abr": "SJU",
+    "colors": [
+      "#d10000",
+      "#101010"
+    ],
+    "conference": "Big East",
+    "mascot": "Red Storm"
+  },
+  {
+    "team": "Providence",
+    "abr": "PROV",
+    "colors": [
+      "#000000",
+      "#a3a19e"
+    ],
+    "conference": "Big East",
+    "mascot": "Friars"
+  },
+  {
+    "team": "Seton Hall",
+    "abr": "HALL",
+    "colors": [
+      "#0857B1",
+      "#8a8d8f"
+    ],
+    "conference": "Big East",
+    "mascot": "Pirates"
+  },
+  {
+    "team": "Marquette",
+    "abr": "MARQ",
+    "colors": [
+      "#003366",
+      "#ffcc00"
+    ],
+    "conference": "Big East",
+    "mascot": "Golden Eagles"
+  },
+  {
+    "team": "Creighton",
+    "abr": "CREI",
+    "colors": [
+      "#005ca9",
+      "#6cadde"
+    ],
+    "conference": "Big East",
+    "mascot": "Bluejays"
+  },
+  {
+    "team": "Xavier",
+    "abr": "XAV",
+    "colors": [
+      "#21304e",
+      "#a5a7a8"
+    ],
+    "conference": "Big East",
+    "mascot": "Musketeers"
+  },
+  {
+    "team": "DePaul",
+    "abr": "DEP",
+    "colors": [
+      "#2d649c",
+      "#ce1125"
+    ],
+    "conference": "Big East",
+    "mascot": "Blue Demons"
+  },
+  {
+    "team": "Butler",
+    "abr": "BUT",
+    "colors": [
+      "#0d1361",
+      "#00a3e0"
+    ],
+    "conference": "Big East",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Weber State",
+    "abr": "WEB",
+    "colors": [
+      "#18005a",
+      "#ebebeb"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "Montana",
+    "abr": "MONT",
+    "colors": [
+      "#751D4A",
+      "#666666"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Grizzlies"
+  },
+  {
+    "team": "Montana State",
+    "abr": "MTST",
+    "colors": [
+      "#00205c",
+      "#bc955c"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Bobcats"
+  },
+  {
+    "team": "Idaho State",
+    "abr": "IDST",
+    "colors": [
+      "#ef8c00",
+      "#e9a126"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Bengals"
+  },
+  {
+    "team": "Northern Arizona",
+    "abr": "NAU",
+    "colors": [
+      "#003976",
+      "#1b3069"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Lumberjacks"
+  },
+  {
+    "team": "Eastern Washington",
+    "abr": "EWU",
+    "colors": [
+      "#a10022",
+      "#abb4bc"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "Portland State",
+    "abr": "PRST",
+    "colors": [
+      "#00311e",
+      "#ebebeb"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Vikings"
+  },
+  {
+    "team": "Northern Colorado",
+    "abr": "UNCO",
+    "colors": [
+      "#13558D",
+      "#ffc533"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Bears"
+  },
+  {
+    "team": "Sacramento State",
+    "abr": "SAC",
+    "colors": [
+      "#00573C",
+      "#cdb97d"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Hornets"
+  },
+  {
+    "team": "Winthrop",
+    "abr": "WIN",
+    "colors": [
+      "#9e0b0e",
+      "#fdb41e"
+    ],
+    "conference": "Big South",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "Radford",
+    "abr": "RAD",
+    "colors": [
+      "#BC1515",
+      "#c2c3c0"
+    ],
+    "conference": "Big South",
+    "mascot": "Highlanders"
+  },
+  {
+    "team": "UNC Asheville",
+    "abr": "UNCA",
+    "colors": [
+      "#003da5",
+      "#ffffff"
+    ],
+    "conference": "Big South",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Charleston Southern",
+    "abr": "CHSO",
+    "colors": [
+      "#2e3192",
+      "#ded090"
+    ],
+    "conference": "Big South",
+    "mascot": "Buccaneers"
+  },
+  {
+    "team": "High Point",
+    "abr": "HPU",
+    "colors": [
+      "#b0b7bc",
+      "#ebebeb"
+    ],
+    "conference": "Big South",
+    "mascot": "Panthers"
+  },
+  {
+    "team": "Gardner-Webb",
+    "abr": "GWEB",
+    "colors": [
+      "#c12535",
+      "#909090"
+    ],
+    "conference": "Big South",
+    "mascot": "Runnin' Bulldogs"
+  },
+  {
+    "team": "Longwood",
+    "abr": "LONG",
+    "colors": [
+      "#003273",
+      "#9ea2a3"
+    ],
+    "conference": "Big South",
+    "mascot": "Lancers"
+  },
+  {
+    "team": "Presbyterian",
+    "abr": "PRES",
+    "colors": [
+      "#194896",
+      "#990134"
+    ],
+    "conference": "Big South",
+    "mascot": "Blue Hose"
+  },
+  {
+    "team": "South Carolina Upstate",
+    "abr": "UPST",
+    "colors": [
+      "#008545",
+      "#000000"
+    ],
+    "conference": "Big South",
+    "mascot": "Spartans"
+  },
+  {
+    "team": "Purdue",
+    "abr": "PUR",
+    "colors": [
+      "#000000",
+      "#cfb991"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Boilermakers"
+  },
+  {
+    "team": "Indiana",
+    "abr": "IU",
+    "colors": [
+      "#990000",
+      "#edebeb"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Hoosiers"
+  },
+  {
+    "team": "Illinois",
+    "abr": "ILL",
+    "colors": [
+      "#ff5f05",
+      "#13294b"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Fighting Illini"
+  },
+  {
+    "team": "Ohio State",
+    "abr": "OSU",
+    "colors": [
+      "#ce1141",
+      "#505056"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Buckeyes"
+  },
+  {
+    "team": "Iowa",
+    "abr": "IOWA",
+    "colors": [
+      "#000000",
+      "#fcd116"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Hawkeyes"
+  },
+  {
+    "team": "Wisconsin",
+    "abr": "WIS",
+    "colors": [
+      "#c4012f",
+      "#ffffff"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Badgers"
+  },
+  {
+    "team": "Minnesota",
+    "abr": "MINN",
+    "colors": [
+      "#5e0a2f",
+      "#fab41c"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Golden Gophers"
+  },
+  {
+    "team": "Michigan",
+    "abr": "MICH",
+    "colors": [
+      "#00274c",
+      "#ffcb05"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Wolverines"
+  },
+  {
+    "team": "Michigan State",
+    "abr": "MSU",
+    "colors": [
+      "#18453b",
+      "#ffffff"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Spartans"
+  },
+  {
+    "team": "Northwestern",
+    "abr": "NU",
+    "colors": [
+      "#582c83",
+      "#ffffff"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "Penn State",
+    "abr": "PSU",
+    "colors": [
+      "#00265D",
+      "#002e5c"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Nittany Lions"
+  },
+  {
+    "team": "Maryland",
+    "abr": "MD",
+    "colors": [
+      "#D5002B",
+      "#ffcd00"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Terrapins"
+  },
+  {
+    "team": "Nebraska",
+    "abr": "NEB",
+    "colors": [
+      "#d00000",
+      "#ffffff"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Cornhuskers"
+  },
+  {
+    "team": "Rutgers",
+    "abr": "RUTG",
+    "colors": [
+      "#d21034",
+      "#ffffff"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Scarlet Knights"
+  },
+  {
+    "team": "Oregon",
+    "abr": "ORE",
+    "colors": [
+      "#007030",
+      "#fee11a"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Ducks"
+  },
+  {
+    "team": "UCLA",
+    "abr": "UCLA",
+    "colors": [
+      "#2774ae",
+      "#f2a900"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Bruins"
+  },
+  {
+    "team": "USC",
+    "abr": "USC",
+    "colors": [
+      "#9e2237",
+      "#ffcc00"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Trojans"
+  },
+  {
+    "team": "Washington",
+    "abr": "WASH",
+    "colors": [
+      "#33006f",
+      "#e8d3a2"
+    ],
+    "conference": "Big Ten",
+    "mascot": "Huskies"
+  },
+  {
+    "team": "Long Beach State",
+    "abr": "LBSU",
+    "colors": [
+      "#000000",
+      "#f1f2f3"
+    ],
+    "conference": "Big West",
+    "mascot": "Beach"
+  },
+  {
+    "team": "UC Irvine",
+    "abr": "UCI",
+    "colors": [
+      "#002B5C",
+      "#fec52e"
+    ],
+    "conference": "Big West",
+    "mascot": "Anteaters"
+  },
+  {
+    "team": "Cal State Fullerton",
+    "abr": "CSUF",
+    "colors": [
+      "#003767",
+      "#ff8300"
+    ],
+    "conference": "Big West",
+    "mascot": "Titans"
+  },
+  {
+    "team": "Cal Poly",
+    "abr": "CP",
+    "colors": [
+      "#1E4D2B",
+      "#eed897"
+    ],
+    "conference": "Big West",
+    "mascot": "Mustangs"
+  },
+  {
+    "team": "Cal State Northridge",
+    "abr": "CSUN",
+    "colors": [
+      "#b50000"
+    ],
+    "conference": "Big West",
+    "mascot": "Matadors"
+  },
+  {
+    "team": "UC Riverside",
+    "abr": "UCR",
+    "colors": [
+      "#14234F"
+    ],
+    "conference": "Big West",
+    "mascot": "Highlanders"
+  },
+  {
+    "team": "UC Davis",
+    "abr": "UCD",
+    "colors": [
+      "#002855",
+      "#c3c4c6"
+    ],
+    "conference": "Big West",
+    "mascot": "Aggies"
+  },
+  {
+    "team": "Hawai'i",
+    "abr": "HAW",
+    "colors": [
+      "#003420",
+      "#ffffff"
+    ],
+    "conference": "Big West",
+    "mascot": "Rainbow Warriors"
+  },
+  {
+    "team": "UC San Diego",
+    "abr": "UCSD",
+    "colors": [
+      "#182B49",
+      "#FFCD00"
+    ],
+    "conference": "Big West",
+    "mascot": "Tritons"
+  },
+  {
+    "team": "Cal State Bakersfield",
+    "abr": "CSUB",
+    "colors": [
+      "#003BAB"
+    ],
+    "conference": "Big West",
+    "mascot": "Roadrunners"
+  },
+  {
+    "team": "UNC Wilmington",
+    "abr": "UNCW",
+    "colors": [
+      "#00665e",
+      "#ffda00"
+    ],
+    "conference": "CAA",
+    "mascot": "Seahawks"
+  },
+  {
+    "team": "Hofstra",
+    "abr": "HOF",
+    "colors": [
+      "#00337c",
+      "#f6c934"
+    ],
+    "conference": "CAA",
+    "mascot": "Pride"
+  },
+  {
+    "team": "Drexel",
+    "abr": "DREX",
+    "colors": [
+      "#020260",
+      "#ffd65a"
+    ],
+    "conference": "CAA",
+    "mascot": "Dragons"
+  },
+  {
+    "team": "Northeastern",
+    "abr": "NE",
+    "colors": [
+      "#CC0001",
+      "#c2c3c0"
+    ],
+    "conference": "CAA",
+    "mascot": "Huskies"
+  },
+  {
+    "team": "Charleston",
+    "abr": "COFC",
+    "colors": [
+      "#7a2531",
+      "#9e8959"
+    ],
+    "conference": "CAA",
+    "mascot": "Cougars"
+  },
+  {
+    "team": "Elon",
+    "abr": "ELON",
+    "colors": [
+      "#020303",
+      "#b59a57"
+    ],
+    "conference": "CAA",
+    "mascot": "Phoenix"
+  },
+  {
+    "team": "Stony Brook",
+    "abr": "STBK",
+    "colors": [
+      "#990000"
+    ],
+    "conference": "CAA",
+    "mascot": "Seawolves"
+  },
+  {
+    "team": "Monmouth",
+    "abr": "MONM",
+    "colors": [
+      "#051844"
+    ],
+    "conference": "CAA",
+    "mascot": "Hawks"
+  },
+  {
+    "team": "Hampton",
+    "abr": "HAMP",
+    "colors": [
+      "#0067AC"
+    ],
+    "conference": "CAA",
+    "mascot": "Pirates"
+  },
+  {
+    "team": "North Carolina A&T",
+    "abr": "NCAT",
+    "colors": [
+      "#0505aa",
+      "#004684"
+    ],
+    "conference": "CAA",
+    "mascot": "Aggies"
+  },
+  {
+    "team": "Campbell",
+    "abr": "CAM",
+    "colors": [
+      "#000000"
+    ],
+    "conference": "CAA",
+    "mascot": "Fighting Camels"
+  },
+  {
+    "team": "UTEP",
+    "abr": "UTEP",
+    "colors": [
+      "#ff8200",
+      "#041e42"
+    ],
+    "conference": "CUSA",
+    "mascot": "Miners"
+  },
+  {
+    "team": "Louisiana Tech",
+    "abr": "LT",
+    "colors": [
+      "#002d65",
+      "#d3313a"
+    ],
+    "conference": "CUSA",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Middle Tennessee",
+    "abr": "MTSU",
+    "colors": [
+      "#006db6",
+      "#ffffff"
+    ],
+    "conference": "CUSA",
+    "mascot": "Blue Raiders"
+  },
+  {
+    "team": "Western Kentucky",
+    "abr": "WKU",
+    "colors": [
+      "#F32026",
+      "#b3b5b8"
+    ],
+    "conference": "CUSA",
+    "mascot": "Hilltoppers"
+  },
+  {
+    "team": "Florida International",
+    "abr": "FIU",
+    "colors": [
+      "#091731",
+      "#c5960c"
+    ],
+    "conference": "CUSA",
+    "mascot": "Panthers"
+  },
+  {
+    "team": "Liberty",
+    "abr": "LIB",
+    "colors": [
+      "#071740",
+      "#a61f21"
+    ],
+    "conference": "CUSA",
+    "mascot": "Flames"
+  },
+  {
+    "team": "Sam Houston",
+    "abr": "SHSU",
+    "colors": [
+      "#fe5000",
+      "#000000"
+    ],
+    "conference": "CUSA",
+    "mascot": "Bearkats"
+  },
+  {
+    "team": "Jacksonville State",
+    "abr": "JVST",
+    "colors": [
+      "#b50500",
+      "#b5b7ba"
+    ],
+    "conference": "CUSA",
+    "mascot": "Gamecocks"
+  },
+  {
+    "team": "New Mexico State",
+    "abr": "NMSU",
+    "colors": [
+      "#891216",
+      "#000000"
+    ],
+    "conference": "CUSA",
+    "mascot": "Aggies"
+  },
+  {
+    "team": "Kennesaw State",
+    "abr": "KENN",
+    "colors": [
+      "#fdbb30",
+      "#000000"
+    ],
+    "conference": "CUSA",
+    "mascot": "Owls"
+  },
+  {
+    "team": "Detroit Mercy",
+    "abr": "DETM",
+    "colors": [
+      "#165b9e",
+      "#d31733"
+    ],
+    "conference": "Horizon",
+    "mascot": "Titans"
+  },
+  {
+    "team": "Wright State",
+    "abr": "WRST",
+    "colors": [
+      "#cba052",
+      "#cba052"
+    ],
+    "conference": "Horizon",
+    "mascot": "Raiders"
+  },
+  {
+    "team": "Green Bay",
+    "abr": "GB",
+    "colors": [
+      "#006633",
+      "#ffffff"
+    ],
+    "conference": "Horizon",
+    "mascot": "Phoenix"
+  },
+  {
+    "team": "Milwaukee",
+    "abr": "MILW",
+    "colors": [
+      "#000000",
+      "#ffc20e"
+    ],
+    "conference": "Horizon",
+    "mascot": "Panthers"
+  },
+  {
+    "team": "Cleveland State",
+    "abr": "CLE",
+    "colors": [
+      "#006633",
+      "#231f20"
+    ],
+    "conference": "Horizon",
+    "mascot": "Vikings"
+  },
+  {
+    "team": "Youngstown State",
+    "abr": "YSU",
+    "colors": [
+      "#E51935",
+      "#690717"
+    ],
+    "conference": "Horizon",
+    "mascot": "Penguins"
+  },
+  {
+    "team": "Oakland",
+    "abr": "OAK",
+    "colors": [
+      "#04091c",
+      "#bc955c"
+    ],
+    "conference": "Horizon",
+    "mascot": "Golden Grizzlies"
+  },
+  {
+    "team": "Northern Kentucky",
+    "abr": "NKU",
+    "colors": [
+      "#ffc82e",
+      "#000000"
+    ],
+    "conference": "Horizon",
+    "mascot": "Norse"
+  },
+  {
+    "team": "Purdue Fort Wayne",
+    "abr": "PFW",
+    "colors": [
+      "#00378A",
+      "#f0f0f0"
+    ],
+    "conference": "Horizon",
+    "mascot": "Mastodons"
+  },
+  {
+    "team": "IU Indianapolis",
+    "abr": "IUIN",
+    "colors": [
+      "#A81F30",
+      "#d59f0f"
+    ],
+    "conference": "Horizon",
+    "mascot": "Jaguars"
+  },
+  {
+    "team": "Robert Morris",
+    "abr": "RMU",
+    "colors": [
+      "#00214D",
+      "#a21d2b"
+    ],
+    "conference": "Horizon",
+    "mascot": "Colonials"
+  },
+  {
+    "team": "Princeton",
+    "abr": "PRIN",
+    "colors": [
+      "#000000",
+      "#ff6000"
+    ],
+    "conference": "Ivy",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Pennsylvania",
+    "abr": "PENN",
+    "colors": [
+      "#082A74",
+      "#a6163d"
+    ],
+    "conference": "Ivy",
+    "mascot": "Quakers"
+  },
+  {
+    "team": "Yale",
+    "abr": "YALE",
+    "colors": [
+      "#004a81",
+      "#286dc0"
+    ],
+    "conference": "Ivy",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Columbia",
+    "abr": "COLU",
+    "colors": [
+      "#174785",
+      "#004b85"
+    ],
+    "conference": "Ivy",
+    "mascot": "Lions"
+  },
+  {
+    "team": "Cornell",
+    "abr": "COR",
+    "colors": [
+      "#d60027",
+      "#101010"
+    ],
+    "conference": "Ivy",
+    "mascot": "Big Red"
+  },
+  {
+    "team": "Dartmouth",
+    "abr": "DART",
+    "colors": [
+      "#005730",
+      "#000000"
+    ],
+    "conference": "Ivy",
+    "mascot": "Big Green"
+  },
+  {
+    "team": "Harvard",
+    "abr": "HARV",
+    "colors": [
+      "#990000",
+      "#dbdbdb"
+    ],
+    "conference": "Ivy",
+    "mascot": "Crimson"
+  },
+  {
+    "team": "Brown",
+    "abr": "BRWN",
+    "colors": [
+      "#411e09",
+      "#949300"
+    ],
+    "conference": "Ivy",
+    "mascot": "Bears"
+  },
+  {
+    "team": "Iona",
+    "abr": "IONA",
+    "colors": [
+      "#6f2c3e",
+      "#f0ab00"
+    ],
+    "conference": "MAAC",
+    "mascot": "Gaels"
+  },
+  {
+    "team": "Saint Peter's",
+    "abr": "SPU",
+    "colors": [
+      "#004CC2"
+    ],
+    "conference": "MAAC",
+    "mascot": "Peacocks"
+  },
+  {
+    "team": "Fairfield",
+    "abr": "FAIR",
+    "colors": [
+      "#000000",
+      "#ebebeb"
+    ],
+    "conference": "MAAC",
+    "mascot": "Stags"
+  },
+  {
+    "team": "Manhattan",
+    "abr": "MAN",
+    "colors": [
+      "#4f8537",
+      "#b5b7ba"
+    ],
+    "conference": "MAAC",
+    "mascot": "Jaspers"
+  },
+  {
+    "team": "Siena",
+    "abr": "SIE",
+    "colors": [
+      "#037961",
+      "#eea60f"
+    ],
+    "conference": "MAAC",
+    "mascot": "Saints"
+  },
+  {
+    "team": "Niagara",
+    "abr": "NIA",
+    "colors": [
+      "#69207E",
+      "#f0f0f0"
+    ],
+    "conference": "MAAC",
+    "mascot": "Purple Eagles"
+  },
+  {
+    "team": "Canisius",
+    "abr": "CAN",
+    "colors": [
+      "#004a81",
+      "#dda50f"
+    ],
+    "conference": "MAAC",
+    "mascot": "Golden Griffins"
+  },
+  {
+    "team": "Rider",
+    "abr": "RID",
+    "colors": [
+      "#a80532",
+      "#ebebeb"
+    ],
+    "conference": "MAAC",
+    "mascot": "Broncs"
+  },
+  {
+    "team": "Marist",
+    "abr": "MRST",
+    "colors": [
+      "#e53730",
+      "#f0f0f0"
+    ],
+    "conference": "MAAC",
+    "mascot": "Red Foxes"
+  },
+  {
+    "team": "Quinnipiac",
+    "abr": "QUIN",
+    "colors": [
+      "#041B43"
+    ],
+    "conference": "MAAC",
+    "mascot": "Bobcats"
+  },
+  {
+    "team": "Mount St. Mary's",
+    "abr": "MSM",
+    "colors": [
+      "#005596",
+      "#ebebeb"
+    ],
+    "conference": "MAAC",
+    "mascot": "Mountaineers"
+  },
+  {
+    "team": "Merrimack",
+    "abr": "MRMK",
+    "colors": [
+      "#2f4f93",
+      "#e8c535"
+    ],
+    "conference": "MAAC",
+    "mascot": "Warriors"
+  },
+  {
+    "team": "Sacred Heart",
+    "abr": "SHU",
+    "colors": [
+      "#a40012",
+      "#c29472"
+    ],
+    "conference": "MAAC",
+    "mascot": "Pioneers"
+  },
+  {
+    "team": "Ohio",
+    "abr": "OHIO",
+    "colors": [
+      "#295A29",
+      "#e4bb85"
+    ],
+    "conference": "MAC",
+    "mascot": "Bobcats"
+  },
+  {
+    "team": "Toledo",
+    "abr": "TOL",
+    "colors": [
+      "#0a2240",
+      "#ffcd00"
+    ],
+    "conference": "MAC",
+    "mascot": "Rockets"
+  },
+  {
+    "team": "Miami (OH)",
+    "abr": "M-OH",
+    "colors": [
+      "#a4000c",
+      "#f0f0f0"
+    ],
+    "conference": "MAC",
+    "mascot": "RedHawks"
+  },
+  {
+    "team": "Kent State",
+    "abr": "KENT",
+    "colors": [
+      "#003976",
+      "#efab00"
+    ],
+    "conference": "MAC",
+    "mascot": "Golden Flashes"
+  },
+  {
+    "team": "William & Mary",
+    "abr": "W&M",
+    "colors": [
+      "#103217",
+      "#f6b220"
+    ],
+    "conference": "CAA",
+    "mascot": "Tribe"
+  },
+  {
+    "team": "Bowling Green",
+    "abr": "BGSU",
+    "colors": [
+      "#2b1000",
+      "#492000"
+    ],
+    "conference": "MAC",
+    "mascot": "Falcons"
+  },
+  {
+    "team": "Western Michigan",
+    "abr": "WMU",
+    "colors": [
+      "#532e1f",
+      "#8b7f79"
+    ],
+    "conference": "MAC",
+    "mascot": "Broncos"
+  },
+  {
+    "team": "Ball State",
+    "abr": "BALL",
+    "colors": [
+      "#DA0000",
+      "#ffffff"
+    ],
+    "conference": "MAC",
+    "mascot": "Cardinals"
+  },
+  {
+    "team": "Eastern Michigan",
+    "abr": "EMU",
+    "colors": [
+      "#00331b",
+      "#f0f0f0"
+    ],
+    "conference": "MAC",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "Central Michigan",
+    "abr": "CMU",
+    "colors": [
+      "#6a0032",
+      "#ffc82e"
+    ],
+    "conference": "MAC",
+    "mascot": "Chippewas"
+  },
+  {
+    "team": "Akron",
+    "abr": "AKR",
+    "colors": [
+      "#00285e",
+      "#84754e"
+    ],
+    "conference": "MAC",
+    "mascot": "Zips"
+  },
+  {
+    "team": "Buffalo",
+    "abr": "BUF",
+    "colors": [
+      "#041A9B",
+      "#ebebeb"
+    ],
+    "conference": "MAC",
+    "mascot": "Bulls"
+  },
+  {
+    "team": "South Carolina State",
+    "abr": "SCST",
+    "colors": [
+      "#7d1315",
+      "#104897"
+    ],
+    "conference": "MEAC",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Howard",
+    "abr": "HOW",
+    "colors": [
+      "#003a63",
+      "#e51937"
+    ],
+    "conference": "MEAC",
+    "mascot": "Bison"
+  },
+  {
+    "team": "Delaware State",
+    "abr": "DSU",
+    "colors": [
+      "#FF3630",
+      "#009cdd"
+    ],
+    "conference": "MEAC",
+    "mascot": "Hornets"
+  },
+  {
+    "team": "Coppin State",
+    "abr": "COPP",
+    "colors": [
+      "#2e3192",
+      "#ffd204"
+    ],
+    "conference": "MEAC",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "Morgan State",
+    "abr": "MORG",
+    "colors": [
+      "#014786",
+      "#f47937"
+    ],
+    "conference": "MEAC",
+    "mascot": "Bears"
+  },
+  {
+    "team": "Norfolk State",
+    "abr": "NORF",
+    "colors": [
+      "#0c8968",
+      "#fdb813"
+    ],
+    "conference": "MEAC",
+    "mascot": "Spartans"
+  },
+  {
+    "team": "Maryland Eastern Shore",
+    "abr": "UMES",
+    "colors": [
+      "#5c2301",
+      "#b5b7ba"
+    ],
+    "conference": "MEAC",
+    "mascot": "Hawks"
+  },
+  {
+    "team": "North Carolina Central",
+    "abr": "NCCU",
+    "colors": [
+      "#880023",
+      "#c2c3c0"
+    ],
+    "conference": "MEAC",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "Southern Illinois",
+    "abr": "SIU",
+    "colors": [
+      "#85283D",
+      "#c2c3c0"
+    ],
+    "conference": "MVC",
+    "mascot": "Salukis"
+  },
+  {
+    "team": "Illinois State",
+    "abr": "ILST",
+    "colors": [
+      "#CE1126",
+      "#ffe716"
+    ],
+    "conference": "MVC",
+    "mascot": "Redbirds"
+  },
+  {
+    "team": "Indiana State",
+    "abr": "INST",
+    "colors": [
+      "#00669a",
+      "#f0f0f0"
+    ],
+    "conference": "MVC",
+    "mascot": "Sycamores"
+  },
+  {
+    "team": "Northern Iowa",
+    "abr": "UNI",
+    "colors": [
+      "#473282",
+      "#ffffff"
+    ],
+    "conference": "MVC",
+    "mascot": "Panthers"
+  },
+  {
+    "team": "Evansville",
+    "abr": "EVAN",
+    "colors": [
+      "#663399",
+      "#ef6f00"
+    ],
+    "conference": "MVC",
+    "mascot": "Purple Aces"
+  },
+  {
+    "team": "Valparaiso",
+    "abr": "VAL",
+    "colors": [
+      "#794500"
+    ],
+    "conference": "MVC",
+    "mascot": "Beacons"
+  },
+  {
+    "team": "Belmont",
+    "abr": "BEL",
+    "colors": [
+      "#182142",
+      "#c9262d"
+    ],
+    "conference": "MVC",
+    "mascot": "Bruins"
+  },
+  {
+    "team": "Murray State",
+    "abr": "MUR",
+    "colors": [
+      "#002148",
+      "#000e00"
+    ],
+    "conference": "MVC",
+    "mascot": "Racers"
+  },
+  {
+    "team": "UIC",
+    "abr": "UIC",
+    "colors": [
+      "#001e62",
+      "#d50032"
+    ],
+    "conference": "MVC",
+    "mascot": "Flames"
+  },
+  {
+    "team": "San Diego State",
+    "abr": "SDSU",
+    "colors": [
+      "#c41230",
+      "#000000"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Aztecs"
+  },
+  {
+    "team": "UNLV",
+    "abr": "UNLV",
+    "colors": [
+      "#b10202",
+      "#ffffff"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Rebels"
+  },
+  {
+    "team": "New Mexico",
+    "abr": "UNM",
+    "colors": [
+      "#000000",
+      "#231f20"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Lobos"
+  },
+  {
+    "team": "Colorado State",
+    "abr": "CSU",
+    "colors": [
+      "#1e4d2b",
+      "#c8c372"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Rams"
+  },
+  {
+    "team": "Wyoming",
+    "abr": "WYO",
+    "colors": [
+      "#492f24",
+      "#ffc425"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Cowboys"
+  },
+  {
+    "team": "Air Force",
+    "abr": "AFA",
+    "colors": [
+      "#004a7b",
+      "#ffffff"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Falcons"
+  },
+  {
+    "team": "Boise State",
+    "abr": "BOIS",
+    "colors": [
+      "#0033a0",
+      "#fa4616"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Broncos"
+  },
+  {
+    "team": "Nevada",
+    "abr": "NEV",
+    "colors": [
+      "#002d62",
+      "#ffffff"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Wolf Pack"
+  },
+  {
+    "team": "Utah State",
+    "abr": "USU",
+    "colors": [
+      "#00263a",
+      "#949ca1"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Aggies"
+  },
+  {
+    "team": "Fresno State",
+    "abr": "FRES",
+    "colors": [
+      "#c41230",
+      "#13284c"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "San Jos\u00e9 State",
+    "abr": "SJSU",
+    "colors": [
+      "#005893",
+      "#fdba31"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Spartans"
+  },
+  {
+    "team": "Fairleigh Dickinson",
+    "abr": "FDU",
+    "colors": [
+      "#72293c",
+      "#28334a"
+    ],
+    "conference": "NEC",
+    "mascot": "Knights"
+  },
+  {
+    "team": "Wagner",
+    "abr": "WAG",
+    "colors": [
+      "#00483A",
+      "#ffffff"
+    ],
+    "conference": "NEC",
+    "mascot": "Seahawks"
+  },
+  {
+    "team": "Long Island University",
+    "abr": "LIU",
+    "colors": [
+      "#50c9f7",
+      "#ffbf00"
+    ],
+    "conference": "NEC",
+    "mascot": "Sharks"
+  },
+  {
+    "team": "St. Francis (PA)",
+    "abr": "SFPA",
+    "colors": [
+      "#a20012"
+    ],
+    "conference": "NEC",
+    "mascot": "Red Flash"
+  },
+  {
+    "team": "Central Connecticut",
+    "abr": "CCSU",
+    "colors": [
+      "#1B49A2",
+      "#d1d5d8"
+    ],
+    "conference": "NEC",
+    "mascot": "Blue Devils"
+  },
+  {
+    "team": "Stonehill",
+    "abr": "STO",
+    "colors": [
+      "#000000"
+    ],
+    "conference": "NEC",
+    "mascot": "Skyhawks"
+  },
+  {
+    "team": "Le Moyne",
+    "abr": "LEM",
+    "colors": [],
+    "conference": "NEC",
+    "mascot": "Dolphins"
+  },
+  {
+    "team": "Mercyhurst",
+    "abr": "MERC",
+    "colors": [
+      "#000000"
+    ],
+    "conference": "NEC",
+    "mascot": "Lakers"
+  },
+  {
+    "team": "Chicago State",
+    "abr": "CHST",
+    "colors": [
+      "#006700"
+    ],
+    "conference": "NEC",
+    "mascot": "Cougars"
+  },
+  {
+    "team": "Morehead State",
+    "abr": "MORE",
+    "colors": [
+      "#094FA3",
+      "#fed91a"
+    ],
+    "conference": "OVC",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "Tennessee Tech",
+    "abr": "TNTC",
+    "colors": [
+      "#5A4099",
+      "#ffde00"
+    ],
+    "conference": "OVC",
+    "mascot": "Golden Eagles"
+  },
+  {
+    "team": "Tennessee State",
+    "abr": "TNST",
+    "colors": [
+      "#171796",
+      "#f0f0f0"
+    ],
+    "conference": "OVC",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Southeast Missouri State",
+    "abr": "SEMO",
+    "colors": [
+      "#c8102e",
+      "#000000"
+    ],
+    "conference": "OVC",
+    "mascot": "Redhawks"
+  },
+  {
+    "team": "UT Martin",
+    "abr": "UTM",
+    "colors": [
+      "#FF6700",
+      "#102a5c"
+    ],
+    "conference": "OVC",
+    "mascot": "Skyhawks"
+  },
+  {
+    "team": "Eastern Illinois",
+    "abr": "EIU",
+    "colors": [
+      "#000000",
+      "#bebab9"
+    ],
+    "conference": "OVC",
+    "mascot": "Panthers"
+  },
+  {
+    "team": "SIU Edwardsville",
+    "abr": "SIUE",
+    "colors": [
+      "#eb1c23",
+      "#080808"
+    ],
+    "conference": "OVC",
+    "mascot": "Cougars"
+  },
+  {
+    "team": "Little Rock",
+    "abr": "LR",
+    "colors": [
+      "#AD0000",
+      "#898d8f"
+    ],
+    "conference": "OVC",
+    "mascot": "Trojans"
+  },
+  {
+    "team": "Southern Indiana",
+    "abr": "USI",
+    "colors": [
+      "#CF102D",
+      "#002D5D"
+    ],
+    "conference": "OVC",
+    "mascot": "Screaming Eagles"
+  },
+  {
+    "team": "Western Illinois",
+    "abr": "WIU",
+    "colors": [
+      "#4e1e8a",
+      "#ffc90a"
+    ],
+    "conference": "OVC",
+    "mascot": "Leathernecks"
+  },
+  {
+    "team": "Lindenwood",
+    "abr": "LIN",
+    "colors": [
+      "#101820",
+      "#B5A36A"
+    ],
+    "conference": "OVC",
+    "mascot": "Lions"
+  },
+  {
+    "team": "Bucknell",
+    "abr": "BUCK",
+    "colors": [
+      "#000060",
+      "#00316e"
+    ],
+    "conference": "Patriot",
+    "mascot": "Bison"
+  },
+  {
+    "team": "Colgate",
+    "abr": "COLG",
+    "colors": [
+      "#821019",
+      "#ffffff"
+    ],
+    "conference": "Patriot",
+    "mascot": "Raiders"
+  },
+  {
+    "team": "Holy Cross",
+    "abr": "HC",
+    "colors": [
+      "#0a0a0a",
+      "#080808"
+    ],
+    "conference": "Patriot",
+    "mascot": "Crusaders"
+  },
+  {
+    "team": "Lehigh",
+    "abr": "LEH",
+    "colors": [
+      "#6c2b2a",
+      "#b69e70"
+    ],
+    "conference": "Patriot",
+    "mascot": "Mountain Hawks"
+  },
+  {
+    "team": "Navy",
+    "abr": "NAVY",
+    "colors": [
+      "#00225b",
+      "#b5a67c"
+    ],
+    "conference": "Patriot",
+    "mascot": "Midshipmen"
+  },
+  {
+    "team": "Lafayette",
+    "abr": "LAF",
+    "colors": [
+      "#790000",
+      "#a59474"
+    ],
+    "conference": "Patriot",
+    "mascot": "Leopards"
+  },
+  {
+    "team": "Army",
+    "abr": "ARMY",
+    "colors": [
+      "#ce9c00",
+      "#231f20"
+    ],
+    "conference": "Patriot",
+    "mascot": "Black Knights"
+  },
+  {
+    "team": "American University",
+    "abr": "AMER",
+    "colors": [
+      "#c41130",
+      "#c8102e"
+    ],
+    "conference": "Patriot",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "Boston University",
+    "abr": "BU",
+    "colors": [
+      "#cc0000",
+      "#ffffff"
+    ],
+    "conference": "Patriot",
+    "mascot": "Terriers"
+  },
+  {
+    "team": "Loyola Maryland",
+    "abr": "L-MD",
+    "colors": [
+      "#76a7a0",
+      "#c9cbca"
+    ],
+    "conference": "Patriot",
+    "mascot": "Greyhounds"
+  },
+  {
+    "team": "Kentucky",
+    "abr": "UK",
+    "colors": [
+      "#0033a0",
+      "#ffffff"
+    ],
+    "conference": "SEC",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "Alabama",
+    "abr": "ALA",
+    "colors": [
+      "#9e1632",
+      "#ffffff"
+    ],
+    "conference": "SEC",
+    "mascot": "Crimson Tide"
+  },
+  {
+    "team": "Tennessee",
+    "abr": "TENN",
+    "colors": [
+      "#ff8200",
+      "#58595b"
+    ],
+    "conference": "SEC",
+    "mascot": "Volunteers"
+  },
+  {
+    "team": "Florida",
+    "abr": "FLA",
+    "colors": [
+      "#0021a5",
+      "#fa4616"
+    ],
+    "conference": "SEC",
+    "mascot": "Gators"
+  },
+  {
+    "team": "Vanderbilt",
+    "abr": "VAN",
+    "colors": [
+      "#000000",
+      "#231f20"
+    ],
+    "conference": "SEC",
+    "mascot": "Commodores"
+  },
+  {
+    "team": "LSU",
+    "abr": "LSU",
+    "colors": [
+      "#461d7c",
+      "#fdd023"
+    ],
+    "conference": "SEC",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Auburn",
+    "abr": "AUB",
+    "colors": [
+      "#002b5c",
+      "#f26522"
+    ],
+    "conference": "SEC",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Mississippi State",
+    "abr": "MSST",
+    "colors": [
+      "#5d1725",
+      "#c1c6c8"
+    ],
+    "conference": "SEC",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Georgia",
+    "abr": "UGA",
+    "colors": [
+      "#ba0c2f",
+      "#ffffff"
+    ],
+    "conference": "SEC",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Ole Miss",
+    "abr": "MISS",
+    "colors": [
+      "#13294b",
+      "#c8102e"
+    ],
+    "conference": "SEC",
+    "mascot": "Rebels"
+  },
+  {
+    "team": "Arkansas",
+    "abr": "ARK",
+    "colors": [
+      "#a41f35",
+      "#ffffff"
+    ],
+    "conference": "SEC",
+    "mascot": "Razorbacks"
+  },
+  {
+    "team": "South Carolina",
+    "abr": "SC",
+    "colors": [
+      "#73000a",
+      "#ffffff"
+    ],
+    "conference": "SEC",
+    "mascot": "Gamecocks"
+  },
+  {
+    "team": "Texas A&M",
+    "abr": "TA&M",
+    "colors": [
+      "#500000",
+      "#ffffff"
+    ],
+    "conference": "SEC",
+    "mascot": "Aggies"
+  },
+  {
+    "team": "Missouri",
+    "abr": "MIZ",
+    "colors": [
+      "#f1b82d",
+      "#000000"
+    ],
+    "conference": "SEC",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Oklahoma",
+    "abr": "OU",
+    "colors": [
+      "#a32036",
+      "#ffffff"
+    ],
+    "conference": "SEC",
+    "mascot": "Sooners"
+  },
+  {
+    "team": "Texas",
+    "abr": "TEX",
+    "colors": [
+      "#c15d26",
+      "#ffffff"
+    ],
+    "conference": "SEC",
+    "mascot": "Longhorns"
+  },
+  {
+    "team": "Southern",
+    "abr": "SOU",
+    "colors": [
+      "#004B97",
+      "#ffc82d"
+    ],
+    "conference": "SWAC",
+    "mascot": "Jaguars"
+  },
+  {
+    "team": "Texas Southern",
+    "abr": "TXSO",
+    "colors": [
+      "#860038",
+      "#ffffff"
+    ],
+    "conference": "SWAC",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Jackson State",
+    "abr": "JKST",
+    "colors": [
+      "#123297",
+      "#b5b7ba"
+    ],
+    "conference": "SWAC",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Alcorn State",
+    "abr": "ALCN",
+    "colors": [
+      "#4b0058",
+      "#46166a"
+    ],
+    "conference": "SWAC",
+    "mascot": "Braves"
+  },
+  {
+    "team": "Alabama State",
+    "abr": "ALST",
+    "colors": [
+      "#e9a900",
+      "#0a0a0a"
+    ],
+    "conference": "SWAC",
+    "mascot": "Hornets"
+  },
+  {
+    "team": "Grambling",
+    "abr": "GRAM",
+    "colors": [
+      "#ee8601",
+      "#ffd10a"
+    ],
+    "conference": "SWAC",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Mississippi Valley State",
+    "abr": "MVSU",
+    "colors": [
+      "#005328",
+      "#cf2d34"
+    ],
+    "conference": "SWAC",
+    "mascot": "Delta Devils"
+  },
+  {
+    "team": "Prairie View A&M",
+    "abr": "PV",
+    "colors": [
+      "#4d0960"
+    ],
+    "conference": "SWAC",
+    "mascot": "Panthers"
+  },
+  {
+    "team": "Alabama A&M",
+    "abr": "AAMU",
+    "colors": [
+      "#790000",
+      "#ffffff"
+    ],
+    "conference": "SWAC",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Arkansas-Pine Bluff",
+    "abr": "UAPB",
+    "colors": [
+      "#e0aa0f",
+      "#eaaa00"
+    ],
+    "conference": "SWAC",
+    "mascot": "Golden Lions"
+  },
+  {
+    "team": "Bethune-Cookman",
+    "abr": "BCU",
+    "colors": [
+      "#7b1831",
+      "#e9aa12"
+    ],
+    "conference": "SWAC",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "Florida A&M",
+    "abr": "FAMU",
+    "colors": [
+      "#F89728",
+      "#00843d"
+    ],
+    "conference": "SWAC",
+    "mascot": "Rattlers"
+  },
+  {
+    "team": "Chattanooga",
+    "abr": "UTC",
+    "colors": [
+      "#00386b",
+      "#dca71d"
+    ],
+    "conference": "SoCon",
+    "mascot": "Mocs"
+  },
+  {
+    "team": "The Citadel",
+    "abr": "CIT",
+    "colors": [
+      "#002b5c",
+      "#f0f0f0"
+    ],
+    "conference": "SoCon",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Western Carolina",
+    "abr": "WCU",
+    "colors": [
+      "#492F91",
+      "#bf9e70"
+    ],
+    "conference": "SoCon",
+    "mascot": "Catamounts"
+  },
+  {
+    "team": "Wofford",
+    "abr": "WOF",
+    "colors": [
+      "#533B22",
+      "#f0f0f0"
+    ],
+    "conference": "SoCon",
+    "mascot": "Terriers"
+  },
+  {
+    "team": "UNC Greensboro",
+    "abr": "UNCG",
+    "colors": [
+      "#003559",
+      "#ffd90a"
+    ],
+    "conference": "SoCon",
+    "mascot": "Spartans"
+  },
+  {
+    "team": "Furman",
+    "abr": "FUR",
+    "colors": [
+      "#582c83",
+      "#ffffff"
+    ],
+    "conference": "SoCon",
+    "mascot": "Paladins"
+  },
+  {
+    "team": "Samford",
+    "abr": "SAM",
+    "colors": [
+      "#005485",
+      "#bc0023"
+    ],
+    "conference": "SoCon",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Mercer",
+    "abr": "MER",
+    "colors": [
+      "#ff7f29",
+      "#080808"
+    ],
+    "conference": "SoCon",
+    "mascot": "Bears"
+  },
+  {
+    "team": "McNeese",
+    "abr": "MCN",
+    "colors": [
+      "#00529C"
+    ],
+    "conference": "Southland",
+    "mascot": "Cowboys"
+  },
+  {
+    "team": "Northwestern State",
+    "abr": "NWST",
+    "colors": [
+      "#492F91",
+      "#ed6118"
+    ],
+    "conference": "Southland",
+    "mascot": "Demons"
+  },
+  {
+    "team": "Nicholls",
+    "abr": "NICH",
+    "colors": [
+      "#C41230",
+      "#f0f0f0"
+    ],
+    "conference": "Southland",
+    "mascot": "Colonels"
+  },
+  {
+    "team": "SE Louisiana",
+    "abr": "SELA",
+    "colors": [
+      "#215732",
+      "#ffc72c"
+    ],
+    "conference": "Southland",
+    "mascot": "Lions"
+  },
+  {
+    "team": "Texas A&M-Corpus Christi",
+    "abr": "AMCC",
+    "colors": [
+      "#0067c5",
+      "#007f3e"
+    ],
+    "conference": "Southland",
+    "mascot": "Islanders"
+  },
+  {
+    "team": "New Orleans",
+    "abr": "UNO",
+    "colors": [
+      "#005da6",
+      "#a2a9ae"
+    ],
+    "conference": "Southland",
+    "mascot": "Privateers"
+  },
+  {
+    "team": "Incarnate Word",
+    "abr": "UIW",
+    "colors": [
+      "#000000",
+      "#080808"
+    ],
+    "conference": "Southland",
+    "mascot": "Cardinals"
+  },
+  {
+    "team": "Houston Christian",
+    "abr": "HCU",
+    "colors": [
+      "#00539c"
+    ],
+    "conference": "Southland",
+    "mascot": "Huskies"
+  },
+  {
+    "team": "East Texas A&M",
+    "abr": "ETAM",
+    "colors": [
+      "#000000"
+    ],
+    "conference": "Southland",
+    "mascot": "Lions"
+  },
+  {
+    "team": "UT Rio Grande Valley",
+    "abr": "RGV",
+    "colors": [
+      "#dc6000",
+      "#e1732d"
+    ],
+    "conference": "Southland",
+    "mascot": "Vaqueros"
+  },
+  {
+    "team": "South Dakota State",
+    "abr": "SDST",
+    "colors": [
+      "#0033a0",
+      "#ffd100"
+    ],
+    "conference": "Summit",
+    "mascot": "Jackrabbits"
+  },
+  {
+    "team": "North Dakota State",
+    "abr": "NDSU",
+    "colors": [
+      "#01402A",
+      "#ffffff"
+    ],
+    "conference": "Summit",
+    "mascot": "Bison"
+  },
+  {
+    "team": "South Dakota",
+    "abr": "SDAK",
+    "colors": [
+      "#CD1241",
+      "#f0f0f0"
+    ],
+    "conference": "Summit",
+    "mascot": "Coyotes"
+  },
+  {
+    "team": "Omaha",
+    "abr": "OMA",
+    "colors": [
+      "#e3193e"
+    ],
+    "conference": "Summit",
+    "mascot": "Mavericks"
+  },
+  {
+    "team": "Denver",
+    "abr": "DEN",
+    "colors": [
+      "#98002e",
+      "#a8996e"
+    ],
+    "conference": "Summit",
+    "mascot": "Pioneers"
+  },
+  {
+    "team": "North Dakota",
+    "abr": "UND",
+    "colors": [
+      "#00A26B",
+      "#c2c3c0"
+    ],
+    "conference": "Summit",
+    "mascot": "Fighting Hawks"
+  },
+  {
+    "team": "St. Thomas-Minnesota",
+    "abr": "STMN",
+    "colors": [
+      "#000000"
+    ],
+    "conference": "Summit",
+    "mascot": "Tommies"
+  },
+  {
+    "team": "South Alabama",
+    "abr": "USA",
+    "colors": [
+      "#003E7E"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Jaguars"
+  },
+  {
+    "team": "Louisiana",
+    "abr": "UL",
+    "colors": [
+      "#ce181e",
+      "#ffffff"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Ragin' Cajuns"
+  },
+  {
+    "team": "Arkansas State",
+    "abr": "ARST",
+    "colors": [
+      "#e81018",
+      "#000000"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Red Wolves"
+  },
+  {
+    "team": "Troy",
+    "abr": "TROY",
+    "colors": [
+      "#AE0210",
+      "#88898c"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Trojans"
+  },
+  {
+    "team": "UL Monroe",
+    "abr": "ULM",
+    "colors": [
+      "#231F20",
+      "#b18445"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Warhawks"
+  },
+  {
+    "team": "Texas State",
+    "abr": "TXST",
+    "colors": [
+      "#4e1719",
+      "#b4975a"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Bobcats"
+  },
+  {
+    "team": "Georgia Southern",
+    "abr": "GASO",
+    "colors": [
+      "#003775",
+      "#f0f0f0"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Eagles"
+  },
+  {
+    "team": "App State",
+    "abr": "APP",
+    "colors": [
+      "#000000",
+      "#ffcd00"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Mountaineers"
+  },
+  {
+    "team": "Coastal Carolina",
+    "abr": "CCU",
+    "colors": [
+      "#007073",
+      "#876447"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Chanticleers"
+  },
+  {
+    "team": "James Madison",
+    "abr": "JMU",
+    "colors": [
+      "#450084",
+      "#b5a068"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Dukes"
+  },
+  {
+    "team": "Southern Miss",
+    "abr": "USM",
+    "colors": [
+      "#FFAA3C",
+      "#ffc423"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Golden Eagles"
+  },
+  {
+    "team": "Marshall",
+    "abr": "MRSH",
+    "colors": [
+      "#00ae42",
+      "#be854c"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Thundering Herd"
+  },
+  {
+    "team": "Utah Valley",
+    "abr": "UVU",
+    "colors": [
+      "#004812",
+      "#e1c736"
+    ],
+    "conference": "WAC",
+    "mascot": "Wolverines"
+  },
+  {
+    "team": "California Baptist",
+    "abr": "CBU",
+    "colors": [
+      "#000080"
+    ],
+    "conference": "WAC",
+    "mascot": "Lancers"
+  },
+  {
+    "team": "Tarleton State",
+    "abr": "TAR",
+    "colors": [
+      "#000000"
+    ],
+    "conference": "WAC",
+    "mascot": "Texans"
+  },
+  {
+    "team": "Abilene Christian",
+    "abr": "ACU",
+    "colors": [
+      "#592d82",
+      "#b1b3b3"
+    ],
+    "conference": "WAC",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "Utah Tech",
+    "abr": "UTU",
+    "colors": [
+      "#000000"
+    ],
+    "conference": "WAC",
+    "mascot": "Trailblazers"
+  },
+  {
+    "team": "Southern Utah",
+    "abr": "SUU",
+    "colors": [
+      "#c72026",
+      "#000000"
+    ],
+    "conference": "WAC",
+    "mascot": "Thunderbirds"
+  },
+  {
+    "team": "San Francisco",
+    "abr": "SF",
+    "colors": [
+      "#22523F",
+      "#fbcd3c"
+    ],
+    "conference": "WCC",
+    "mascot": "Dons"
+  },
+  {
+    "team": "Santa Clara",
+    "abr": "SCU",
+    "colors": [
+      "#690b0b",
+      "#101010"
+    ],
+    "conference": "WCC",
+    "mascot": "Broncos"
+  },
+  {
+    "team": "Saint Mary's",
+    "abr": "SMC",
+    "colors": [
+      "#d80024",
+      "#003057"
+    ],
+    "conference": "WCC",
+    "mascot": "Gaels"
+  },
+  {
+    "team": "Gonzaga",
+    "abr": "GONZ",
+    "colors": [
+      "#041e42",
+      "#c8102e"
+    ],
+    "conference": "WCC",
+    "mascot": "Bulldogs"
+  },
+  {
+    "team": "Pepperdine",
+    "abr": "PEPP",
+    "colors": [
+      "#003A72",
+      "#dc762f"
+    ],
+    "conference": "WCC",
+    "mascot": "Waves"
+  },
+  {
+    "team": "Loyola Marymount",
+    "abr": "LMU",
+    "colors": [
+      "#880029",
+      "#00345b"
+    ],
+    "conference": "WCC",
+    "mascot": "Lions"
+  },
+  {
+    "team": "San Diego",
+    "abr": "USD",
+    "colors": [
+      "#2f99d4",
+      "#2f99d4"
+    ],
+    "conference": "WCC",
+    "mascot": "Toreros"
+  },
+  {
+    "team": "Portland",
+    "abr": "PORT",
+    "colors": [
+      "#330072",
+      "#a8b3ba"
+    ],
+    "conference": "WCC",
+    "mascot": "Pilots"
+  },
+  {
+    "team": "Washington State",
+    "abr": "WSU",
+    "colors": [
+      "#981e32",
+      "#ffffff"
+    ],
+    "conference": "WCC",
+    "mascot": "Cougars"
+  },
+  {
+    "team": "Oregon State",
+    "abr": "ORST",
+    "colors": [
+      "#231f20",
+      "#d73f09"
+    ],
+    "conference": "WCC",
+    "mascot": "Beavers"
+  },
+  {
+    "team": "Old Dominion",
+    "abr": "ODU",
+    "colors": [
+      "#00507d",
+      "#a1d2f1"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Monarchs"
+  },
+  {
+    "team": "Colorado",
+    "abr": "COLO",
+    "colors": [
+      "#000000",
+      "#cfb87c"
+    ],
+    "conference": "Big 12",
+    "mascot": "Buffaloes"
+  },
+  {
+    "team": "Delaware",
+    "abr": "DEL",
+    "colors": [
+      "#033594",
+      "#e8ce31"
+    ],
+    "conference": "CUSA",
+    "mascot": "Blue Hens"
+  },
+  {
+    "team": "Grand Canyon",
+    "abr": "GCU",
+    "colors": [
+      "#522398",
+      "#ffffff"
+    ],
+    "conference": "Mountain West",
+    "mascot": "Lopes"
+  },
+  {
+    "team": "Missouri State",
+    "abr": "MOST",
+    "colors": [
+      "#5F0000",
+      "#e8e8e8"
+    ],
+    "conference": "CUSA",
+    "mascot": "Bears"
+  },
+  {
+    "team": "New Haven",
+    "abr": "NHVN",
+    "colors": [
+      "#000000"
+    ],
+    "conference": "NEC",
+    "mascot": "Chargers"
+  },
+  {
+    "team": "Seattle U",
+    "abr": "SEA",
+    "colors": [
+      "#BF2E1A",
+      "#c2c3c0"
+    ],
+    "conference": "WCC",
+    "mascot": "Redhawks"
+  },
+  {
+    "team": "Massachusetts",
+    "abr": "MASS",
+    "colors": [
+      "#880007"
+    ],
+    "conference": "MAC",
+    "mascot": "Minutemen"
+  },
+  {
+    "team": "Stephen F. Austin",
+    "abr": "SFA",
+    "colors": [
+      "#393996",
+      "#bec0c2"
+    ],
+    "conference": "Southland",
+    "mascot": "Lumberjacks"
+  },
+  {
+    "team": "UT Arlington",
+    "abr": "UTA",
+    "colors": [
+      "#004b7c",
+      "#f58024"
+    ],
+    "conference": "WAC",
+    "mascot": "Mavericks"
+  },
+  {
+    "team": "Lamar",
+    "abr": "LAM",
+    "colors": [
+      "#000000",
+      "#ebebeb"
+    ],
+    "conference": "Southland",
+    "mascot": "Cardinals"
+  },
+  {
+    "team": "UConn",
+    "abr": "CONN",
+    "colors": [
+      "#0c2340",
+      "#f1f2f3"
+    ],
+    "conference": "Big East",
+    "mascot": "Huskies"
+  },
+  {
+    "team": "Kansas City",
+    "abr": "KC",
+    "colors": [
+      "#004b87",
+      "#ffc72c"
+    ],
+    "conference": "Summit",
+    "mascot": "Roos"
+  },
+  {
+    "team": "Oral Roberts",
+    "abr": "ORU",
+    "colors": [
+      "#002462",
+      "#dac792"
+    ],
+    "conference": "Summit",
+    "mascot": "Golden Eagles"
+  },
+  {
+    "team": "VMI",
+    "abr": "VMI",
+    "colors": [
+      "#ae122a",
+      "#ffd619"
+    ],
+    "conference": "SoCon",
+    "mascot": "Keydets"
+  },
+  {
+    "team": "East Tennessee State",
+    "abr": "ETSU",
+    "colors": [
+      "#002d61",
+      "#ffc423"
+    ],
+    "conference": "SoCon",
+    "mascot": "Buccaneers"
+  },
+  {
+    "team": "Idaho",
+    "abr": "IDHO",
+    "colors": [
+      "#000000",
+      "#8c6e4a"
+    ],
+    "conference": "Big Sky",
+    "mascot": "Vandals"
+  },
+  {
+    "team": "Georgia State",
+    "abr": "GAST",
+    "colors": [
+      "#1e539a",
+      "#ebebeb"
+    ],
+    "conference": "Sun Belt",
+    "mascot": "Panthers"
+  },
+  {
+    "team": "Pacific",
+    "abr": "PAC",
+    "colors": [
+      "#F47820",
+      "#c2c3c0"
+    ],
+    "conference": "WCC",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Towson",
+    "abr": "TOW",
+    "colors": [
+      "#FFC229"
+    ],
+    "conference": "CAA",
+    "mascot": "Tigers"
+  },
+  {
+    "team": "Northern Illinois",
+    "abr": "NIU",
+    "colors": [
+      "#F1122C",
+      "#cc0000"
+    ],
+    "conference": "MAC",
+    "mascot": "Huskies"
+  },
+  {
+    "team": "Duquesne",
+    "abr": "DUQ",
+    "colors": [
+      "#002D62",
+      "#b90b2e"
+    ],
+    "conference": "A-10",
+    "mascot": "Dukes"
+  },
+  {
+    "team": "UC Santa Barbara",
+    "abr": "UCSB",
+    "colors": [
+      "#1e1840",
+      "#febc11"
+    ],
+    "conference": "Big West",
+    "mascot": "Gauchos"
+  },
+  {
+    "team": "Bradley",
+    "abr": "BRAD",
+    "colors": [
+      "#b70002",
+      "#c0c0c0"
+    ],
+    "conference": "MVC",
+    "mascot": "Braves"
+  },
+  {
+    "team": "Drake",
+    "abr": "DRKE",
+    "colors": [
+      "#005596",
+      "#bec0c2"
+    ],
+    "conference": "MVC",
+    "mascot": "Bulldogs"
   }
 ]
