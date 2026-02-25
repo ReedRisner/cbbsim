@@ -1,14 +1,23 @@
 import Fastify from "fastify";
 import { PrismaClient } from "@prisma/client";
-import type { BootstrapUniverseRequest, SeasonSimulationInput, UniverseSnapshot } from "@cbbsim/shared";
+import type {
+  ActiveSeasonState,
+  BootstrapUniverseRequest,
+  LeagueStateSnapshot,
+  SeasonSimulationInput,
+  UniverseSnapshot,
+} from "@cbbsim/shared";
 import { z } from "zod";
-import { runSeasonSimulation } from "./simulation.js";
+import { initializeSeason, runSeasonSimulation, simulateSeasonSpan } from "./simulation.js";
 import { bootstrapUniverse } from "./universe.js";
 
 const prisma = new PrismaClient();
 const app = Fastify({ logger: true });
 
+const LEAGUE_STATE_ID = "primary";
+
 let universe: UniverseSnapshot | null = null;
+let activeSeason: ActiveSeasonState | null = null;
 
 const bootstrapSchema = z.object({
   leagueName: z.string().min(3).max(80),
@@ -39,7 +48,42 @@ const seasonInputSchema = z.object({
   fatigueImpact: z.number().min(0).max(20),
 });
 
+const progressSchema = z.object({
+  mode: z.enum(["day", "week", "season"]),
+});
+
+const saveLeagueState = async () => {
+  await prisma.leagueState.upsert({
+    where: { id: LEAGUE_STATE_ID },
+    update: {
+      universe: universe,
+      season: activeSeason,
+    },
+    create: {
+      id: LEAGUE_STATE_ID,
+      universe,
+      season: activeSeason,
+    },
+  });
+};
+
+const loadLeagueState = async () => {
+  const state = await prisma.leagueState.findUnique({ where: { id: LEAGUE_STATE_ID } });
+
+  if (!state) {
+    return;
+  }
+
+  universe = (state.universe as UniverseSnapshot | null) ?? null;
+  activeSeason = (state.season as ActiveSeasonState | null) ?? null;
+};
+
 app.get("/api/health", async () => ({ ok: true, now: new Date().toISOString() }));
+app.get("/api/state", async (): Promise<LeagueStateSnapshot> => ({
+  universe,
+  activeSeason,
+  savedAt: new Date().toISOString(),
+}));
 
 app.post("/api/universe/bootstrap", async (request, reply) => {
   const parsed = bootstrapSchema.safeParse(request.body);
@@ -49,6 +93,7 @@ app.post("/api/universe/bootstrap", async (request, reply) => {
 
   const payload = parsed.data as BootstrapUniverseRequest;
   universe = bootstrapUniverse(payload);
+  activeSeason = null;
 
   await Promise.all(
     universe.teams.map((team) =>
@@ -81,10 +126,16 @@ app.post("/api/universe/bootstrap", async (request, reply) => {
     ),
   );
 
+  await saveLeagueState();
   return { universe };
 });
 
 app.get("/api/universe", async () => {
+  if (universe) {
+    return { universe };
+  }
+
+  await loadLeagueState();
   if (universe) {
     return { universe };
   }
@@ -94,25 +145,67 @@ app.get("/api/universe", async () => {
     return { universe: null };
   }
 
-  return {
-    universe: {
-      leagueName: "Recovered League",
-      generatedAt: new Date().toISOString(),
-      teams: teams.map((team) => ({
-        id: team.id,
-        name: team.name,
-        conference: team.conference,
-        rosterTalent: team.rosterTalent,
-        coaching: team.coachingRating,
-        facilities: team.facilityRating,
-        nilStrength: team.nilStrength,
-        defenseDiscipline: team.defenseDiscipline,
-        tempoControl: team.tempoControl,
-        prestige: team.currentPrestige,
-        expectedWins: 14,
-      })),
-    },
+  universe = {
+    leagueName: "Recovered League",
+    generatedAt: new Date().toISOString(),
+    teams: teams.map((team) => ({
+      id: team.id,
+      name: team.name,
+      conference: team.conference,
+      rosterTalent: team.rosterTalent,
+      coaching: team.coachingRating,
+      facilities: team.facilityRating,
+      nilStrength: team.nilStrength,
+      defenseDiscipline: team.defenseDiscipline,
+      tempoControl: team.tempoControl,
+      prestige: team.currentPrestige,
+      expectedWins: 14,
+    })),
   };
+
+  await saveLeagueState();
+  return { universe };
+});
+
+app.post("/api/season/start", async (request, reply) => {
+  const parsed = seasonInputSchema.safeParse(request.body);
+  if (!parsed.success) {
+    return reply.code(400).send({ error: parsed.error.flatten() });
+  }
+
+  const payload = parsed.data as SeasonSimulationInput;
+  activeSeason = initializeSeason(payload);
+
+  await saveLeagueState();
+  return { season: activeSeason };
+});
+
+app.get("/api/season", async () => {
+  if (!activeSeason) {
+    await loadLeagueState();
+  }
+
+  return { season: activeSeason };
+});
+
+app.post("/api/season/progress", async (request, reply) => {
+  const parsed = progressSchema.safeParse(request.body);
+  if (!parsed.success) {
+    return reply.code(400).send({ error: parsed.error.flatten() });
+  }
+
+  if (!activeSeason) {
+    await loadLeagueState();
+  }
+
+  if (!activeSeason) {
+    return reply.code(400).send({ error: "No active season. Start one first." });
+  }
+
+  activeSeason = simulateSeasonSpan(activeSeason, parsed.data.mode);
+  await saveLeagueState();
+
+  return { season: activeSeason };
 });
 
 app.post("/api/season/simulate", async (request, reply) => {
@@ -129,6 +222,7 @@ app.post("/api/season/simulate", async (request, reply) => {
 
 const start = async () => {
   try {
+    await loadLeagueState();
     await app.listen({ host: "0.0.0.0", port: 4000 });
   } catch (error) {
     app.log.error(error);

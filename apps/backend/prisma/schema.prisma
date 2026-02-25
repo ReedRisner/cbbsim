@@ -24,3 +24,10 @@ model Team {
 
   @@index([conference])
 }
+
+model LeagueState {
+  id         String   @id
+  universe   Json?
+  season     Json?
+  updatedAt  DateTime @updatedAt
+}
