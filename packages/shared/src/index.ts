@@ -2,6 +2,9 @@ export type TeamIdentity = {
   id: string;
   name: string;
   conference: string;
+  abr: string;
+  mascot: string;
+  colors: string[];
 };
 
 export type TeamRatings = {
@@ -66,6 +69,54 @@ export type PostseasonBracket = {
   matchups: BracketMatchup[];
 };
 
+export type RecruitProfile = {
+  id: string;
+  name: string;
+  classYear: "FR" | "JUCO";
+  region: string;
+  archetype: "Creator" | "Shooter" | "RimProtector" | "PointForward" | "GlueWing";
+  trueOverall: number;
+  truePotential: number;
+  stars: 2 | 3 | 4 | 5;
+  scoutedMin: number;
+  scoutedMax: number;
+  confidence: number;
+  committedTeamId: string;
+};
+
+export type PortalPlayer = {
+  id: string;
+  name: string;
+  originTeamId: string;
+  overall: number;
+  yearsRemaining: number;
+  tamperingRisk: number;
+  destinationTeamId: string;
+};
+
+export type TeamOffseasonSummary = {
+  teamId: string;
+  scholarshipsOpen: number;
+  recruitsSigned: number;
+  portalAdditions: number;
+  portalLosses: number;
+  nilBudgetStart: number;
+  nilSpent: number;
+  nilBudgetEnd: number;
+  tamperingIncidents: number;
+  projectedRosterCount: number;
+};
+
+export type OffseasonState = {
+  seasonYear: number;
+  generatedRecruits: RecruitProfile[];
+  signedRecruits: RecruitProfile[];
+  portalEntrants: PortalPlayer[];
+  portalCommitments: PortalPlayer[];
+  teamSummaries: TeamOffseasonSummary[];
+  completedAt: string;
+};
+
 export type ActiveSeasonState = {
   teams: TeamProfile[];
   settings: Omit<SeasonSimulationInput, "teams">;
@@ -86,6 +137,7 @@ export type ActiveSeasonState = {
   autoBidTeamId: string;
   storylines: string[];
   bracket: PostseasonBracket | null;
+  offseason: OffseasonState | null;
 };
 
 export type LeagueStateSnapshot = {
