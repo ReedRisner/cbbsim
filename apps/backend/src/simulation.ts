@@ -121,43 +121,70 @@ const pairTeamsForTarget = (
   throw new Error(`Unable to build schedule for target games (${conferenceGame ? "conference" : "non-conference"}) after retries.`);
 };
 
-const assignDays = (games: PlannedGame[], teams: TeamProfile[]): ActiveSeasonState["schedule"] => {
-  const schedule: ActiveSeasonState["schedule"] = [];
-  const maxGamesPerDay = Math.max(1, Math.floor(teams.length / 2));
-  let day = 1;
-  let gameId = 1;
-  let dayGames = 0;
+const seasonStartDate = () => new Date(new Date().getFullYear(), 10, 5);
 
-  games.forEach((game) => {
-    if (dayGames >= maxGamesPerDay) {
-      day += 1;
-      dayGames = 0;
-    }
+const dayOffset = (start: Date, target: Date) =>
+  Math.floor((target.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
-    schedule.push({
-      gameId: `g-${gameId}`,
-      day,
-      homeTeamId: game.homeTeamId,
-      awayTeamId: game.awayTeamId,
-      conferenceGame: game.conferenceGame,
-    });
-
-    gameId += 1;
-    dayGames += 1;
+const schedulePhaseGames = (
+  games: PlannedGame[],
+  teams: TeamProfile[],
+  startDay: number,
+  endDay: number,
+  previousLastPlayed?: Map<string, number>,
+) => {
+  const unscheduled = [...games];
+  const byTeamRemaining = new Map<string, number>();
+  teams.forEach((team) => byTeamRemaining.set(team.id, 0));
+  unscheduled.forEach((game) => {
+    byTeamRemaining.set(game.homeTeamId, (byTeamRemaining.get(game.homeTeamId) ?? 0) + 1);
+    byTeamRemaining.set(game.awayTeamId, (byTeamRemaining.get(game.awayTeamId) ?? 0) + 1);
   });
 
-  return schedule;
-};
+  const lastPlayed = new Map(previousLastPlayed ?? teams.map((team) => [team.id, -10]));
+  const scheduled: Array<PlannedGame & { day: number }> = [];
 
-const validateScheduleShape = (schedule: ActiveSeasonState["schedule"], teams: TeamProfile[]) => {
-  const totals = new Map<string, { total: number; conference: number; nonConference: number }>();
-  teams.forEach((team) => totals.set(team.id, { total: 0, conference: 0, nonConference: 0 }));
+  for (let day = startDay; day <= endDay && unscheduled.length > 0; day += 1) {
+    const usedToday = new Set<string>();
 
-  schedule.forEach((game) => {
-    const home = totals.get(game.homeTeamId);
-    const away = totals.get(game.awayTeamId);
-    if (!home || !away) {
-      return;
+    while (true) {
+      let bestIndex = -1;
+      let bestScore = Number.NEGATIVE_INFINITY;
+
+      for (let index = 0; index < unscheduled.length; index += 1) {
+        const game = unscheduled[index];
+        if (usedToday.has(game.homeTeamId) || usedToday.has(game.awayTeamId)) {
+          continue;
+        }
+
+        const homeLast = lastPlayed.get(game.homeTeamId) ?? -10;
+        const awayLast = lastPlayed.get(game.awayTeamId) ?? -10;
+        if (day - homeLast < 2 || day - awayLast < 2) {
+          continue;
+        }
+
+        const urgency = (byTeamRemaining.get(game.homeTeamId) ?? 0) + (byTeamRemaining.get(game.awayTeamId) ?? 0);
+        const rest = Math.min(day - homeLast, day - awayLast);
+        const score = urgency * 10 + rest;
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestIndex = index;
+        }
+      }
+
+      if (bestIndex === -1) {
+        break;
+      }
+
+      const [picked] = unscheduled.splice(bestIndex, 1);
+      scheduled.push({ ...picked, day });
+      usedToday.add(picked.homeTeamId);
+      usedToday.add(picked.awayTeamId);
+      lastPlayed.set(picked.homeTeamId, day);
+      lastPlayed.set(picked.awayTeamId, day);
+      byTeamRemaining.set(picked.homeTeamId, (byTeamRemaining.get(picked.homeTeamId) ?? 1) - 1);
+      byTeamRemaining.set(picked.awayTeamId, (byTeamRemaining.get(picked.awayTeamId) ?? 1) - 1);
     }
 
     home.total += 1;
@@ -241,7 +268,145 @@ const buildStructuredSchedule = (teams: TeamProfile[]) => {
   const schedule = assignDays(allGames, teams);
   validateScheduleShape(schedule, teams);
 
-  return schedule;
+  if (unscheduled.length > 0) {
+    throw new Error(`Unable to place all ${games[0]?.conferenceGame ? "conference" : "non-conference"} games in calendar window.`);
+  }
+
+  return { scheduled, lastPlayed };
+};
+
+const validateScheduleShape = (schedule: ActiveSeasonState["schedule"], teams: TeamProfile[]) => {
+  const totals = new Map<string, { total: number; conference: number; nonConference: number }>();
+  teams.forEach((team) => totals.set(team.id, { total: 0, conference: 0, nonConference: 0 }));
+
+  schedule.forEach((game) => {
+    const home = totals.get(game.homeTeamId);
+    const away = totals.get(game.awayTeamId);
+    if (!home || !away) {
+      return;
+    }
+
+    home.total += 1;
+    away.total += 1;
+
+    if (game.conferenceGame) {
+      home.conference += 1;
+      away.conference += 1;
+    } else {
+      home.nonConference += 1;
+      away.nonConference += 1;
+    }
+  });
+
+  const invalid = [...totals.entries()].filter(([, count]) =>
+    count.total !== REGULAR_SEASON_GAMES ||
+    count.conference !== CONFERENCE_GAMES_TARGET ||
+    count.nonConference !== NON_CONFERENCE_GAMES_TARGET,
+  );
+
+  if (invalid.length > 0) {
+    const detail = invalid
+      .map(([teamId, count]) => `${teamId}=T${count.total}/C${count.conference}/N${count.nonConference}`)
+      .join("; ");
+    throw new Error(`Schedule validation failed: ${detail}`);
+  }
+
+  const firstConferenceDay = Math.min(
+    ...schedule.filter((game) => game.conferenceGame).map((game) => game.day),
+  );
+  const lastNonConferenceDay = Math.max(
+    ...schedule.filter((game) => !game.conferenceGame).map((game) => game.day),
+  );
+
+  if (lastNonConferenceDay >= firstConferenceDay) {
+    throw new Error("Schedule validation failed: non-conference games must finish before conference games begin.");
+  }
+};
+
+const buildStructuredSchedule = (teams: TeamProfile[]) => {
+  const teamIds = teams.map((team) => team.id);
+  const teamMap = new Map(teams.map((team) => [team.id, team]));
+  const homeCounts = new Map<string, number>();
+  teams.forEach((team) => homeCounts.set(team.id, 0));
+
+  const byConference = new Map<string, string[]>();
+  teams.forEach((team) => {
+    const list = byConference.get(team.conference) ?? [];
+    list.push(team.id);
+    byConference.set(team.conference, list);
+  });
+
+  const conferenceGames: PlannedGame[] = [];
+  byConference.forEach((conferenceTeamIds) => {
+    conferenceGames.push(
+      ...pairTeamsForTarget(
+        conferenceTeamIds,
+        CONFERENCE_GAMES_TARGET,
+        (a, b) => a !== b,
+        true,
+        homeCounts,
+      ),
+    );
+  });
+
+  const nonConferenceGames = pairTeamsForTarget(
+    teamIds,
+    NON_CONFERENCE_GAMES_TARGET,
+    (a, b) => {
+      if (a === b) {
+        return false;
+      }
+
+      const first = teamMap.get(a);
+      const second = teamMap.get(b);
+      if (!first || !second) {
+        return false;
+      }
+
+      if (first.conference !== second.conference) {
+        return true;
+      }
+
+      const uniqueConferences = new Set(teams.map((team) => team.conference));
+      return uniqueConferences.size === 1;
+    },
+    false,
+    homeCounts,
+  );
+
+  const start = seasonStartDate();
+  const nonConferenceStartDay = 1;
+  const nonConferenceEndDay = dayOffset(start, new Date(start.getFullYear(), 11, 20));
+  const conferenceStartDay = dayOffset(start, new Date(start.getFullYear() + 1, 0, 20));
+  const conferenceEndDay = dayOffset(start, new Date(start.getFullYear() + 1, 2, 25));
+
+  const nonConferencePhase = schedulePhaseGames(
+    nonConferenceGames,
+    teams,
+    nonConferenceStartDay,
+    nonConferenceEndDay,
+  );
+
+  const conferencePhase = schedulePhaseGames(
+    conferenceGames,
+    teams,
+    conferenceStartDay,
+    conferenceEndDay,
+    nonConferencePhase.lastPlayed,
+  );
+
+  const combined = [...nonConferencePhase.scheduled, ...conferencePhase.scheduled]
+    .sort((a, b) => a.day - b.day)
+    .map((game, index) => ({
+      gameId: `g-${index + 1}`,
+      day: game.day,
+      homeTeamId: game.homeTeamId,
+      awayTeamId: game.awayTeamId,
+      conferenceGame: game.conferenceGame,
+    }));
+
+  validateScheduleShape(combined, teams);
+  return combined;
 };
 
 const initializeRecords = (teams: TeamProfile[]): Map<string, TeamSeasonRecord> => {
