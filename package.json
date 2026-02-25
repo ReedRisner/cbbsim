@@ -1,0 +1,19 @@
+{
+  "name": "cbbsim",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w @cbbsim/backend\" \"npm run dev -w @cbbsim/frontend\"",
+    "build": "npm run build -w @cbbsim/backend && npm run build -w @cbbsim/frontend",
+    "typecheck": "npm run typecheck -w @cbbsim/backend && npm run typecheck -w @cbbsim/frontend",
+    "prisma:generate": "npm run prisma:generate -w @cbbsim/backend",
+    "prisma:migrate": "npm run prisma:migrate -w @cbbsim/backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
