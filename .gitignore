@@ -1,0 +1,7 @@
+node_modules
+npm-debug.log*
+.DS_Store
+*.log
+apps/backend/.env
+apps/backend/prisma/migrations
+apps/**/dist
