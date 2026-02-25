@@ -23,7 +23,7 @@ let activeSeason: ActiveSeasonState | null = null;
 
 const bootstrapSchema = z.object({
   leagueName: z.string().min(3).max(80),
-  conferenceNames: z.array(z.string().min(2).max(40)).min(1).max(32),
+  conferenceNames: z.array(z.string().min(2).max(40)).min(0).max(40),
   teamsPerConference: z.number().int().min(4).max(20),
 });
 
@@ -103,8 +103,8 @@ app.post("/api/universe/bootstrap", async (request, reply) => {
   universe = bootstrapUniverse(payload);
   activeSeason = null;
 
-  await withPersistence("upsertTeams", async () =>
-    Promise.all(
+  await withPersistence("upsertUniverse", async () => {
+    await Promise.all(
       universe!.teams.map((team) =>
         prisma.team.upsert({
           where: { id: team.id },
@@ -149,8 +149,162 @@ app.post("/api/universe/bootstrap", async (request, reply) => {
           },
         }),
       ),
-    ),
-  );
+    );
+
+    if (universe?.conferences?.length) {
+      await prisma.conference.deleteMany();
+      await prisma.conference.createMany({
+        data: universe.conferences.map((conference) => ({
+          name: conference.name,
+          prestige: Math.round(conference.prestige),
+          mediaDealValue: Math.round(conference.mediaDealValue),
+          tournamentFormat: "single_elimination",
+          autoBidValue: conference.autoBidValue,
+          memberCount: conference.teamIds.length,
+          tier: conference.tier,
+          foundedSeason: 1900,
+        })),
+      });
+    }
+
+    if (universe?.coaches?.length) {
+      await prisma.coach.deleteMany();
+      await prisma.coach.createMany({
+        data: universe.coaches.map((coach) => ({
+          firstName: coach.firstName,
+          lastName: coach.lastName,
+          teamId: coach.teamId,
+          role: coach.role,
+          age: coach.age,
+          offensiveIq: coach.offensiveIq,
+          defensiveIq: coach.defensiveIq,
+          developmentSkill: coach.developmentSkill,
+          recruitingSkill: coach.recruitingSkill,
+          charisma: coach.charisma,
+          discipline: coach.discipline,
+          gameManagement: coach.gameManagement,
+          adaptability: coach.adaptability,
+          loyalty: coach.loyalty,
+          ambition: coach.ambition,
+          ethics: coach.ethics,
+          salary: 250000 + coach.offensiveIq * 7500,
+          contractYearsRemaining: 4,
+          careerWins: 0,
+          careerLosses: 0,
+          tournamentAppearances: 0,
+          finalFours: 0,
+          championships: 0,
+          schemePace: coach.adaptability,
+          schemeThreeEmphasis: coach.offensiveIq,
+          schemePostUsage: coach.defensiveIq,
+          schemePressFrequency: coach.charisma,
+          schemeZoneVsMan: coach.defensiveIq,
+          schemePnr: coach.offensiveIq,
+          schemeTransition: coach.adaptability,
+          schemeDefAggression: coach.discipline,
+          nbaInterest: Math.round(coach.ambition * 0.7),
+        })),
+      });
+    }
+
+    if (universe?.players?.length) {
+      await prisma.player.deleteMany();
+      await prisma.player.createMany({
+        data: universe.players.map((player) => ({
+          firstName: player.firstName,
+          lastName: player.lastName,
+          teamId: player.teamId,
+          position: player.position,
+          classYear: player.classYear,
+          age: player.age,
+          height: player.height,
+          weight: player.weight,
+          wingspan: player.wingspan,
+          hometownState: "NA",
+          hometownCity: "NA",
+          hsStarRating: Math.max(2, Math.min(5, Math.round((player.overall - 45) / 10))),
+          closeShot: player.skills.close_shot,
+          midRange: player.skills.mid_range,
+          threePoint: player.skills.three_point,
+          freeThrow: player.skills.mid_range,
+          postMoves: player.skills.post_moves,
+          ballHandling: player.skills.ball_handling,
+          passing: player.skills.passing,
+          offRebounding: player.skills.def_rebounding,
+          defRebounding: player.skills.def_rebounding,
+          interiorDef: player.skills.interior_def,
+          perimeterDef: player.skills.perimeter_def,
+          stealAbility: player.skills.perimeter_def,
+          shotIq: player.skills.mid_range,
+          defIq: player.skills.perimeter_def,
+          screenSetting: player.skills.screen_setting,
+          offBallMovement: player.skills.off_ball_movement,
+          transitionPlay: player.skills.transition_play,
+          drawFouls: player.skills.draw_fouls,
+          speed: player.skills.speed,
+          vertical: player.skills.speed,
+          stamina: player.skills.transition_play,
+          aggressionOffense: 55,
+          aggressionDefense: 52,
+          threePointFrequency: 50,
+          postUpFrequency: 50,
+          transitionPush: 52,
+          passFirst: 48,
+          flashyPlay: 40,
+          foulProne: 45,
+          workEthic: 55,
+          loyalty: 55,
+          ego: 50,
+          coachability: 55,
+          competitiveness: 56,
+          leadership: 50,
+          maturity: 52,
+          truePotential: player.truePotential,
+          potentialVariance: 10,
+          injuryProneness: 0.02,
+          clutchRating: 50,
+          consistency: 55,
+          nbaDraftInterest: 40,
+          overallRating: player.overall,
+          nilValue: player.overall * 1800,
+          injuryStatus: "healthy",
+          injuryGamesRemaining: 0,
+          academicGpa: 3.0,
+          eligibilityYearsRemaining: 4,
+          portalStatus: "none",
+          draftDeclaration: false,
+          devCurveType: player.devCurveType,
+          createdSeason: new Date().getFullYear(),
+        })),
+      });
+    }
+
+    if (universe?.recruits?.length && prisma.recruit) {
+      await prisma.recruit.deleteMany();
+      await prisma.recruit.createMany({
+        data: universe.recruits.map((recruit) => {
+          const [firstName, ...rest] = recruit.name.split(" ");
+          return {
+            id: recruit.id,
+            firstName,
+            lastName: rest.join(" ") || "Prospect",
+            position: (["PG", "SG", "SF", "PF", "C"] as const)[Math.floor(Math.random() * 5)],
+            starRating: recruit.stars,
+            compositeScore: recruit.compositeScore,
+            hometownState: recruit.region,
+            hometownCity: recruit.region,
+            scoutedOverall: Math.round((recruit.scoutedMin + recruit.scoutedMax) / 2),
+            scoutedPotential: recruit.scoutedMax,
+            trueOverall: recruit.trueOverall,
+            truePotential: recruit.truePotential,
+            recruitType: recruit.recruitType,
+            committedTeamId: recruit.committedTeamId || null,
+            recruitClassYear: new Date().getFullYear(),
+          };
+        }),
+      });
+    }
+  });
 
   await saveLeagueState();
   return { universe };

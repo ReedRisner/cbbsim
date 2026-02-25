@@ -37,6 +37,27 @@ enum DevCurveType {
   freak
 }
 
+enum CoachRole {
+  head
+  assistant_oc
+  assistant_dc
+  assistant_recruiting
+  assistant_dev
+}
+
+enum ConferenceTier {
+  power4
+  upper_mid
+  mid
+  low
+}
+
+enum RecruitType {
+  HS
+  JUCO
+  INTL
+}
+
 enum TeamTier {
   BLUE_BLOOD
   ELITE
@@ -153,6 +174,24 @@ model Conference {
   dissolvedSeason   Int?
 }
 
+model Recruit {
+  id                String     @id
+  firstName         String
+  lastName          String
+  position          Position
+  starRating        Int
+  compositeScore    Float
+  hometownState     String
+  hometownCity      String
+  scoutedOverall    Int
+  scoutedPotential  Int
+  trueOverall       Int
+  truePotential     Int
+  recruitType       RecruitType
+  committedTeamId   String?
+  recruitClassYear  Int
+}
+
 model Coach {
   id                      BigInt   @id @default(autoincrement())
   firstName               String
@@ -188,6 +227,115 @@ model Coach {
   schemeDefAggression     Int
   coachingTreeParentId    BigInt?
   nbaInterest             Int
+}
+
+model NilContract {
+  id             BigInt @id @default(autoincrement())
+  playerId       BigInt
+  teamId         String
+  annualValue    Float
+  contractYears  Int
+  startSeason    Int
+  endSeason      Int
+  status         String
+}
+
+model Transfer {
+  id                 BigInt @id @default(autoincrement())
+  playerId           BigInt
+  fromTeamId         String
+  toTeamId           String
+  season             Int
+  reason             String
+  portalEntryDate    Int
+  commitmentDate     Int?
+  immediateEligible  Boolean @default(true)
+}
+
+model Award {
+  id         BigInt @id @default(autoincrement())
+  season     Int
+  awardType  String
+  playerId   BigInt?
+  teamId     String?
+  coachId    BigInt?
+}
+
+model RankingsHistory {
+  id        BigInt @id @default(autoincrement())
+  season    Int
+  week      Int
+  pollType  String
+  teamId    String
+  rank      Int
+  points    Int
+}
+
+model SeasonRecord {
+  id                   BigInt @id @default(autoincrement())
+  season               Int
+  teamId               String
+  wins                 Int
+  losses               Int
+  confWins             Int
+  confLosses           Int
+  adjOffEff            Float
+  adjDefEff            Float
+  netRating            Float
+  sos                  Float
+  ncaaSeed             Int?
+  ncaaResult           String?
+  recruitingClassRank  Int?
+}
+
+model CoachingChange {
+  id          BigInt @id @default(autoincrement())
+  season      Int
+  teamId      String
+  oldCoachId  BigInt?
+  newCoachId  BigInt?
+  reason      String
+  buyoutAmount Float
+}
+
+model ConferenceMembershipHistory {
+  id            BigInt @id @default(autoincrement())
+  teamId         String
+  conferenceId   BigInt
+  startSeason    Int
+  endSeason      Int?
+}
+
+model Sanction {
+  id                    BigInt @id @default(autoincrement())
+  teamId                String
+  seasonImposed         Int
+  severity              String
+  scholarshipReduction  Int
+  postseasonBanYears    Int
+  recruitingPenalty     String
+  prestigeHit           Int
+  durationYears         Int
+}
+
+model DraftHistory {
+  id              BigInt @id @default(autoincrement())
+  season          Int
+  playerId        BigInt
+  round           Int
+  pick            Int
+  declaredEarly   Boolean
+}
+
+model Schedule {
+  id              BigInt @id @default(autoincrement())
+  season          Int
+  week            Int
+  homeTeamId      String
+  awayTeamId      String
+  neutralSite     Boolean
+  tournamentName  String?
+  isRivalry       Boolean
 }
 
 model GameLog {
