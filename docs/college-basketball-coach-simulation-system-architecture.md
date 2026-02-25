@@ -29,6 +29,86 @@ College Basketball Coach Simulation — System Architecture
 18. Balance & Edge Case Handling
 19. Optional Features & Events
 Page 2
+0. Implementation Roadmap by Phase
+College Basketball Coach Simulation — System Architecture
+Use this section as an execution checklist. You can issue implementation requests as “do Phase 1,” “do Phase 2,” etc.
+
+Phase 1 — Foundation Vertical Slice (Playable Prototype)
+Goal: deliver a complete single-season loop with generated teams, schedule, game simulation, standings, and a usable management UI.
+Includes:
+- Sections 1, 2.1, 3.1, 9 (core parts), 10 (core parts), 11 (core parts), 12 (basic), 17 (minimum schema)
+- Team + conference generation
+- Basic roster/team ratings and prestige
+- Season schedule generation (conference + non-conference simplified)
+- Possession/game simulation with box scores and final records
+- Basic rankings (poll + NET-like composite)
+- Frontend pages: dashboard, team profile, standings, game log
+- Save/load league state
+Exit Criteria:
+- User can start a new universe, simulate day/week/season, and view standings + postseason bracket.
+- Data persists in DB and reload works.
+
+Phase 2 — Recruiting + Portal + NIL Core Systems
+Goal: make roster construction strategic across seasons.
+Includes:
+- Sections 4, 5, 6, 7 (first complete pass)
+- Recruit generation by class year, archetype, and region
+- Scouting uncertainty and confidence intervals
+- Recruiting pipelines + AI competition for prospects
+- Transfer portal entry logic, tampering risk, and destination utility model
+- NIL offers and budget constraints tied to boosters/program profile
+- Scholarship and roster limit enforcement
+Exit Criteria:
+- User completes offseason with recruits signed, portal players added/lost, NIL budget updated.
+- AI teams also recruit/portal realistically.
+
+Phase 3 — Coaching, Scheme, and AI Decision Layer
+Goal: make team identity and coach behavior materially affect outcomes.
+Includes:
+- Sections 8, 9, 16
+- Coach attributes, tendencies, and hot-seat logic
+- Playstyle interaction matrix (pace, spacing, pressure, rebounding emphasis)
+- In-game tactical adjustments by AI coach profiles
+- Staff hiring/firing and progression
+Exit Criteria:
+- Different coaches produce measurably different sim outputs with same raw talent.
+- Coaching carousel works each offseason.
+
+Phase 4 — Postseason, Metrics, and Narrative Depth
+Goal: deliver full competitive structure and immersion.
+Includes:
+- Sections 12, 13, 15, 19
+- Conference tournaments and selection committee logic
+- Full NCAA bracket generation and sim
+- Expanded advanced stats engine (lineup/offensive/defensive splits)
+- News feed, storylines, awards, and rivalry events
+Exit Criteria:
+- Full season-to-title loop with realistic seeding, bids, and tournament outcomes.
+- User can review awards, records, and narrative recap.
+
+Phase 5 — Long-Term Dynasty and World Evolution
+Goal: maintain realism and balance over 50+ seasons.
+Includes:
+- Sections 2.2-2.4, 3.2-3.5, 14, 18
+- Prestige growth/decay tuning
+- Conference realignment cycles
+- Rule changes, sanctions, and economy drift controls
+- Historical tracking (record books, coach legacy, program era scoring)
+Exit Criteria:
+- Multi-decade sims remain stable, diverse, and balanced.
+- No dominant runaway behavior without tradeoffs.
+
+Phase 6 — Production Hardening and Release Readiness
+Goal: ship-quality reliability, UX polish, and operational tooling.
+Includes:
+- Performance profiling/optimization for long-horizon simulation
+- Deterministic seeded simulation mode for reproducible tests
+- Comprehensive automated tests (unit, integration, e2e)
+- Save migration/versioning strategy
+- Observability, crash recovery, and export/import tooling
+Exit Criteria:
+- Release candidate quality: stable, tested, and performant for long dynasties.
+
 1. Core Game Philosophy
 College Basketball Coach Simulation — System Architecture
 1.1 Design Pillars

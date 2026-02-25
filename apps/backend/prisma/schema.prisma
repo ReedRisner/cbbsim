@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id                String   @id
+  name              String
+  conference        String
+  currentPrestige   Int      @default(50)
+  historicalRating  Int      @default(50)
+  facilityRating    Int      @default(50)
+  nilStrength       Int      @default(50)
+  rosterTalent      Int      @default(50)
+  coachingRating    Int      @default(50)
+  defenseDiscipline Int      @default(50)
+  tempoControl      Int      @default(50)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([conference])
+}
