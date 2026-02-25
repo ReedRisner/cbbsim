@@ -1,0 +1,135 @@
+[
+  {
+    "team": "George Washington",
+    "abr": "GW",
+    "colors": ["002843", "e8d2a1"],
+    "conference": "A-10",
+    "mascot": "Revolutionaries"
+  },
+  {
+    "team": "Saint Joseph's",
+    "abr": "JOES",
+    "colors": ["C2071B", "101010"],
+    "conference": "A-10",
+    "mascot": "Hawks"
+  },
+  {
+    "team": "Rhode Island",
+    "abr": "URI",
+    "colors": ["091f3f", "5ab3e8"],
+    "conference": "A-10",
+    "mascot": "Rams"
+  },
+  {
+    "team": "St. Bonaventure",
+    "abr": "SBU",
+    "colors": ["70261D"],
+    "conference": "A-10",
+    "mascot": "Bonnies"
+  },
+  {
+    "team": "Dayton",
+    "abr": "DAY",
+    "colors": ["004B8D", "ffffff"],
+    "conference": "A-10",
+    "mascot": "Flyers"
+  },
+  {
+    "team": "Richmond",
+    "abr": "RICH",
+    "colors": ["9e0712", "b90b2e"],
+    "conference": "A-10",
+    "mascot": "Spiders"
+  },
+  {
+    "team": "La Salle",
+    "abr": "LAS",
+    "colors": ["003356", "ffce00"],
+    "conference": "A-10",
+    "mascot": "Explorers"
+  },
+  {
+    "team": "Saint Louis",
+    "abr": "SLU",
+    "colors": ["00539C", "ebebeb"],
+    "conference": "A-10",
+    "mascot": "Billikens"
+  },
+  {
+    "team": "Fordham",
+    "abr": "FOR",
+    "colors": ["830032", "909090"],
+    "conference": "A-10",
+    "mascot": "Rams"
+  },
+  {
+    "team": "VCU",
+    "abr": "VCU",
+    "colors": ["ffaf00", "000000"],
+    "conference": "A-10",
+    "mascot": "Rams"
+  },
+  {
+    "team": "Davidson",
+    "abr": "DAV",
+    "colors": ["000000", "e51837"],
+    "conference": "A-10",
+    "mascot": "Wildcats"
+  },
+  {
+    "team": "George Mason",
+    "abr": "GMU",
+    "colors": ["016600", "ecb010"],
+    "conference": "A-10",
+    "mascot": "Patriots"
+  },
+  {
+    "team": "Loyola Chicago",
+    "abr": "LUC",
+    "colors": ["9d1244"],
+    "conference": "A-10",
+    "mascot": "Ramblers"
+  },
+  {
+    "team": "North Carolina",
+    "abr": "UNC",
+    "colors": ["7bafd4", "13294b"],
+    "conference": "ACC",
+    "mascot": "Tar Heels"
+  },
+  {
+    "team": "Duke",
+    "abr": "DUKE",
+    "colors": ["013088", "ffffff"],
+    "conference": "ACC",
+    "mascot": "Blue Devils"
+  },
+  {
+    "team": "NC State",
+    "abr": "NCSU",
+    "colors": ["cc0000", "ffffff"],
+    "conference": "ACC",
+    "mascot": "Wolfpack"
+  },
+  {
+    "team": "Virginia",
+    "abr": "UVA",
+    "colors": ["232d4b", "f84c1e"],
+    "conference": "ACC",
+    "mascot": "Cavaliers"
+  },
+  {
+    "team": "Wake Forest",
+    "abr": "WAKE",
+    "colors": ["000000", "ceb888"],
+    "conference": "ACC",
+    "mascot": "Demon Deacons"
+  },
+  {
+    "team": "Clemson",
+    "abr": "CLEM",
+    "colors": ["f56600", "522d80"],
+    "conference": "ACC",
+    "mascot": "Tigers"
+  }
+]

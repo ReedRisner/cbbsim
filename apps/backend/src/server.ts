@@ -1,5 +1,5 @@
 import Fastify from "fastify";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import type {
   ActiveSeasonState,
   BootstrapUniverseRequest,
@@ -9,6 +9,7 @@ import type {
 } from "@cbbsim/shared";
 import { z } from "zod";
 import { initializeSeason, runSeasonSimulation, simulateSeasonSpan } from "./simulation.js";
+import { runOffseason } from "./offseason.js";
 import { bootstrapUniverse } from "./universe.js";
 
 const prisma = new PrismaClient();
@@ -32,6 +33,9 @@ const seasonInputSchema = z.object({
         id: z.string(),
         name: z.string(),
         conference: z.string(),
+        abr: z.string(),
+        mascot: z.string(),
+        colors: z.array(z.string()).min(1).max(3),
         rosterTalent: z.number().min(0).max(100),
         coaching: z.number().min(0).max(100),
         facilities: z.number().min(0).max(100),
@@ -56,13 +60,13 @@ const saveLeagueState = async () => {
   await prisma.leagueState.upsert({
     where: { id: LEAGUE_STATE_ID },
     update: {
-      universe: universe,
-      season: activeSeason,
+      universe: universe ?? Prisma.JsonNull,
+      season: activeSeason ?? Prisma.JsonNull,
     },
     create: {
       id: LEAGUE_STATE_ID,
-      universe,
-      season: activeSeason,
+      universe: universe ?? Prisma.JsonNull,
+      season: activeSeason ?? Prisma.JsonNull,
     },
   });
 };
@@ -148,10 +152,13 @@ app.get("/api/universe", async () => {
   universe = {
     leagueName: "Recovered League",
     generatedAt: new Date().toISOString(),
-    teams: teams.map((team) => ({
+    teams: teams.map((team: (typeof teams)[number]) => ({
       id: team.id,
       name: team.name,
       conference: team.conference,
+      abr: team.id.toUpperCase(),
+      mascot: "Program",
+      colors: ["111111", "eeeeee"],
       rosterTalent: team.rosterTalent,
       coaching: team.coachingRating,
       facilities: team.facilityRating,
@@ -218,6 +225,35 @@ app.post("/api/season/simulate", async (request, reply) => {
   const result = runSeasonSimulation(payload);
 
   return { result };
+});
+
+
+app.get("/api/offseason", async () => {
+  if (!activeSeason) {
+    await loadLeagueState();
+  }
+
+  return { offseason: activeSeason?.offseason ?? null };
+});
+
+app.post("/api/offseason/run", async (_request, reply) => {
+  if (!activeSeason) {
+    await loadLeagueState();
+  }
+
+  if (!activeSeason) {
+    return reply.code(400).send({ error: "No active season. Start one first." });
+  }
+
+  if (!activeSeason.isComplete) {
+    return reply.code(400).send({ error: "Offseason requires a completed season." });
+  }
+
+  const offseason = runOffseason(activeSeason);
+  activeSeason = { ...activeSeason, offseason };
+  await saveLeagueState();
+
+  return { offseason };
 });
 
 const start = async () => {
