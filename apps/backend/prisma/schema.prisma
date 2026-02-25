@@ -7,6 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Position {
+  PG
+  SG
+  SF
+  PF
+  C
+}
+
+enum ClassYear {
+  FR
+  SO
+  JR
+  SR
+  GR
+}
+
+enum PortalStatus {
+  none
+  entered
+  committed
+}
+
+enum DevCurveType {
+  early
+  standard
+  late
+  bust
+  freak
+}
+
+enum TeamTier {
+  BLUE_BLOOD
+  ELITE
+  UPPER_TIER
+  MID_TIER
+  LOWER_TIER
+}
+
 model Team {
   id                String   @id
   name              String
@@ -19,15 +57,185 @@ model Team {
   coachingRating    Int      @default(50)
   defenseDiscipline Int      @default(50)
   tempoControl      Int      @default(50)
+  boosterBudget     Int      @default(80)
+  mediaMarket       Int      @default(50)
+  fanIntensity      Int      @default(50)
+  fanInterest       Int      @default(50)
+  arenaCapacity     Int      @default(9000)
+  academicRating    Int      @default(50)
+  blueBloodTier     String   @default("Mid Tier")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   @@index([conference])
 }
 
+model Player {
+  id                        BigInt   @id @default(autoincrement())
+  firstName                 String
+  lastName                  String
+  teamId                    String?
+  position                  Position
+  classYear                 ClassYear
+  age                       Int
+  height                    Int
+  weight                    Int
+  wingspan                  Int
+  hometownState             String
+  hometownCity              String
+  hsStarRating              Int
+  closeShot                 Int
+  midRange                  Int
+  threePoint                Int
+  freeThrow                 Int
+  postMoves                 Int
+  ballHandling              Int
+  passing                   Int
+  offRebounding             Int
+  defRebounding             Int
+  interiorDef               Int
+  perimeterDef              Int
+  stealAbility              Int
+  shotIq                    Int
+  defIq                     Int
+  screenSetting             Int
+  offBallMovement           Int
+  transitionPlay            Int
+  drawFouls                 Int
+  speed                     Int
+  vertical                  Int
+  stamina                   Int
+  aggressionOffense         Int
+  aggressionDefense         Int
+  threePointFrequency       Int
+  postUpFrequency           Int
+  transitionPush            Int
+  passFirst                 Int
+  flashyPlay                Int
+  foulProne                 Int
+  workEthic                 Int
+  loyalty                   Int
+  ego                       Int
+  coachability              Int
+  competitiveness           Int
+  leadership                Int
+  maturity                  Int
+  truePotential             Int
+  potentialVariance         Int
+  injuryProneness           Float
+  clutchRating              Int
+  consistency               Int
+  nbaDraftInterest          Int
+  overallRating             Int
+  nilValue                  Float
+  injuryStatus              String
+  injuryGamesRemaining      Int
+  academicGpa               Float
+  eligibilityYearsRemaining Int
+  redshirtUsed              Boolean      @default(false)
+  portalStatus              PortalStatus @default(none)
+  draftDeclaration          Boolean      @default(false)
+  devCurveType              DevCurveType @default(standard)
+  createdSeason             Int
+  retiredSeason             Int?
+}
+
+model Conference {
+  id                BigInt   @id @default(autoincrement())
+  name              String   @unique
+  prestige          Int
+  mediaDealValue    Int
+  tournamentFormat  String
+  autoBidValue      Float
+  memberCount       Int
+  tier              String
+  foundedSeason     Int
+  dissolvedSeason   Int?
+}
+
+model Coach {
+  id                      BigInt   @id @default(autoincrement())
+  firstName               String
+  lastName                String
+  teamId                  String?
+  role                    String
+  age                     Int
+  offensiveIq             Int
+  defensiveIq             Int
+  developmentSkill        Int
+  recruitingSkill         Int
+  charisma                Int
+  discipline              Int
+  gameManagement          Int
+  adaptability            Int
+  loyalty                 Int
+  ambition                Int
+  ethics                  Int
+  salary                  Float
+  contractYearsRemaining  Int
+  careerWins              Int
+  careerLosses            Int
+  tournamentAppearances   Int
+  finalFours              Int
+  championships           Int
+  schemePace              Int
+  schemeThreeEmphasis     Int
+  schemePostUsage         Int
+  schemePressFrequency    Int
+  schemeZoneVsMan         Int
+  schemePnr               Int
+  schemeTransition        Int
+  schemeDefAggression     Int
+  coachingTreeParentId    BigInt?
+  nbaInterest             Int
+}
+
+model GameLog {
+  id               BigInt   @id @default(autoincrement())
+  season           Int
+  week             Int
+  homeTeamId       String
+  awayTeamId       String
+  homeScore        Int
+  awayScore        Int
+  homeOffEff       Float
+  awayOffEff       Float
+  homeDefEff       Float
+  awayDefEff       Float
+  pace             Int
+  overtimePeriods  Int
+  attendance       Int
+  isConference     Boolean
+  isTournament     Boolean
+  isNcaaTournament Boolean
+  neutralSite      Boolean
+}
+
+model PlayerGameStat {
+  id        BigInt @id @default(autoincrement())
+  gameId    BigInt
+  playerId  BigInt
+  minutes   Int
+  points    Int
+  fgm       Int
+  fga       Int
+  threePm   Int
+  threePa   Int
+  ftm       Int
+  fta       Int
+  offReb    Int
+  defReb    Int
+  assists   Int
+  steals    Int
+  blocks    Int
+  turnovers Int
+  fouls     Int
+  plusMinus Int
+}
+
 model LeagueState {
-  id         String   @id
-  universe   Json?
-  season     Json?
-  updatedAt  DateTime @updatedAt
+  id        String   @id
+  universe  Json?
+  season    Json?
+  updatedAt DateTime @updatedAt
 }
