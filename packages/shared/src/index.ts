@@ -21,12 +21,14 @@ export type TeamProfile = TeamIdentity &
 
 export type GameResult = {
   gameId: string;
+  day: number;
   homeTeamId: string;
   awayTeamId: string;
   homeScore: number;
   awayScore: number;
   winnerTeamId: string;
   upset: boolean;
+  conferenceGame: boolean;
 };
 
 export type TeamSeasonRecord = {
@@ -36,6 +38,9 @@ export type TeamSeasonRecord = {
   conferenceWins: number;
   conferenceLosses: number;
   netRating: number;
+  netComposite: number;
+  pollScore: number;
+  rank: number;
 };
 
 export type SeasonSimulationInput = {
@@ -45,6 +50,50 @@ export type SeasonSimulationInput = {
   fatigueImpact: number;
 };
 
+export type BracketMatchup = {
+  round: "Quarterfinal" | "Semifinal" | "Final";
+  homeTeamId: string;
+  awayTeamId: string;
+  winnerTeamId: string;
+  homeSeed: number;
+  awaySeed: number;
+  homeScore: number;
+  awayScore: number;
+};
+
+export type PostseasonBracket = {
+  championTeamId: string;
+  matchups: BracketMatchup[];
+};
+
+export type ActiveSeasonState = {
+  teams: TeamProfile[];
+  settings: Omit<SeasonSimulationInput, "teams">;
+  schedule: Array<{
+    gameId: string;
+    day: number;
+    homeTeamId: string;
+    awayTeamId: string;
+    conferenceGame: boolean;
+  }>;
+  nextGameIndex: number;
+  currentDay: number;
+  gamesPerDay: number;
+  standings: TeamSeasonRecord[];
+  completedGames: GameResult[];
+  isComplete: boolean;
+  bubbleTeams: string[];
+  autoBidTeamId: string;
+  storylines: string[];
+  bracket: PostseasonBracket | null;
+};
+
+export type LeagueStateSnapshot = {
+  universe: UniverseSnapshot | null;
+  activeSeason: ActiveSeasonState | null;
+  savedAt: string;
+};
+
 export type SeasonSimulationResult = {
   records: TeamSeasonRecord[];
   standings: TeamSeasonRecord[];
@@ -52,6 +101,7 @@ export type SeasonSimulationResult = {
   bubbleTeams: string[];
   autoBidTeamId: string;
   storylines: string[];
+  bracket: PostseasonBracket | null;
 };
 
 export type BootstrapUniverseRequest = {
