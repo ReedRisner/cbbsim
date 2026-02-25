@@ -1,1188 +1,1782 @@
-College Basketball Coach Simulation — System Architecture
-COLLEGE BASKETBALL COACH 
-SIMULATION
-Complete System Architecture & Game Design Document
-Version 1.0  |  February 2026
-A Football-Manager-depth simulation for college basketball.
-Designed for 50+ year dynasty simulation with full NIL, Transfer Portal, and NCAA ecosystem 
-modeling.
-Page 1
-Table of Contents
-College Basketball Coach Simulation — System Architecture
-1. Core Game Philosophy
-2. Universe Structure
-3. Team Systems
-4. Player Archetype System
-5. Recruiting System
-6. Transfer Portal System
-7. NIL System
-8. Coaching System
-9. Playstyle System
-10. Game Simulation Engine
-11. Scheduling System
-12. Rankings & Metrics
-13. Postseason System
-14. Long-Term Dynasty System
-15. Advanced Stats Engine
-16. AI Coach Decision Engine
-17. Database Structure
-18. Balance & Edge Case Handling
-19. Optional Features & Events
-Page 2
-0. Implementation Roadmap by Phase
-College Basketball Coach Simulation — System Architecture
-Use this section as an execution checklist. You can issue implementation requests as “do Phase 1,” “do Phase 2,” etc.
+# COLLEGE BASKETBALL COACH SIMULATION
+## Complete System Architecture & Game Design Document
+### Version 1.0 | February 2026
 
-Phase 1 — Foundation Vertical Slice (Playable Prototype)
-Goal: deliver a complete single-season loop with generated teams, schedule, game simulation, standings, and a usable management UI.
-Includes:
-- Sections 1, 2.1, 3.1, 9 (core parts), 10 (core parts), 11 (core parts), 12 (basic), 17 (minimum schema)
-- Team + conference generation
-- Basic roster/team ratings and prestige
-- Season schedule generation (conference + non-conference simplified)
-- Possession/game simulation with box scores and final records
-- Basic rankings (poll + NET-like composite)
-- Frontend pages: dashboard, team profile, standings, game log
-- Save/load league state
-Exit Criteria:
-- User can start a new universe, simulate day/week/season, and view standings + postseason bracket.
-- Data persists in DB and reload works.
+---
 
-Phase 2 — Recruiting + Portal + NIL Core Systems
-Goal: make roster construction strategic across seasons.
-Includes:
-- Sections 4, 5, 6, 7 (first complete pass)
-- Recruit generation by class year, archetype, and region
-- Scouting uncertainty and confidence intervals
-- Recruiting pipelines + AI competition for prospects
-- Transfer portal entry logic, tampering risk, and destination utility model
-- NIL offers and budget constraints tied to boosters/program profile
-- Scholarship and roster limit enforcement
-Exit Criteria:
-- User completes offseason with recruits signed, portal players added/lost, NIL budget updated.
-- AI teams also recruit/portal realistically.
+> **How to use this document:** This blueprint is divided into **6 development phases**. Each phase is self-contained. You can hand any phase to an AI or developer and say *"Build Phase 1"* and they will have everything they need — schemas, formulas, logic, and system interactions.
 
-Phase 3 — Coaching, Scheme, and AI Decision Layer
-Goal: make team identity and coach behavior materially affect outcomes.
-Includes:
-- Sections 8, 9, 16
-- Coach attributes, tendencies, and hot-seat logic
-- Playstyle interaction matrix (pace, spacing, pressure, rebounding emphasis)
-- In-game tactical adjustments by AI coach profiles
-- Staff hiring/firing and progression
-Exit Criteria:
-- Different coaches produce measurably different sim outputs with same raw talent.
-- Coaching carousel works each offseason.
+---
 
-Phase 4 — Postseason, Metrics, and Narrative Depth
-Goal: deliver full competitive structure and immersion.
-Includes:
-- Sections 12, 13, 15, 19
-- Conference tournaments and selection committee logic
-- Full NCAA bracket generation and sim
-- Expanded advanced stats engine (lineup/offensive/defensive splits)
-- News feed, storylines, awards, and rivalry events
-Exit Criteria:
-- Full season-to-title loop with realistic seeding, bids, and tournament outcomes.
-- User can review awards, records, and narrative recap.
+# PHASE 1: FOUNDATION — Universe, Teams, Players, Database
 
-Phase 5 — Long-Term Dynasty and World Evolution
-Goal: maintain realism and balance over 50+ seasons.
-Includes:
-- Sections 2.2-2.4, 3.2-3.5, 14, 18
-- Prestige growth/decay tuning
-- Conference realignment cycles
-- Rule changes, sanctions, and economy drift controls
-- Historical tracking (record books, coach legacy, program era scoring)
-Exit Criteria:
-- Multi-decade sims remain stable, diverse, and balanced.
-- No dominant runaway behavior without tradeoffs.
+*Build the data layer. No simulation yet — just the world and its entities.*
 
-Phase 6 — Production Hardening and Release Readiness
-Goal: ship-quality reliability, UX polish, and operational tooling.
-Includes:
-- Performance profiling/optimization for long-horizon simulation
-- Deterministic seeded simulation mode for reproducible tests
-- Comprehensive automated tests (unit, integration, e2e)
-- Save migration/versioning strategy
-- Observability, crash recovery, and export/import tooling
-Exit Criteria:
-- Release candidate quality: stable, tested, and performant for long dynasties.
+---
 
-1. Core Game Philosophy
-College Basketball Coach Simulation — System Architecture
-1.1 Design Pillars
-This simulation is built on four non-negotiable design pillars that inform every system interaction, 
-formula weight, and UI decision in the game.
-Pillar 1: Systemic Realism Over Arcade Fun
-Every outcome emerges from interlocking systems, not scripted events. A recruit choosing your 
-rival isn't random; it's the output of NIL offers, playing time projections, facility ratings, coaching 
-charisma, distance from home, personality traits, and program prestige all feeding into a 
-weighted decision function. The player should feel that the simulation world operates by 
-consistent, discoverable rules.
-Pillar 2: Long-Horizon Consequences
-Every decision the player makes should have consequences that ripple across 5, 10, or even 20 
-seasons. Overspending on NIL today creates booster fatigue tomorrow. Neglecting player 
-development in favor of portal shopping erodes your coaching reputation for development
-minded recruits. The game rewards strategic patience and punishes short-term thinking in 
-realistic ways.
-Pillar 3: Fog of War and Imperfect Information
-The user never sees a recruit's true overall rating. Scouting reports have confidence intervals. A 
-4-star recruit may have a hidden potential ceiling of 58 or 88. Transfer portal players may have 
-inflated stats from weak conferences. The game models the real-world uncertainty that makes 
-college basketball coaching so challenging.
-Pillar 4: Emergent Narrative
-The simulation should generate stories organically. A walk-on who develops into an All
-American. A mid-major that raids the portal and makes a Cinderella run. A blue blood that 
-collapses under NCAA sanctions. These emerge from systems, not scripts. The game tracks 
-and surfaces these narratives through a dynamic media system.
-1.2 Simulation Mode
-The game operates as a hardcore management simulation. There is no real-time gameplay; all 
-games are simulated via a possession-by-possession engine. The user's role is strategic: 
-recruiting, roster construction, scheme design, in-game adjustment sliders, and long-term 
-program building. The target audience is the overlap between college basketball obsessives, 
-Football Manager veterans, and OOTP Baseball fans.
-1.3 Data Architecture
-Page 3
-College Basketball Coach Simulation — System Architecture
-The simulation is data-driven at its core. Every entity (player, team, coach, conference, recruit) 
-is defined by a rich attribute model with 30-100+ data points. Formulas govern all interactions. 
-Random variance is applied via normal distributions with defined standard deviations, never flat 
-random rolls. This ensures realistic clustering of outcomes while preserving the possibility of 
-outliers.
-1.4 Time Horizon
-The game is designed to simulate 50+ consecutive seasons without systemic degradation, 
-inflation collapse, or unrealistic drift. Self-correcting mechanisms (prestige decay, booster 
-fatigue, salary cap soft limits, NCAA rule changes) prevent runaway dynasty snowballing or 
-permanent mid-major death spirals. The simulation should feel as realistic in Year 40 as in Year 
-1.
-Page 4
-2. Universe Structure
-College Basketball Coach Simulation — System Architecture
-2.1 Teams and Conferences
-The simulation includes 362 Division I programs organized into 32 conferences (mirroring the 
-real 2024-25 NCAA landscape or a fictional analog). Each conference has between 8 and 18 
-members.
-Tier
-Example Conferences Teams Prestige Range Auto-Bid Value
-Power 4
-SEC, Big Ten, Big 12, ACC
-~68
-65-99
-1.0
-Upper Mid
-Major
-AAC, Mountain West, WCC, A
-10
-~56
-40-70
-0.7
-Mid-Major
-MVC, MAC, Sun Belt, CUSA
-~80
-20-55
-0.5
-Low-Major
-MEAC, SWAC, Southland, 
-NEC
-~100+
-5-35
-0.3
-2.2 Conference Prestige Formula
-Each conference has a composite prestige score recalculated annually:
-ConferencePrestige = (0.40 * AvgTeamPrestige) + (0.25 * Top5TeamAvg) + 
-(0.15 * NCAATourneySuccess_3yr) + (0.10 * MediaDealValue) + (0.10 * 
-HistoricalWeight)
-Where NCAATourneySuccess_3yr is a rolling 3-year weighted sum (current year 50%, year-1 
-30%, year-2 20%) of tournament wins by conference members, normalized to 0-100. 
-MediaDealValue is derived from the conference TV contract tier (0-100 scale). HistoricalWeight 
-is a slowly decaying average of all-time conference prestige.
-2.3 Realignment System
-Conference realignment is modeled as an event-driven system that can trigger under specific 
-conditions. Every 3-5 years (randomized), the simulation evaluates realignment probability:
-RealignmentTriggerProb = 0.05 + (0.03 * |ConfPrestigeDelta|) + (0.10 * 
-MediaDealExpiring) + (0.05 * ProgramDissatisfaction)
-When realignment triggers, the system identifies candidate movers using a utility function:
-MoveUtility(Team, NewConf) = (0.35 * PrestigeGain) + (0.25 * RevenuGain) + 
-(0.20 * GeographicFit) + (0.10 * RivalryPreservation) + (0.10 * 
-CompetitiveFit)
-Teams move to the conference offering the highest MoveUtility above a threshold of 0.6. The 
-receiving conference must also benefit (their ConferencePrestige must not drop by more than 5 
-points). Realignment cascades are possible: one team leaving can trigger another team leaving 
-the same conference within the same cycle.
-2.4 Blue Blood Classification
-The simulation dynamically classifies programs into tiers based on sustained performance:
-Page 5
-College Basketball Coach Simulation — System Architecture
-Classification
-Criteria
-Count (Approx)
-Blue Blood
-HistPrestige >= 90 AND CurrentPrestige >= 75 AND 
-FinalFours >= 6
-6-8
-Elite
-CurrentPrestige >= 80 OR (HistPrestige >= 75 AND 
-CurrentPrestige >= 65)
-10-15
-Upper Tier
-Mid Tier
-Lower Tier
-CurrentPrestige >= 60
-25-35
-CurrentPrestige 35-59
-80-120
-CurrentPrestige < 35
-150+
-Classifications update annually and affect recruiting bonuses, media coverage, and AI coaching 
-hires.
-Page 6
-3. Team Systems
-College Basketball Coach Simulation — System Architecture
-3.1 Team Attribute Model
-Every team in the simulation is defined by the following core attributes, each rated 0-100 unless 
-otherwise noted:
-Attribute
-Description
-Update Frequency
-CurrentPrestige
-Reflects recent (3-5 year) on-court success, recruiting, 
-and media visibility
-Annual
-HistoricalPrestige
-All-time program legacy; decays very slowly (0.5/yr 
-toward CurrentPrestige)
-Annual
-FacilityRating
-Quality of arena, practice facility, weight room, dorms
-On investment
-NILCollectiveStrength Financial power of the team's NIL collective (0-100)
-Annual
-BoosterBudget
-Annual discretionary funds from boosters (in $100K 
-units, range 0-500)
-Annual
-RecruitingRegions
-Array of 1-4 geographic pipeline regions with affinity 
-scores
-Static + coach
-FanBaseIntensity
-How engaged and demanding the fanbase is (affects 
-morale, hot seat)
-Annual
-MediaMarket
-Size of the team's media market (affects NIL, revenue, 
-recruit visibility)
-Static
-ArenCapacity
-Seating capacity; affects revenue and home court 
-advantage
-On investment
-Academic Rating
-Affects academic eligibility rates and appeals to 
-academic-minded recruits
-Static
-3.2 Prestige Growth Formula
-Prestige changes annually based on on-court results, recruiting success, and external factors:
-PrestigeDelta = (0.35 * WinImpact) + (0.25 * TourneyImpact) + (0.15 * 
-RecruitingClassRank) + (0.10 * NFLDraftPicks) + (0.08 * MediaBuzz) + (0.07 
-* FacilityBonus) - Sanctions
-Where WinImpact = (ActualWins - ExpectedWins) * 1.5, capped at +/- 8. TourneyImpact maps 
-tournament results to point values: Round of 64 exit = +0.5, Round of 32 = +1.5, Sweet 16 = +3, 
-Elite 8 = +5, Final Four = +8, Championship Game = +11, Title = +15. Missing the tournament 
-when expected costs -3 to -6. RecruitingClassRank is normalized so the #1 class = +5 and #100 
-= -2.
-3.3 Prestige Decay
-Programs that underperform experience prestige decay that accelerates over time:
-DecayRate = BaseDecay * (1 + 0.15 * ConsecutiveUnderperformYears)
-Page 7
-College Basketball Coach Simulation — System Architecture
-BaseDecay = max(0, (ExpectedWins - ActualWins) * 0.8)
-A team expected to win 22 games that wins only 14 would lose (22-14)*0.8 = 6.4 prestige points 
-in Year 1. If they underperform again in Year 2, the multiplier increases: 6.4 * 1.15 = 7.36.
-Historical prestige decays much more slowly: it moves 0.5 points per year toward the 10-year 
-rolling average of CurrentPrestige. A program with HistoricalPrestige of 95 that has averaged 60 
-CurrentPrestige over the last decade would still have HistoricalPrestige of ~90 after 10 years, 
-preserving legacy advantages.
-3.4 Facility Investment
-Teams can invest booster funds to improve facilities. Cost scales non-linearly:
-UpgradeCost(currentRating, targetRating) = SUM from r=current to target 
-of: BaseCost * (1.04 ^ r)
+## 1. Core Game Philosophy
+
+### 1.1 Design Pillars
+
+**Pillar 1: Systemic Realism Over Arcade Fun**
+Every outcome emerges from interlocking systems, not scripted events. A recruit choosing your rival isn't random — it's the output of NIL offers, playing time projections, facility ratings, coaching charisma, distance from home, personality traits, and program prestige all feeding into a weighted decision function.
+
+**Pillar 2: Long-Horizon Consequences**
+Every decision ripples across 5, 10, or 20+ seasons. Overspending on NIL today creates booster fatigue tomorrow. Neglecting player development in favor of portal shopping erodes your coaching reputation for development-minded recruits.
+
+**Pillar 3: Fog of War and Imperfect Information**
+The user never sees a recruit's true overall rating. Scouting reports have confidence intervals. A 4-star recruit may have a hidden potential ceiling of 58 or 88. Transfer portal players may have inflated stats from weak conferences.
+
+**Pillar 4: Emergent Narrative**
+A walk-on develops into an All-American. A mid-major raids the portal and makes a Cinderella run. A blue blood collapses under NCAA sanctions. These emerge from systems, not scripts.
+
+### 1.2 Simulation Mode
+
+Hardcore management simulation. No real-time gameplay — all games simulated via possession-by-possession engine. The user's role is strategic: recruiting, roster construction, scheme design, in-game adjustment sliders, and long-term program building.
+
+### 1.3 Data Architecture
+
+Every entity (player, team, coach, conference, recruit) is defined by 30–100+ data points. Random variance uses normal distributions with defined standard deviations, never flat random rolls.
+
+### 1.4 Time Horizon
+
+Designed for 50+ seasons without systemic degradation. Self-correcting mechanisms (prestige decay, booster fatigue, salary cap soft limits, NCAA rule changes) prevent runaway dynasties or permanent mid-major death spirals.
+
+---
+
+## 2. Universe Structure
+
+### 2.1 Teams and Conferences
+
+362 Division I programs organized into 32 conferences (mirroring the real 2024–25 NCAA landscape or a fictional analog). Each conference has 8–18 members.
+
+| Tier | Example Conferences | Teams | Prestige Range | Auto-Bid Value |
+|------|-------------------|-------|---------------|----------------|
+| Power 4 | SEC, Big Ten, Big 12, ACC | ~68 | 65–99 | 1.0 |
+| Upper Mid-Major | AAC, Mountain West, WCC, A-10 | ~56 | 40–70 | 0.7 |
+| Mid-Major | MVC, MAC, Sun Belt, CUSA | ~80 | 20–55 | 0.5 |
+| Low-Major | MEAC, SWAC, Southland, NEC | ~100+ | 5–35 | 0.3 |
+
+### 2.2 Conference Prestige Formula
+
+Recalculated annually:
+
+```
+ConferencePrestige = (0.40 × AvgTeamPrestige)
+                   + (0.25 × Top5TeamAvg)
+                   + (0.15 × NCAATourneySuccess_3yr)
+                   + (0.10 × MediaDealValue)
+                   + (0.10 × HistoricalWeight)
+```
+
+- `NCAATourneySuccess_3yr` = rolling 3-year weighted sum (current year 50%, year-1 30%, year-2 20%) of tournament wins by conference members, normalized 0–100
+- `MediaDealValue` = conference TV contract tier (0–100)
+- `HistoricalWeight` = slowly decaying average of all-time conference prestige
+
+### 2.3 Realignment System
+
+Event-driven, evaluated every 3–5 years (randomized):
+
+```
+RealignmentTriggerProb = 0.05
+  + (0.03 × |ConfPrestigeDelta|)
+  + (0.10 × MediaDealExpiring)
+  + (0.05 × ProgramDissatisfaction)
+```
+
+When triggered, candidate movers are scored:
+
+```
+MoveUtility(Team, NewConf) = (0.35 × PrestigeGain)
+  + (0.25 × RevenueGain)
+  + (0.20 × GeographicFit)
+  + (0.10 × RivalryPreservation)
+  + (0.10 × CompetitiveFit)
+```
+
+Teams move when `MoveUtility > 0.6` and the receiving conference's prestige doesn't drop by more than 5 points. Cascading moves are possible within the same cycle.
+
+**Safety rails:** No conference below 6 members (triggers merger), max 4 moves per cycle, max 20 teams per conference. Orphaned teams are placed into nearest viable conference by geography and prestige.
+
+### 2.4 Blue Blood Classification
+
+Recalculated every 5 years:
+
+| Classification | Criteria | Approx Count |
+|---------------|----------|-------------|
+| Blue Blood | HistPrestige ≥ 90 AND CurrentPrestige ≥ 75 AND FinalFours ≥ 6 | 6–8 |
+| Elite | CurrentPrestige ≥ 80 OR (HistPrestige ≥ 75 AND CurrentPrestige ≥ 65) | 10–15 |
+| Upper Tier | CurrentPrestige ≥ 60 | 25–35 |
+| Mid Tier | CurrentPrestige 35–59 | 80–120 |
+| Lower Tier | CurrentPrestige < 35 | 150+ |
+
+---
+
+## 3. Team Systems
+
+### 3.1 Team Attribute Model
+
+Every team is defined by these core attributes (0–100 unless noted):
+
+| Attribute | Description | Update Frequency |
+|-----------|-------------|-----------------|
+| CurrentPrestige | Recent (3–5 yr) on-court success, recruiting, media visibility | Annual |
+| HistoricalPrestige | All-time legacy; decays 0.5/yr toward CurrentPrestige | Annual |
+| FacilityRating | Arena, practice facility, weight room, dorms | On investment |
+| NILCollectiveStrength | Financial power of the team's NIL collective | Annual |
+| BoosterBudget | Annual discretionary booster funds (in $100K units, range 0–500) | Annual |
+| RecruitingRegions | 1–4 geographic pipeline regions with affinity scores | Static + coach |
+| FanBaseIntensity | How engaged/demanding the fanbase is | Annual |
+| MediaMarket | Size of media market (affects NIL, revenue, visibility) | Static |
+| ArenaCapacity | Seating capacity; affects revenue and home court advantage | On investment |
+| AcademicRating | Affects eligibility rates, appeals to academic-minded recruits | Static |
+
+### 3.2 Prestige Growth Formula
+
+```
+PrestigeDelta = (0.35 × WinImpact)
+              + (0.25 × TourneyImpact)
+              + (0.15 × RecruitingClassRank)
+              + (0.10 × NBADraftPicks)
+              + (0.08 × MediaBuzz)
+              + (0.07 × FacilityBonus)
+              - Sanctions
+```
+
+- `WinImpact = (ActualWins - ExpectedWins) × 1.5`, capped at ±8
+- `TourneyImpact`: R64 exit = +0.5, R32 = +1.5, S16 = +3, E8 = +5, F4 = +8, Championship Game = +11, Title = +15. Missing tournament when expected = -3 to -6
+- `RecruitingClassRank`: #1 class = +5, #100 class = -2 (normalized)
+
+### 3.3 Prestige Decay
+
+```
+DecayRate = BaseDecay × (1 + 0.15 × ConsecutiveUnderperformYears)
+BaseDecay = max(0, (ExpectedWins - ActualWins) × 0.8)
+```
+
+Example: Team expected 22 wins, gets 14 → loses (22-14)×0.8 = 6.4 prestige in Year 1. Year 2 underperformance → 6.4 × 1.15 = 7.36.
+
+Historical prestige decays at 0.5 points/year toward 10-year rolling average of CurrentPrestige.
+
+### 3.4 Facility Investment
+
+Non-linear cost scaling:
+
+```
+UpgradeCost(current, target) = SUM from r=current to target of: BaseCost × (1.04^r)
 BaseCost = $200K per point at rating 0
-So improving from 50 to 55 costs roughly $200K * (1.04^50 + 1.04^51 + ... + 1.04^54) = 
-approximately $7.4M. Improving from 90 to 95 costs approximately $38M. This naturally limits 
-facility arms races. Facilities degrade at -1 point every 3 years without maintenance investment.
-3.5 Fan Interest Model
-Fan interest drives revenue, home court advantage, and hot seat pressure:
-FanInterest = (0.30 * CurrentPrestige) + (0.25 * RecentWinPct_3yr) + (0.20 
-* FanBaseIntensity) + (0.15 * StarPlayerPresence) + (0.10 * 
-RivalryIntensity)
-FanInterest above 75 grants a +3 home court advantage bonus. Below 30, booster donations 
-decline by 20%. Below 20, arena attendance drops to 60%, reducing game-day revenue.
-Page 8
-College Basketball Coach Simulation — System Architecture
-4. Player Archetype System
-4.1 Player Attribute Model
-Each player is defined by approximately 50 attributes across six categories. All ratings are 0-99 
-unless noted.
-Physical Attributes (6)
-Attribute Description Affected By
-Height In inches (72-87 typical range) Static after age 19
-Wingspan In inches; affects blocks, steals, rebounding Static
-Weight In pounds; affects post play, physicality Training (+/- 5 lbs/yr max)
-Speed Straight-line quickness Age curve, training
-Vertical Leaping ability Age curve, training
-Stamina Endurance before fatigue penalties Training, age
-Skill Attributes (18)
-Attribute Category Description
-CloseShot Offense Finishing at the rim, layups, floaters
-MidRange Offense Pull-up and catch-and-shoot from mid-range
-ThreePoint Offense Spot-up, off-dribble, and deep three-point shooting
-FreeThrow Offense Free throw accuracy
-PostMoves Offense Back-to-basket moves, hooks, fades
-BallHandling Offense Dribble moves, turnover avoidance under pressure
-Passing Offense Vision, accuracy, pocket passes
-OffRebounding Hustle Positioning and effort on offensive glass
-DefRebounding Defense Defensive board positioning and boxing out
-InteriorDef Defense Shot blocking, rim protection, post defense
-PerimeterDef Defense On-ball defense, lateral quickness, staying in front
-StealAbility Defense Active hands, passing lane reads
-ShotIQ Mental Shot selection, knowing when to shoot vs pass
-DefIQ Mental Rotations, help defense, positioning
-ScreenSetting Offense Pick quality, roll timing
-OffBallMovement Offense Cutting, spacing, relocating
-TransitionPlay Offense Effectiveness in fast break situations
-DrawFouls Offense Ability to get to the foul line
-Page 9
-College Basketball Coach Simulation — System Architecture
-Tendencies (8)
-Tendencies are not skill levels; they describe HOW a player plays. Rated 0-99:
-Tendency Low (0-30) High (70-99)
-AggressionOffense Conservative, low usage Ball-dominant, high usage
-AggressionDefense Stays home, positional Gambles for steals/blocks
-ThreePointFrequency Rarely shoots threes High-volume three shooter
-PostUpFrequency Faces up or perimeter Frequently posts up
-TransitionPush Slows it down Always pushes tempo
-PassFirst Looks to score first Pass-first mentality
-FlashyPlay Fundamental Flashy but higher turnover risk
-FoulProne Disciplined Commits fouls frequently
-Personality Traits (7)
-Trait Range Impact
-WorkEthic 0-99 Development speed multiplier: 0.7x (low) to 1.4x (high)
-Loyalty 0-99 Portal entry probability, decommit chance, coach attachment
-Ego 0-99 Playing time demands, NIL expectations, chemistry impact
-Coachability 0-99 Scheme fit speed, adjustment to new playstyle
-Competitiveness 0-99 Clutch multiplier, practice intensity, rivalry boosts
-Leadership 0-99 Team morale buffer, locker room influence
-Maturity 0-99 Off-court incident risk, academic focus, media handling
-Hidden/Special Attributes (6)
-Attribute Visibility Description
-TruePotential Hidden Ceiling rating (40-99); determines max 
-development
-PotentialVariance Hidden How uncertain the ceiling is (low = reliable, high = 
-boom/bust)
-InjuryProneness Partially Hidden Base probability of injury per game (0.5%-5%)
-ClutchRating Hidden until proven Performance modifier in final 5 mins of close 
-games
-Consistency Partially Hidden Game-to-game variance in performance (low = 
-volatile)
-NBADraftInterest Dynamic Likelihood of declaring for draft (recalculated each 
-March)
-4.2 Potential and Development System
-Player development is the core progression loop. Each offseason and throughout the season, 
-players develop (or regress) based on a complex formula:
-Page 10
-College Basketball Coach Simulation — System Architecture
-SeasonDevPoints = BaseDev * WorkEthicMult * CoachDevSkill * 
-PlayingTimeMult * AgeFactor * FitBonus
-Where BaseDev is determined by the gap between current rating and TruePotential:
-BaseDev = (TruePotential - CurrentOverall) * 0.12  [if gap > 10]
-BaseDev = (TruePotential - CurrentOverall) * 0.06  [if gap 1-10]
-BaseDev = 0  [if at or above TruePotential]
-WorkEthicMult ranges from 0.7 (WorkEthic < 20) to 1.4 (WorkEthic > 90). CoachDevSkill is the 
-head coach's Development attribute / 100, ranging 0.6-1.2. PlayingTimeMult = min(1.0, 
-MinutesPerGame / 25); players who ride the bench develop slower. AgeFactor peaks at age 19
-20 (1.1x) and drops to 0.8x at age 23+. FitBonus is +0.1 if the player's archetype matches the 
-coach's playstyle.
-4.3 Development Curves
-Players follow one of five hidden development curves, assigned at generation:
-Curve Type
-Probability
-Peak Age
-Development Pattern
-Early Bloomer
-15%
-19-20
-Fast initial growth, plateaus early, earlier 
-regression
-Standard
-45%
-21-22
-Steady linear improvement through 
-junior/senior year
-Late Bloomer
-20%
-22-24
-Slow start, significant jumps in Year 3-4
-Bust
-12%
-N/A
-TruePotential overestimated by 10-25 points; 
-never reaches projected ceiling
-Freak Leap
-4.4 Regression
-8%
-Varies
-One season of massive improvement (+12-18 
-points), then normal trajectory
-Players begin regressing after their peak age, which varies by position:
-RegressionRate = BaseRegression * (Age - PeakAge) * PositionFactor
-BaseRegression = 1.5 points/year for physical attributes, 0.5 points/year 
-for skill attributes
-Guards peak earlier (age 21-22) than bigs (age 22-23) in college terms. Since most players 
-leave by age 22, regression primarily affects 5th-year seniors and grad transfers.
-4.5 Overall Rating Calculation
-The visible 'Overall' rating is calculated using position-weighted attribute averages:
-Overall = SUM(Attribute_i * PositionWeight_i) / SUM(PositionWeight_i)
-A point guard weights BallHandling (1.5x), Passing (1.3x), PerimeterDef (1.2x), and Speed 
-(1.2x) heavily, while PostMoves (0.2x) and InteriorDef (0.3x) matter little. A center inverts these 
-Page 11
-College Basketball Coach Simulation — System Architecture
-weights. This means a 75-overall PG and a 75-overall C have very different attribute profiles but 
-equivalent value at their positions.
-Page 12
-5. Recruiting System
-College Basketball Coach Simulation — System Architecture
-5.1 Recruit Generation
-Each year, the simulation generates approximately 450-550 high school recruits, 100-150 junior 
-college (JUCO) transfers, and 20-40 international prospects. Recruits are distributed 
-geographically based on real-world basketball talent density (weighted toward the Eastern 
-seaboard, Texas, California, Illinois, Indiana, and Georgia).
-5.2 Star Rating Formula
-Star ratings (2-5 stars, with unranked below 2-star) are derived from scouted potential, not true 
-potential:
+```
+
+- 50→55 costs ~$7.4M
+- 90→95 costs ~$38M
+- Facilities degrade -1 point every 3 years without maintenance
+
+### 3.5 Fan Interest Model
+
+```
+FanInterest = (0.30 × CurrentPrestige)
+            + (0.25 × RecentWinPct_3yr)
+            + (0.20 × FanBaseIntensity)
+            + (0.15 × StarPlayerPresence)
+            + (0.10 × RivalryIntensity)
+```
+
+- Above 75 → +3 home court advantage bonus
+- Below 30 → booster donations decline 20%
+- Below 20 → arena attendance drops to 60%, reducing game-day revenue
+
+### 3.6 Budget Calculation
+
+```
+AnnualRevenue = (ConfRevShare × MediaDealTier)
+              + (GameDayRevenue × ArenaCapacity × AttendancePct)
+              + (BoosterDonations × FanInterest/100)
+              + (MerchRevenue × CurrentPrestige/100)
+              + (NCAATourneyPayout × TourneyRoundsWon)
+```
+
+---
+
+## 4. Player Archetype System
+
+### 4.1 Physical Attributes (6)
+
+| Attribute | Description | Mutability |
+|-----------|-------------|-----------|
+| Height | In inches (72–87 typical) | Static after age 19 |
+| Wingspan | In inches; affects blocks, steals, rebounding | Static |
+| Weight | In pounds; affects post play, physicality | Training (±5 lbs/yr max) |
+| Speed | Straight-line quickness | Age curve, training |
+| Vertical | Leaping ability | Age curve, training |
+| Stamina | Endurance before fatigue penalties | Training, age |
+
+### 4.2 Skill Attributes (18)
+
+All rated 0–99:
+
+| Attribute | Category | Description |
+|-----------|----------|-------------|
+| CloseShot | Offense | Finishing at rim, layups, floaters |
+| MidRange | Offense | Pull-up and catch-and-shoot mid-range |
+| ThreePoint | Offense | Spot-up, off-dribble, deep three |
+| FreeThrow | Offense | Free throw accuracy |
+| PostMoves | Offense | Back-to-basket moves, hooks, fades |
+| BallHandling | Offense | Dribble moves, turnover avoidance |
+| Passing | Offense | Vision, accuracy, pocket passes |
+| OffRebounding | Hustle | Offensive glass positioning and effort |
+| DefRebounding | Defense | Defensive board positioning, boxing out |
+| InteriorDef | Defense | Shot blocking, rim protection, post D |
+| PerimeterDef | Defense | On-ball defense, lateral quickness |
+| StealAbility | Defense | Active hands, passing lane reads |
+| ShotIQ | Mental | Shot selection, when to shoot vs pass |
+| DefIQ | Mental | Rotations, help defense, positioning |
+| ScreenSetting | Offense | Pick quality, roll timing |
+| OffBallMovement | Offense | Cutting, spacing, relocating |
+| TransitionPlay | Offense | Fast break effectiveness |
+| DrawFouls | Offense | Ability to get to the foul line |
+
+### 4.3 Tendencies (8)
+
+Tendencies describe HOW a player plays, not how good they are. Rated 0–99:
+
+| Tendency | Low (0–30) | High (70–99) |
+|----------|-----------|-------------|
+| AggressionOffense | Conservative, low usage | Ball-dominant, high usage |
+| AggressionDefense | Stays home, positional | Gambles for steals/blocks |
+| ThreePointFrequency | Rarely shoots threes | High-volume three shooter |
+| PostUpFrequency | Faces up / perimeter | Frequently posts up |
+| TransitionPush | Slows it down | Always pushes tempo |
+| PassFirst | Looks to score first | Pass-first mentality |
+| FlashyPlay | Fundamental | Flashy but higher TO risk |
+| FoulProne | Disciplined | Commits fouls frequently |
+
+### 4.4 Personality Traits (7)
+
+| Trait | Range | Impact |
+|-------|-------|--------|
+| WorkEthic | 0–99 | Development speed multiplier: 0.7x (low) to 1.4x (high) |
+| Loyalty | 0–99 | Portal entry probability, decommit chance, coach attachment |
+| Ego | 0–99 | Playing time demands, NIL expectations, chemistry impact |
+| Coachability | 0–99 | Scheme fit speed, adjustment to new playstyle |
+| Competitiveness | 0–99 | Clutch multiplier, practice intensity, rivalry boosts |
+| Leadership | 0–99 | Team morale buffer, locker room influence |
+| Maturity | 0–99 | Off-court incident risk, academic focus, media handling |
+
+### 4.5 Hidden/Special Attributes (6)
+
+| Attribute | Visibility | Description |
+|-----------|-----------|-------------|
+| TruePotential | Hidden | Ceiling rating (40–99); determines max development |
+| PotentialVariance | Hidden | How uncertain the ceiling is (low = reliable, high = boom/bust) |
+| InjuryProneness | Partially Hidden | Base injury probability per game (0.5%–5%) |
+| ClutchRating | Hidden until proven | Performance modifier in final 5 min of close games |
+| Consistency | Partially Hidden | Game-to-game variance (low = volatile) |
+| NBADraftInterest | Dynamic | Likelihood of declaring; recalculated each March |
+
+### 4.6 Potential and Development
+
+```
+SeasonDevPoints = BaseDev × WorkEthicMult × CoachDevSkill × PlayingTimeMult × AgeFactor × FitBonus
+```
+
+Where:
+
+```
+BaseDev = (TruePotential - CurrentOverall) × 0.12   [if gap > 10]
+BaseDev = (TruePotential - CurrentOverall) × 0.06   [if gap 1–10]
+BaseDev = 0                                          [if at or above TruePotential]
+```
+
+Multipliers:
+- `WorkEthicMult`: 0.7 (WorkEthic < 20) to 1.4 (WorkEthic > 90)
+- `CoachDevSkill`: coach's Development attribute / 100, range 0.6–1.2
+- `PlayingTimeMult`: min(1.0, MinutesPerGame / 25)
+- `AgeFactor`: peaks at age 19–20 (1.1x), drops to 0.8x at age 23+
+- `FitBonus`: +0.1 if player archetype matches coach playstyle
+
+### 4.7 Development Curves
+
+Assigned at generation, hidden from user:
+
+| Curve Type | Probability | Peak Age | Pattern |
+|-----------|------------|---------|---------|
+| Early Bloomer | 15% | 19–20 | Fast growth, plateaus early, earlier regression |
+| Standard | 45% | 21–22 | Steady linear improvement through Jr/Sr year |
+| Late Bloomer | 20% | 22–24 | Slow start, significant jumps in Year 3–4 |
+| Bust | 12% | N/A | TruePotential overestimated by 10–25 points |
+| Freak Leap | 8% | Varies | One season of massive improvement (+12–18 pts) |
+
+### 4.8 Regression
+
+```
+RegressionRate = BaseRegression × (Age - PeakAge) × PositionFactor
+BaseRegression = 1.5 pts/yr for physical attributes, 0.5 pts/yr for skill attributes
+```
+
+Guards peak at 21–22, bigs at 22–23. Primarily affects 5th-year seniors and grad transfers.
+
+### 4.9 Overall Rating Calculation
+
+```
+Overall = SUM(Attribute_i × PositionWeight_i) / SUM(PositionWeight_i)
+```
+
+Position-weighted: A PG weights BallHandling (1.5x), Passing (1.3x), PerimeterDef (1.2x), Speed (1.2x) heavily, PostMoves (0.2x) low. A center inverts these. A 75-overall PG and 75-overall C have very different profiles but equivalent positional value.
+
+---
+
+## 5. Database Structure
+
+### 5.1 Players Table
+
+```sql
+players (
+  id BIGINT PRIMARY KEY,
+  first_name VARCHAR, last_name VARCHAR,
+  team_id BIGINT REFERENCES teams(id),
+  position ENUM('PG','SG','SF','PF','C'),
+  class_year ENUM('FR','SO','JR','SR','GR'),
+  age INT, height INT, weight INT, wingspan INT,
+  hometown_state VARCHAR, hometown_city VARCHAR,
+  hs_star_rating INT,
+
+  -- Skill attributes (18)
+  close_shot INT, mid_range INT, three_point INT, free_throw INT,
+  post_moves INT, ball_handling INT, passing INT,
+  off_rebounding INT, def_rebounding INT,
+  interior_def INT, perimeter_def INT, steal_ability INT,
+  shot_iq INT, def_iq INT, screen_setting INT,
+  off_ball_movement INT, transition_play INT, draw_fouls INT,
+
+  -- Physical (4 mutable)
+  speed INT, vertical INT, stamina INT, weight INT,
+
+  -- Tendencies (8)
+  aggression_offense INT, aggression_defense INT,
+  three_point_frequency INT, post_up_frequency INT,
+  transition_push INT, pass_first INT,
+  flashy_play INT, foul_prone INT,
+
+  -- Personality (7)
+  work_ethic INT, loyalty INT, ego INT, coachability INT,
+  competitiveness INT, leadership INT, maturity INT,
+
+  -- Hidden (6)
+  true_potential INT, potential_variance INT,
+  injury_proneness FLOAT, clutch_rating INT,
+  consistency INT, nba_draft_interest INT,
+
+  -- Status
+  overall_rating INT, nil_value FLOAT, nil_contract_id BIGINT,
+  injury_status VARCHAR, injury_games_remaining INT,
+  academic_gpa FLOAT, eligibility_years_remaining INT,
+  redshirt_used BOOLEAN, portal_status ENUM('none','entered','committed'),
+  draft_declaration BOOLEAN, dev_curve_type ENUM('early','standard','late','bust','freak'),
+  created_season INT, retired_season INT
+);
+```
+
+### 5.2 Teams Table
+
+```sql
+teams (
+  id BIGINT PRIMARY KEY,
+  name VARCHAR, mascot VARCHAR,
+  conference_id BIGINT REFERENCES conferences(id),
+  prestige_current INT, prestige_historical INT,
+  facility_rating INT, nil_collective_strength INT,
+  booster_budget INT, media_market INT,
+  fan_intensity INT, arena_capacity INT,
+  academic_rating INT, head_coach_id BIGINT REFERENCES coaches(id),
+  primary_color VARCHAR, secondary_color VARCHAR,
+  rivalry_1_team_id BIGINT, rivalry_1_intensity INT,
+  rivalry_2_team_id BIGINT, rivalry_2_intensity INT,
+  rivalry_3_team_id BIGINT, rivalry_3_intensity INT
+);
+```
+
+### 5.3 Conferences Table
+
+```sql
+conferences (
+  id BIGINT PRIMARY KEY,
+  name VARCHAR, prestige INT,
+  media_deal_value INT, tournament_format VARCHAR,
+  auto_bid_value FLOAT, member_count INT,
+  tier ENUM('power4','upper_mid','mid','low'),
+  founded_season INT, dissolved_season INT
+);
+```
+
+### 5.4 Coaches Table
+
+```sql
+coaches (
+  id BIGINT PRIMARY KEY,
+  first_name VARCHAR, last_name VARCHAR,
+  team_id BIGINT REFERENCES teams(id),
+  role ENUM('head','assistant_oc','assistant_dc','assistant_recruiting','assistant_dev'),
+  age INT,
+
+  -- Attributes (11)
+  offensive_iq INT, defensive_iq INT, development_skill INT,
+  recruiting_skill INT, charisma INT, discipline INT,
+  game_management INT, adaptability INT,
+  loyalty INT, ambition INT, ethics INT,
+
+  -- Contract
+  salary FLOAT, contract_years_remaining INT,
+
+  -- Record
+  career_wins INT, career_losses INT,
+  tournament_appearances INT, final_fours INT, championships INT,
+
+  -- Scheme
+  scheme_pace INT, scheme_three_emphasis INT, scheme_post_usage INT,
+  scheme_press_frequency INT, scheme_zone_vs_man INT,
+  scheme_pnr INT, scheme_transition INT, scheme_def_aggression INT,
+
+  -- Lineage
+  coaching_tree_parent_id BIGINT REFERENCES coaches(id),
+  nba_interest INT
+);
+```
+
+### 5.5 Game Logs Table
+
+```sql
+game_logs (
+  id BIGINT PRIMARY KEY,
+  season INT, week INT,
+  home_team_id BIGINT, away_team_id BIGINT,
+  home_score INT, away_score INT,
+  home_off_eff FLOAT, away_off_eff FLOAT,
+  home_def_eff FLOAT, away_def_eff FLOAT,
+  pace INT, overtime_periods INT,
+  attendance INT,
+  is_conference BOOLEAN, is_tournament BOOLEAN,
+  is_ncaa_tournament BOOLEAN, neutral_site BOOLEAN
+);
+
+player_game_stats (
+  id BIGINT PRIMARY KEY,
+  game_id BIGINT REFERENCES game_logs(id),
+  player_id BIGINT REFERENCES players(id),
+  minutes INT, points INT, fgm INT, fga INT,
+  three_pm INT, three_pa INT, ftm INT, fta INT,
+  off_reb INT, def_reb INT, assists INT,
+  steals INT, blocks INT, turnovers INT,
+  fouls INT, plus_minus INT
+);
+```
+
+### 5.6 Additional Tables
+
+```sql
+recruits (
+  id BIGINT PRIMARY KEY,
+  first_name VARCHAR, last_name VARCHAR,
+  position VARCHAR, star_rating INT, composite_score FLOAT,
+  hometown_state VARCHAR, hometown_city VARCHAR,
+  scouted_overall INT, scouted_potential INT,
+  true_overall INT, true_potential INT,
+  committed_team_id BIGINT, committed_date INT,
+  -- All personality/physical attributes same as players
+  recruit_class_year INT
+);
+
+nil_contracts (
+  id BIGINT PRIMARY KEY,
+  player_id BIGINT, team_id BIGINT,
+  annual_value FLOAT, contract_years INT,
+  start_season INT, end_season INT, status VARCHAR
+);
+
+transfers (
+  id BIGINT PRIMARY KEY,
+  player_id BIGINT, from_team_id BIGINT, to_team_id BIGINT,
+  season INT, reason VARCHAR, portal_entry_date INT,
+  commitment_date INT, immediate_eligible BOOLEAN
+);
+
+awards (
+  id BIGINT PRIMARY KEY,
+  season INT, award_type VARCHAR,
+  player_id BIGINT, team_id BIGINT, coach_id BIGINT
+);
+
+rankings_history (
+  id BIGINT PRIMARY KEY,
+  season INT, week INT, poll_type VARCHAR,
+  team_id BIGINT, rank INT, points INT
+);
+
+season_records (
+  id BIGINT PRIMARY KEY,
+  season INT, team_id BIGINT,
+  wins INT, losses INT, conf_wins INT, conf_losses INT,
+  adj_off_eff FLOAT, adj_def_eff FLOAT, net_rating FLOAT,
+  sos FLOAT, ncaa_seed INT, ncaa_result VARCHAR,
+  recruiting_class_rank INT
+);
+
+coaching_changes (
+  id BIGINT PRIMARY KEY,
+  season INT, team_id BIGINT,
+  old_coach_id BIGINT, new_coach_id BIGINT,
+  reason VARCHAR, buyout_amount FLOAT
+);
+
+conference_membership_history (
+  id BIGINT PRIMARY KEY,
+  team_id BIGINT, conference_id BIGINT,
+  start_season INT, end_season INT
+);
+
+sanctions (
+  id BIGINT PRIMARY KEY,
+  team_id BIGINT, season_imposed INT,
+  severity VARCHAR, scholarship_reduction INT,
+  postseason_ban_years INT, recruiting_penalty VARCHAR,
+  prestige_hit INT, duration_years INT
+);
+
+draft_history (
+  id BIGINT PRIMARY KEY,
+  season INT, player_id BIGINT,
+  round INT, pick INT, declared_early BOOLEAN
+);
+
+schedule (
+  id BIGINT PRIMARY KEY,
+  season INT, week INT,
+  home_team_id BIGINT, away_team_id BIGINT,
+  neutral_site BOOLEAN, tournament_name VARCHAR,
+  is_rivalry BOOLEAN
+);
+```
+
+---
+
+### Phase 1 Deliverable Checklist
+
+- [ ] All database tables created and seeded
+- [ ] 362 teams generated with full attributes
+- [ ] 32 conferences with prestige scores and media deals
+- [ ] Initial roster generation: ~4,500 players with all 50+ attributes
+- [ ] ~500 recruits generated for Year 1 class
+- [ ] Coaching staff (head + 4 assistants) for all 362 teams
+- [ ] Conference prestige formula functional
+- [ ] Blue blood classification logic functional
+- [ ] Prestige growth/decay formulas functional
+- [ ] Fan interest model functional
+- [ ] Facility investment cost curve functional
+- [ ] Player overall rating calculator functional (position-weighted)
+- [ ] Development curve assignment at player generation
+
+---
+
+# PHASE 2: RECRUITING, PORTAL, AND NIL
+
+*Build the player acquisition and economic systems.*
+
+---
+
+## 6. Recruiting System
+
+### 6.1 Recruit Generation
+
+Each year generate:
+- **450–550 high school recruits** distributed geographically (weighted toward Eastern seaboard, Texas, California, Illinois, Indiana, Georgia)
+- **100–150 JUCO transfers** (2-year college players, typically more physically mature, lower academic ratings, immediately eligible, 2 years of eligibility remaining)
+- **20–40 international prospects** (higher scouting uncertainty ×1.5, potential visa complications with 5% chance of delay, unique physical tools)
+
+### 6.2 Star Rating Formula
+
+```
 ScoutedOverall = TrueOverall + NormalRandom(0, ScoutingUncertainty)
-ScoutedPotential = TruePotential + NormalRandom(0, ScoutingUncertainty * 
-1.5)
-CompositeScore = (0.40 * ScoutedPotential) + (0.35 * ScoutedOverall) + 
-(0.15 * Measurables) + (0.10 * EventPerformance)
-Star Rating
-Composite Score Range
-Approx Count/Year
-Avg True Potential
-5-Star
-92-99
-25-35
-82-95
-4-Star
-80-91
-100-130
-70-88
-3-Star
-65-79
-200-250
-55-78
-2-Star
-50-64
-100-150
-42-65
-Unranked
-<50
-Unlimited (walk-ons)
-30-55
-Note the overlap in True Potential ranges. A 3-star recruit with TruePotential of 78 may 
-outperform many 4-stars. This is by design and reflects real-world scouting uncertainty.
-5.3 Scouting Fog of War
-The user does not see true ratings. Instead, they see scouted grades with confidence levels:
-ScoutingUncertainty = BaseUncertainty * (1 - ScoutingInvestment) * 
-PositionFactor * GeographyFactor
-BaseUncertainty is 15 for all recruits. ScoutingInvestment is normalized 0-1 based on how much 
-scouting effort you've invested (visits, film study, camp evaluations). PositionFactor is 1.0 for 
-guards, 1.2 for wings, 1.4 for bigs (big men are harder to evaluate). GeographyFactor is 1.0 for 
-domestic, 1.5 for international.
-With zero scouting, a player's displayed range might be '65-85 potential' (uncertainty of +/-10). 
-With maximum scouting, it narrows to '73-79 potential' (uncertainty of +/-3). You can never 
-eliminate uncertainty entirely.
-5.4 Recruit Interest Calculation
-Page 13
-College Basketball Coach Simulation — System Architecture
-Each recruit maintains an Interest score (0-100) for every school that is recruiting them. Interest 
-updates weekly during the recruiting cycle:
-InterestDelta = (PrestigeWeight * PrestigeFactor) + (ProximityWeight * 
-DistanceFactor) + (PlayingTimeWeight * PTProjection)
-  + (NILWeight * NILOffer) + (CoachWeight * CoachCharisma) + (StyleWeight 
-* PlaystyleFit)
-  + (DevWeight * CoachDevReputation) + (WinWeight * RecentSuccess) + 
-(RelationshipWeight * RecruitingEffort)
-Weights vary by recruit personality. A high-Ego recruit weights NIL and Prestige heavily. A high
-Loyalty recruit weights Proximity and Relationship. A pro-focused recruit weights DevReputation 
-and NBA draft history.
-5.5 Visit System
-Recruits can take up to 5 official visits and unlimited unofficial visits. Each visit modifies interest:
-OfficialVisitBoost = 5 + (FacilityRating / 20) + (FanInterest / 25) + 
-(CoachCharisma / 30)
-UnofficialVisitBoost = OfficialVisitBoost * 0.4
-A visit to a school with top facilities (90), high fan interest (80), and a charismatic coach (85) 
-would yield: 5 + 4.5 + 3.2 + 2.8 = +15.5 interest points. Visit timing matters: late visits (after 
-January) get a 1.3x multiplier due to urgency.
-5.6 Commitment Logic
-A recruit commits when their top school's interest exceeds 80 AND leads the second-place 
-school by at least 15 points. If no school meets this threshold by signing day, the recruit 
-commits to their highest-interest school above 60. Below 60, the recruit goes to a random 
-school in their tier range.
-CommitProbability = sigmoid((TopInterest - 80) / 5) * sigmoid((TopInterest - SecondInterest - 15) / 5)
-5.7 Decommitment and Flips
-After committing, a recruit can decommit if conditions change:
-DecommitProb = BaseDecommit * (1 - Loyalty/100) * TriggerMultiplier
-BaseDecommit is 0.03 per week (3%). TriggerMultiplier increases based on events: coach fired 
-= 5x, program sanctions = 4x, better NIL offer = 2x, key player transfer = 1.5x. A low-loyalty (20) 
-recruit facing a coaching change has DecommitProb = 0.03 * 0.8 * 5 = 12% per week, likely to 
-flip. A high-loyalty (90) recruit has only 0.03 * 0.1 * 5 = 1.5% per week.
-Page 14
-6. Transfer Portal System
-College Basketball Coach Simulation — System Architecture
-6.1 Portal Entry Logic
-After each season, every player evaluates whether to enter the transfer portal. The decision is 
-modeled as a probability based on dissatisfaction factors:
-PortalEntryProb = BaseRate + PTFrustration + NILGap + CoachChangePush + 
-SanctionsPush + PersonalityFactor - LoyaltyAnchor
-Component definitions:
-BaseRate = 0.05 (5% of all players consider transferring regardless)
-PTFrustration = max(0, (ExpectedMinutes - ActualMinutes) / ExpectedMinutes 
-* 0.30)
-NILGap = max(0, (MarketValueNIL - CurrentNIL) / MarketValueNIL * 0.15)
-CoachChangePush = 0.25 if head coach fired/left, 0.10 if key assistant 
-left
+ScoutedPotential = TruePotential + NormalRandom(0, ScoutingUncertainty × 1.5)
+CompositeScore = (0.40 × ScoutedPotential) + (0.35 × ScoutedOverall) + (0.15 × Measurables) + (0.10 × EventPerformance)
+```
+
+| Star Rating | Composite Range | Count/Year | Avg True Potential |
+|------------|----------------|-----------|-------------------|
+| 5-Star | 92–99 | 25–35 | 82–95 |
+| 4-Star | 80–91 | 100–130 | 70–88 |
+| 3-Star | 65–79 | 200–250 | 55–78 |
+| 2-Star | 50–64 | 100–150 | 42–65 |
+| Unranked | <50 | Unlimited (walk-ons) | 30–55 |
+
+Note overlapping True Potential ranges — a 3-star with potential 78 can outperform many 4-stars. This is by design.
+
+### 6.3 Scouting Fog of War
+
+```
+ScoutingUncertainty = BaseUncertainty × (1 - ScoutingInvestment) × PositionFactor × GeographyFactor
+```
+
+- `BaseUncertainty` = 15 for all recruits
+- `ScoutingInvestment` = 0–1 based on effort (visits, film study, camp evaluations)
+- `PositionFactor` = 1.0 guards, 1.2 wings, 1.4 bigs
+- `GeographyFactor` = 1.0 domestic, 1.5 international
+
+Zero scouting: displayed range = "65–85 potential" (±10). Max scouting: "73–79 potential" (±3). Uncertainty never reaches zero.
+
+### 6.4 Recruit Interest Calculation
+
+Each recruit maintains Interest (0–100) for every recruiting school, updated weekly:
+
+```
+InterestDelta = (PrestigeWeight × PrestigeFactor)
+              + (ProximityWeight × DistanceFactor)
+              + (PlayingTimeWeight × PTProjection)
+              + (NILWeight × NILOffer)
+              + (CoachWeight × CoachCharisma)
+              + (StyleWeight × PlaystyleFit)
+              + (DevWeight × CoachDevReputation)
+              + (WinWeight × RecentSuccess)
+              + (RelationshipWeight × RecruitingEffort)
+              + (ProDevWeight × NBATrackRecord)
+```
+
+**Weight personalization by personality:**
+- High-Ego recruit → weights NIL and Prestige heavily
+- High-Loyalty recruit → weights Proximity and Relationship
+- Pro-focused recruit → weights DevReputation and NBATrackRecord
+- Academic recruit → weights AcademicRating
+
+### 6.5 Pro Development Pitch
+
+```
+NBATrackRecord = (DraftPicksLast5yr × 3) + (LotteryPicksLast5yr × 5) + (CoachDevReputation × 0.2)
+```
+
+Displayed to recruits as a "Pro Development Grade" (A+ through D). Recruits with high NBADraftInterest weight this at 2–3× normal.
+
+### 6.6 Visit System
+
+Up to 5 official visits and unlimited unofficial visits per recruit:
+
+```
+OfficialVisitBoost = 5 + (FacilityRating / 20) + (FanInterest / 25) + (CoachCharisma / 30)
+UnofficialVisitBoost = OfficialVisitBoost × 0.4
+```
+
+Example: Facilities 90, FanInterest 80, Charisma 85 → 5 + 4.5 + 3.2 + 2.8 = **+15.5 interest**
+
+Late visits (after January) get 1.3× multiplier due to urgency.
+
+### 6.7 Commitment Logic
+
+```
+CommitProbability = sigmoid((TopInterest - 80) / 5) × sigmoid((TopInterest - SecondInterest - 15) / 5)
+```
+
+- Commit when top school Interest > 80 AND leads 2nd place by ≥ 15
+- If no school meets threshold by signing day → commits to highest above 60
+- Below 60 → recruit goes to random school in their tier range
+
+### 6.8 Decommitment and Flips
+
+```
+DecommitProb = BaseDecommit × (1 - Loyalty/100) × TriggerMultiplier
+BaseDecommit = 0.03 per week (3%)
+```
+
+Trigger multipliers:
+- Coach fired = 5×
+- Program sanctions = 4×
+- Better NIL offer = 2×
+- Key player transfer = 1.5×
+
+Example: Low-loyalty (20) recruit + coaching change → 0.03 × 0.8 × 5 = **12%/week** (likely to flip). High-loyalty (90) + same → 0.03 × 0.1 × 5 = **1.5%/week**.
+
+### 6.9 JUCO-Specific Mechanics
+
+- JUCO players have known ratings (no fog of war on skills, but personality traits still uncertain ±10)
+- Immediately eligible, 2 years of eligibility
+- Typically higher physical attributes, lower academic GPA (2.0–2.8 range)
+- Appeal to programs needing instant roster help
+- Higher transfer-out risk (Loyalty typically 20–50)
+
+### 6.10 International-Specific Mechanics
+
+- Scouting uncertainty × 1.5 on all attributes
+- 5% chance of visa delay (miss first 2–4 weeks of season)
+- Often unique physical profiles (height/wingspan outliers)
+- Lower social media following (NIL value reduced 30%)
+- Cultural adjustment period: -5 to all attributes for first semester, recovering over Year 1
+
+---
+
+## 7. Transfer Portal System
+
+### 7.1 Portal Entry Logic
+
+After each season, every player evaluates portal entry:
+
+```
+PortalEntryProb = BaseRate + PTFrustration + NILGap + CoachChangePush
+               + SanctionsPush + PersonalityFactor - LoyaltyAnchor
+```
+
+Components:
+```
+BaseRate = 0.05 (5% consider transferring regardless)
+PTFrustration = max(0, (ExpectedMinutes - ActualMinutes) / ExpectedMinutes × 0.30)
+NILGap = max(0, (MarketValueNIL - CurrentNIL) / MarketValueNIL × 0.15)
+CoachChangePush = 0.25 if head coach fired/left, 0.10 if key assistant left
 SanctionsPush = 0.20 if program under sanctions
-PersonalityFactor = (Ego / 100) * 0.10 - (Maturity / 100) * 0.05
-LoyaltyAnchor = (Loyalty / 100) * 0.20
-Example: A player with 30% playing time frustration, no NIL gap, high ego (80), medium loyalty 
-(50), and a coaching change would have: 0.05 + 0.30 + 0 + 0.25 + 0 + 0.08 - 0.10 = 58% 
-probability of entering the portal.
-6.2 Portal Market Dynamics
-The portal operates as a marketplace. Transfer players are evaluated similarly to recruits, but 
-with known (not scouted) ratings, reduced by a TransferAdjustment:
+PersonalityFactor = (Ego / 100) × 0.10 - (Maturity / 100) × 0.05
+LoyaltyAnchor = (Loyalty / 100) × 0.20
+```
+
+Example: 30% PT frustration, high ego (80), medium loyalty (50), coaching change → 0.05 + 0.30 + 0 + 0.25 + 0 + 0.08 - 0.10 = **58% portal entry probability**
+
+### 7.2 Portal Market Dynamics
+
+```
 PortalPlayerValue = CurrentOverall - ContextDiscount + SystemBonus
-ContextDiscount = max(0, (OldTeamSOS - 50) * -0.3) [penalizes stats padded 
-vs weak opponents]
-SystemBonus = FitScore(Player, NewCoachPlaystyle) * 3
-6.3 Immediate Eligibility
-By default, all one-time transfers receive immediate eligibility. The simulation includes a toggle 
-for sit-out rules for second-time transfers. If the NCAA rule changes (modeled via the Dynamic 
-Rule system), this logic updates accordingly.
-6.4 Tampering
-AI coaches and the player's own program may engage in soft tampering. Tampering risk is:
-TamperRisk = (CoachEthics < 40) * 0.15 + (NILCollective > 80) * 0.10 + 
-(PlayerValue > 85) * 0.10
-Page 15
-College Basketball Coach Simulation — System Architecture
-If tampering is detected (random audit with 5% chance per flagged interaction), the offending 
-program receives a recruiting penalty.
-Page 16
-7. NIL System
-College Basketball Coach Simulation — System Architecture
-7.1 NIL Economic Model
-The NIL system models the flow of money from boosters and donors through NIL collectives to 
-players. It is designed to be a powerful but self-balancing economic system.
-7.2 Collective Funding Formula
-AnnualNILBudget = (BoosterBase * MediaMarketMult * PrestigeMult * 
-FanInterestMult) * (1 + DonorMomentum)
-BoosterBase = BoosterBudget * $100K [raw dollar amount]
-MediaMarketMult = 0.6 + (MediaMarket / 100) * 0.8 [range 0.6-1.4]
-PrestigeMult = 0.5 + (CurrentPrestige / 100) * 1.0 [range 0.5-1.5]
-FanInterestMult = 0.7 + (FanInterest / 100) * 0.6 [range 0.7-1.3]
-DonorMomentum = 0.15 if made tournament, 0.25 if Sweet16+, -0.10 if missed 
-tournament
-Example: A blue blood with BoosterBudget 400, MediaMarket 90, Prestige 92, FanInterest 85, 
-coming off a Final Four run: Budget = 400 * $100K * 1.32 * 1.42 * 1.21 * 1.25 = ~$113M. A low
-major with BoosterBudget 15, MediaMarket 20, Prestige 18, FanInterest 30: Budget = 15 * 
-$100K * 0.76 * 0.59 * 0.88 * 0.90 = ~$533K. This 200:1 ratio mirrors real-world NIL disparities.
-7.3 Player NIL Value
-PlayerNILValue = (PerformanceScore * 0.40) + (SocialMediaRating * 0.25) + 
-(MarketAppeal * 0.20) + (TeamPrestige * 0.15)
-PerformanceScore is based on stats (points, assists, PER). SocialMediaRating (0-99) is 
-generated per player and grows with performance and market size. MarketAppeal factors in 
-personality, charisma, and position (guards typically higher).
-7.4 Booster Fatigue
-To prevent NIL inflation spiraling, boosters experience fatigue:
-BoosterFatigue = max(0, (CumulativeSpending_3yr / BoosterCapacity) - 1.0) 
-* 0.20
-When fatigue exceeds 0, the NIL budget is reduced by the fatigue factor. A program that 
-massively overspends for 3 consecutive years sees their budget cut by up to 20%. This self
-corrects NIL arms races.
-7.5 NIL Jealousy
-Players on the same team compare NIL deals. If a player perceives unfairness:
-JealousyFactor = max(0, (TeammateTopNIL - PlayerNIL) / TeammateTopNIL - 
-ExpectedGap) * (Ego / 100)
-Page 17
-College Basketball Coach Simulation — System Architecture
-High-ego players who feel underpaid relative to teammates suffer morale penalties, which can 
-reduce performance by up to 8% and increase portal entry probability by up to 15%.
-Page 18
-8. Coaching System
-College Basketball Coach Simulation — System Architecture
-8.1 Coach Attribute Model
-Attribute Range Primary Effect
-OffensiveIQ
-0-99
-Offensive efficiency in sim, offensive scheme quality
-DefensiveIQ 0-99
-Defensive efficiency in sim, defensive scheme quality
-DevelopmentSkill
-0-99
-Player growth multiplier (0.6x to 1.2x)
-RecruitingSkill
-0-99
-Interest generation rate, scouting accuracy
-Charisma
-0-99
-Visit boosts, media handling, decommit resistance
-Discipline
-0-99
-Fewer off-court incidents, better academic performance
-GameManagement
-0-99
-Timeout usage, lineup rotation, end-game decisions
-Adaptability
-0-99
-In-game adjustment speed, ability to change schemes
-Loyalty
-0-99
-Resistance to job-hopping, commitment to program
-Ambition 0-99 Job-seeking behavior, NBA interest, willingness to leave
-Ethics
-8.2 Coaching Tree
-0-99
-Compliance with rules, tampering avoidance
-Each AI coach has a CoachingTree linking them to a mentor. Coaches who share a tree tend to 
-run similar schemes, have pipeline recruiting connections, and are more likely to hire each other 
-as assistants. When a head coach is fired, their assistants scatter to other programs, carrying 
-institutional knowledge and recruit relationships.
-8.3 Firing Logic
-HotSeatScore = (ExpectedWins - ActualWins) * 2 + TourneyDisappointment * 3 
-+ ScandalPenalty + FanPressure
+ContextDiscount = max(0, (OldTeamSOS - 50) × -0.3)  [penalizes stats vs weak opponents]
+SystemBonus = FitScore(Player, NewCoachPlaystyle) × 3
+```
+
+### 7.3 Immediate Eligibility
+
+- First-time transfers: immediate eligibility (default)
+- Second-time transfers: sit-out one year (toggleable rule)
+- Dynamic rule system can modify these rules over time
+
+### 7.4 Tampering
+
+```
+TamperRisk = (CoachEthics < 40) × 0.15 + (NILCollective > 80) × 0.10 + (PlayerValue > 85) × 0.10
+```
+
+5% random audit chance per flagged interaction. Penalty if caught: recruiting restriction for 1 season.
+
+### 7.5 Mid-Season Portal Window
+
+A secondary portal window opens in December (10-day window). Only applies to players with:
+- PTFrustration > 0.50
+- OR CoachChange during season
+- Only 10–15% of annual portal volume occurs mid-season
+
+---
+
+## 8. NIL System
+
+### 8.1 Collective Funding Formula
+
+```
+AnnualNILBudget = BoosterBase × MediaMarketMult × PrestigeMult × FanInterestMult × (1 + DonorMomentum)
+```
+
+Where:
+```
+BoosterBase = BoosterBudget × $100K
+MediaMarketMult = 0.6 + (MediaMarket / 100) × 0.8       [range 0.6–1.4]
+PrestigeMult = 0.5 + (CurrentPrestige / 100) × 1.0       [range 0.5–1.5]
+FanInterestMult = 0.7 + (FanInterest / 100) × 0.6        [range 0.7–1.3]
+DonorMomentum = +0.15 if tournament, +0.25 if S16+, -0.10 if missed
+```
+
+Example blue blood: Budget 400, Media 90, Prestige 92, Fan 85, Final Four → ~$113M
+Example low-major: Budget 15, Media 20, Prestige 18, Fan 30 → ~$533K
+**200:1 ratio mirrors real-world disparities.**
+
+### 8.2 Player NIL Value
+
+```
+PlayerNILValue = (PerformanceScore × 0.40) + (SocialMediaRating × 0.25) + (MarketAppeal × 0.20) + (TeamPrestige × 0.15)
+```
+
+### 8.3 Social Media Growth
+
+```
+SocialMediaDelta = BaseGrowth + PerformanceBoost + ViralEventBoost + MarketMultiplier
+BaseGrowth = +1 per season
+PerformanceBoost = (PER - 15) × 0.5  [above average players grow faster]
+ViralEventBoost = +5 to +15 (rare event, 3% chance per season per player)
+MarketMultiplier = MediaMarket / 50  [big market = 2× growth]
+```
+
+### 8.4 NIL Contract Mechanics
+
+- **Contract length:** 1–4 years
+- **Renegotiation triggers:** Player performance changes ±15%, team changes, market shifts
+- **Early termination:** Player enters portal → contract void. Player drafted → contract void.
+- **Signing bonus:** Up to 20% of annual value, paid upfront (non-recoverable)
+
+### 8.5 Booster Fatigue
+
+```
+BoosterFatigue = max(0, (CumulativeSpending_3yr / BoosterCapacity) - 1.0) × 0.20
+```
+
+Overspending 3 consecutive years → budget cut up to 20%. Self-corrects NIL arms races.
+
+### 8.6 NIL Jealousy
+
+```
+JealousyFactor = max(0, (TeammateTopNIL - PlayerNIL) / TeammateTopNIL - ExpectedGap) × (Ego / 100)
+```
+
+High-ego underpaid players: morale penalty up to -8% performance, portal entry probability +15%.
+
+### 8.7 NIL Soft Cap
+
+No player can receive more than 25% of collective budget. Diminishing returns on NIL spending in recruiting:
+
+```
+NILRecruitingImpact = log(NILOffer / MedianNILAtTier + 1) × 15  [logarithmic, not linear]
+```
+
+After ~3× median offer, additional money has minimal marginal effect.
+
+---
+
+### Phase 2 Deliverable Checklist
+
+- [ ] Recruit generation pipeline (HS + JUCO + International)
+- [ ] Star rating and composite score calculator
+- [ ] Scouting fog of war system
+- [ ] Interest calculation engine with personality-weighted factors
+- [ ] Visit system with boost calculations
+- [ ] Commitment and decommitment logic
+- [ ] Pro development pitch tracking and display
+- [ ] Transfer portal entry probability calculator
+- [ ] Portal marketplace with value adjustments
+- [ ] Tampering detection system
+- [ ] NIL collective funding formula
+- [ ] Player NIL valuation
+- [ ] Social media growth model
+- [ ] NIL contract creation, renegotiation, termination
+- [ ] Booster fatigue and jealousy systems
+- [ ] NIL soft cap and diminishing returns
+- [ ] JUCO and international-specific mechanics
+
+---
+
+# PHASE 3: COACHING, PLAYSTYLE, AND GAME SIMULATION
+
+*Build the coaching model and the engine that plays the games.*
+
+---
+
+## 9. Coaching System
+
+### 9.1 Coach Attribute Model
+
+| Attribute | Range | Primary Effect |
+|-----------|-------|---------------|
+| OffensiveIQ | 0–99 | Offensive efficiency in sim, scheme quality |
+| DefensiveIQ | 0–99 | Defensive efficiency in sim, scheme quality |
+| DevelopmentSkill | 0–99 | Player growth multiplier (0.6x–1.2x) |
+| RecruitingSkill | 0–99 | Interest generation rate, scouting accuracy |
+| Charisma | 0–99 | Visit boosts, media handling, decommit resistance |
+| Discipline | 0–99 | Fewer off-court incidents, better academic performance |
+| GameManagement | 0–99 | Timeout usage, rotation, end-game decisions |
+| Adaptability | 0–99 | In-game adjustment speed, scheme flexibility |
+| Loyalty | 0–99 | Resistance to job-hopping |
+| Ambition | 0–99 | Job-seeking behavior, NBA interest |
+| Ethics | 0–99 | Rule compliance, tampering avoidance |
+
+### 9.2 Assistant Coaches (4 per staff)
+
+| Role | Primary Contribution |
+|------|---------------------|
+| Offensive Coordinator | +0 to +8 bonus to team OffensiveIQ based on their own OffIQ |
+| Defensive Coordinator | +0 to +8 bonus to team DefensiveIQ based on their own DefIQ |
+| Recruiting Coordinator | +0 to +10 bonus to recruiting reach, extra scouting capacity |
+| Player Development Coach | +0 to +8 bonus to DevelopmentSkill, specializes in 1–2 positions |
+
+Assistants are poachable — successful assistant coaches get hired as head coaches elsewhere, weakening your staff.
+
+### 9.3 Coaching Tree
+
+Each coach links to a mentor. Shared tree → similar schemes, pipeline recruiting connections, more likely to hire each other as assistants. When a HC is fired, their assistants scatter, carrying institutional knowledge and recruit relationships.
+
+### 9.4 Firing Logic
+
+```
+HotSeatScore = (ExpectedWins - ActualWins) × 2
+             + TourneyDisappointment × 3
+             + ScandalPenalty + FanPressure
+
 FiringProbability = sigmoid((HotSeatScore - FiringThreshold) / 3)
-FiringThreshold varies by program expectations: blue bloods have a threshold of 8 (fired for 
-modest underperformance), mid-majors have 15 (tolerate more losing). A coach with 
-HotSeatScore 12 at a blue blood (threshold 8) has sigmoid((12-8)/3) = sigmoid(1.33) = 79% 
-firing probability. The same score at a mid-major (threshold 15) yields sigmoid(-1.0) = 27%.
-8.4 Hiring Logic
-When a job opens, the simulation generates a candidate pool and scores each candidate:
-HireScore = (0.25 * WinRecord) + (0.20 * RecruitingSkill) + (0.15 * 
-Charisma) + (0.15 * SchemesFit) + (0.10 * Loyalty) + (0.10 * Prestige 
-Match) + (0.05 * Cost)
-Blue blood programs prioritize WinRecord and Charisma. Mid-majors prioritize Cost and 
-RecruitingSkill. The AI athletic director for each program has biases that affect weights.
-Page 19
-8.5 Buyout Formula
-College Basketball Coach Simulation — System Architecture
-Buyout = AnnualSalary * RemainingYears * 0.70
-Coaches on long contracts at high salaries create financial constraints for programs wanting to 
-make a change. A coach making $4M/year with 5 years left costs $14M to fire, which reduces 
-the BoosterBudget for 2-3 years.
-Page 20
-9. Playstyle System
-College Basketball Coach Simulation — System Architecture
-9.1 Scheme Definition
-Each coach defines an offensive and defensive scheme using continuous sliders (0-100):
-Slider
-Low (0-30)
-High (70-100)
-Sim Effect
-Pace
-Slow, half-court
-Fast, up-tempo
-Possessions/game: 60-78
-ThreePointEmphasis
-Paint-focused
-Perimeter-heavy
-3PA rate: 20%-50%
-PostUsage
-No post play
-Feed the post
-Post possessions: 5%
-35%
-PressFrequency
-No press
-Full-court press
-Turnover forcing +/- 
-fatigue cost
-ZoneVsMan
-All man-to-man
-All zone
-Affects rebounding, 3PT 
-defense
-PickAndRoll
-Isolation/motion
-PnR heavy
-PnR possessions: 10%
-45%
-TransitionPush
-Always set up
-Run and gun
-Fast break rate: 10%-30%
-DefensiveAggression
-Pack the paint
-Extend and deny
-Steal rate vs open 3 rate
-9.2 Playstyle-Player Fit
-Each player has a FitScore for any given playstyle configuration:
-FitScore = 100 - SUM(|PlayerTendency_i - SchemeRequirement_i| * 
-Weight_i) / N
-A stretch-5 (high ThreePoint, low PostMoves) in a PostUsage-heavy system has a poor 
-FitScore. Players with FitScore below 50 suffer a -5% performance penalty in simulation. Above 
-80, they get a +3% bonus. FitScore also affects morale: mismatched players lose 2 
-morale/week.
-9.3 Playstyle Impact on Recruiting
-Recruits evaluate playstyle fit when choosing programs. A ball-dominant guard recruit strongly 
-prefers programs with high Pace and low PostUsage. This creates strategic tension: changing 
-your scheme to fit a star recruit may alienate existing players.
-Page 21
-College Basketball Coach Simulation — System Architecture
-10. Game Simulation Engine
-10.1 Architecture Overview
-The game simulation engine operates on a possession-by-possession model. Each game 
-simulates 130-160 possessions (65-80 per team) depending on pace. Every possession 
-resolves through a decision tree that determines the action, shot quality, and outcome.
-10.2 Possession Flow
-Step 1: Determine possession type (transition or half-court) based on TransitionPush and 
-turnover context. Step 2: Select primary action (PnR, post-up, isolation, motion, cut) based on 
-scheme weights and personnel. Step 3: Determine ball-handler and action participants based 
-on usage tendencies and lineup. Step 4: Calculate shot quality. Step 5: Determine outcome 
-(made shot, missed shot, turnover, foul). Step 6: If missed, resolve rebound. Step 7: Update 
-fatigue, fouls, and stats.
-10.3 Shot Quality Formula
-ShotQuality = BaseSkill + SpacingBonus + SchemeBonus - DefenseRating - 
-FatiguePenalty + Randomness
-BaseSkill = ShooterRelevantAttribute [CloseShot for rim, MidRange, or 
-ThreePoint]
-SpacingBonus = (TeamSpacingIndex - 50) * 0.15 [5 shooters = +7.5, no 
-shooters = -7.5]
-SchemeBonus = FitScore * 0.05 [max +5 for perfect scheme fit]
-DefenseRating = ClosestDefenderAttribute * ContestFactor
-FatiguePenalty = max(0, (MinutesPlayed - 30) * 0.8) [increases after 30 
-minutes]
-Randomness = NormalRandom(0, 8) [standard deviation of 8 rating points]
-10.4 Shooting Probability
-MakeProbability = BasePct * (1 + (ShotQuality - 50) * 0.008)
-Where BasePct is the league average for that shot type: Close = 58%, MidRange = 40%, Three 
-= 34%, FreeThrow = 72%. A ShotQuality of 80 yields: Close = 58% * (1 + 30*0.008) = 58% * 
-1.24 = 71.9%. A ShotQuality of 30 yields: 58% * (1 - 20*0.008) = 58% * 0.84 = 48.7%.
-10.5 Turnover Probability
-TurnoverProb = BaseTurnover * (1 + PressAdjustment + DefIntensity - 
-BallSecurity)
+```
+
+- Blue blood FiringThreshold = 8 (low tolerance)
+- Mid-major FiringThreshold = 15 (higher tolerance)
+
+Example: HotSeatScore 12 at blue blood → sigmoid((12-8)/3) = **79% fired**. Same at mid-major → sigmoid((12-15)/3) = **27%**.
+
+### 9.5 Hiring Logic
+
+```
+HireScore = (0.25 × WinRecord) + (0.20 × RecruitingSkill) + (0.15 × Charisma)
+          + (0.15 × SchemeFit) + (0.10 × Loyalty) + (0.10 × PrestigeMatch) + (0.05 × Cost)
+```
+
+Blue bloods prioritize WinRecord and Charisma. Mid-majors prioritize Cost and RecruitingSkill.
+
+### 9.6 Buyout Formula
+
+```
+Buyout = AnnualSalary × RemainingYears × 0.70
+```
+
+A coach at $4M/yr with 5 years left costs $14M to fire, reducing BoosterBudget for 2–3 years.
+
+### 9.7 Coach Development
+
+Coaches improve over time:
+```
+CoachDevRate = (Experience × 0.3) + (WinPct × 0.3) + (TourneySuccess × 0.2) + (MentorQuality × 0.2)
+```
+Young coaches (age < 40) gain +1–2 to a random attribute per year. Veteran coaches (55+) begin regressing at -0.5/yr.
+
+---
+
+## 10. Playstyle System
+
+### 10.1 Scheme Sliders (0–100)
+
+| Slider | Low (0–30) | High (70–100) | Sim Effect |
+|--------|-----------|--------------|-----------|
+| Pace | Slow, half-court | Fast, up-tempo | Possessions/game: 60–78 |
+| ThreePointEmphasis | Paint-focused | Perimeter-heavy | 3PA rate: 20%–50% |
+| PostUsage | No post play | Feed the post | Post possessions: 5%–35% |
+| PressFrequency | No press | Full-court press | TO forcing +/– fatigue cost |
+| ZoneVsMan | All man-to-man | All zone | Rebounding vs 3PT defense tradeoff |
+| PickAndRoll | Isolation/motion | PnR heavy | PnR possessions: 10%–45% |
+| TransitionPush | Always set up | Run and gun | Fast break rate: 10%–30% |
+| DefensiveAggression | Pack the paint | Extend and deny | Steal rate vs open 3 rate |
+
+### 10.2 Playstyle-Player Fit
+
+```
+FitScore = 100 - SUM(|PlayerTendency_i - SchemeRequirement_i| × Weight_i) / N
+```
+
+- FitScore < 50 → -5% performance penalty
+- FitScore > 80 → +3% performance bonus
+- FitScore affects morale: mismatched players lose 2 morale/week
+
+### 10.3 Playstyle Impact on Recruiting
+
+Recruits evaluate playstyle fit. A ball-dominant guard prefers high Pace, low PostUsage. Strategic tension: changing scheme to fit a star recruit may alienate existing players.
+
+---
+
+## 11. Game Simulation Engine
+
+### 11.1 Architecture
+
+Possession-by-possession model. Each game simulates 130–160 possessions (65–80 per team) depending on pace.
+
+### 11.2 Possession Flow
+
+1. **Determine possession type** — transition or half-court (based on TransitionPush and turnover context)
+2. **Select primary action** — PnR, post-up, isolation, motion, cut (scheme weights + personnel)
+3. **Determine participants** — ball-handler and action targets (usage tendencies + lineup)
+4. **Calculate shot quality**
+5. **Determine outcome** — made shot, missed shot, turnover, foul
+6. **If missed → resolve rebound**
+7. **Update fatigue, fouls, stats**
+
+### 11.3 Shot Quality Formula
+
+```
+ShotQuality = BaseSkill + SpacingBonus + SchemeBonus - DefenseRating - FatiguePenalty + Randomness
+
+BaseSkill = ShooterRelevantAttribute  [CloseShot / MidRange / ThreePoint]
+SpacingBonus = (TeamSpacingIndex - 50) × 0.15  [5 shooters = +7.5, none = -7.5]
+SchemeBonus = FitScore × 0.05  [max +5]
+DefenseRating = ClosestDefenderAttribute × ContestFactor
+FatiguePenalty = max(0, (MinutesPlayed - 30) × 0.8)
+Randomness = NormalRandom(0, 8)
+```
+
+### 11.4 Shooting Probability
+
+```
+MakeProbability = BasePct × (1 + (ShotQuality - 50) × 0.008)
+```
+
+| Shot Type | BasePct | ShotQuality 80 | ShotQuality 30 |
+|-----------|---------|----------------|----------------|
+| Close | 58% | 71.9% | 48.7% |
+| MidRange | 40% | 49.6% | 33.6% |
+| Three | 34% | 42.2% | 28.5% |
+| FreeThrow | 72% | N/A (uses FT attribute directly) | N/A |
+
+### 11.5 Turnover Probability
+
+```
+TurnoverProb = BaseTurnover × (1 + PressAdjust + DefIntensity - BallSecurity)
 BaseTurnover = 0.14 per possession
-PressAdjustment = OpponentPressFrequency * 0.003
-DefIntensity = (OpponentDefAggression - 50) * 0.002
-BallSecurity = (BallHandlerRating - 50) * 0.003
-Page 22
-10.6 Rebounding
-College Basketball Coach Simulation — System Architecture
-OffRebProb = (TeamOffReb_avg / (TeamOffReb_avg + OppDefReb_avg)) * 
-ZoneBonus * Hustle
-Zone defense gives a -8% offensive rebounding penalty (box-out advantage). Hustle is a small 
-random factor based on team Competitiveness averages.
-10.7 Home Court Advantage
+PressAdjust = OpponentPressFrequency × 0.003
+DefIntensity = (OpponentDefAggression - 50) × 0.002
+BallSecurity = (BallHandlerRating - 50) × 0.003
+```
+
+### 11.6 Foul Rate Formula
+
+```
+FoulProb = BaseFoulRate × (DefAggressiveness × 0.01) × (FoulProneTendency × 0.008) × (DriveRate × 1.2)
+BaseFoulRate = 0.08 per possession
+```
+
+Bonus foul probability in final 2 minutes when trailing (intentional foul situations):
+```
+IntentionalFoulProb = 0.80 if trailing by 1–6 pts with < 60 seconds remaining
+```
+
+### 11.7 Rebounding
+
+```
+OffRebProb = (TeamOffReb_avg / (TeamOffReb_avg + OppDefReb_avg)) × ZoneBonus × Hustle
+```
+
+Zone defense → -8% offensive rebounding for opponents (box-out advantage). Hustle = small random factor from team Competitiveness average.
+
+### 11.8 Home Court Advantage
+
+```
 HomeCourtBoost = BaseHCA + FanIntensityBonus + AltitudeBonus
-BaseHCA = +3.5 to home team's overall effective rating
-FanIntensityBonus = (FanInterest - 50) * 0.06 [range -3 to +3]
-AltitudeBonus = AltitudeFactor for high-altitude venues (BYU, Air Force, 
-etc.)
-Total HCA ranges from +1 to +7 rating points, consistent with real-world research showing 
-home court advantage in college basketball is worth approximately 3-4 points on the spread.
-10.8 Clutch and Upset Mechanics
-ClutchMultiplier = 1.0 + (ClutchRating - 50) * 0.005 [applied in final 5 
-min if margin < 8]
-UpsetBoost = max(0, (Underdog Competitiveness_avg - 60) * 0.3) [underdog 
-gets boost from effort]
-Combined with random variance, the engine produces upset rates of approximately 20-25% for 
-5-vs-12 seed matchups, consistent with historical NCAA tournament data.
-Page 23
-11. Scheduling System
-College Basketball Coach Simulation — System Architecture
-11.1 Conference Schedule
-Conference schedules are generated using a round-robin or partial round-robin format 
-depending on conference size. Conferences with 14+ teams play 18-20 conference games with 
-an unbalanced schedule. Rivalry games are always scheduled as home-and-away. The 
-scheduling algorithm ensures every team plays every other team at least once, with travel
-balanced home/away distribution.
-11.2 Non-Conference Generation
-Each team plays 10-13 non-conference games. The scheduling AI targets:
-DesiredSOS = ConfAvgPrestige * 0.4 + TeamPrestige * 0.3 + AmbitionFactor * 
-0.3
-High-prestige programs schedule harder non-conference slates. Mid-majors balance between 
-resume-building games (1-2 tough road games) and winnable home games. Multi-team events 
-(MTE) are generated pre-season: 8-16 early-season tournaments with prestige tiers (e.g., Maui 
-Invitational tier vs. low-major MTE).
-11.3 Strength of Schedule Formula
-SOS = (0.60 * AvgOpponentRating) + (0.25 * AvgOpponentWinPct) + (0.15 * 
-AvgOppSOS)
-This recursive formula stabilizes after 3-4 iterations and produces a 0-100 SOS score used for 
-tournament selection.
-11.4 Rivalry System
-Each team has 1-3 designated rivals with Rivalry Intensity scores (0-100). Rivalry games get 
-attendance bonuses (+10%), home court boost (+1.5), and media coverage multipliers. Rivalry 
-intensity changes slowly based on competitive history, geographic proximity, and conference 
-membership.
-Page 24
-12. Rankings & Metrics
-College Basketball Coach Simulation — System Architecture
-12.1 AP Poll Simulation
-The simulated AP Poll uses a voter model with 65 simulated voters. Each voter evaluates teams 
-using a weighted formula with individual voter bias:
-VoterScore(team) = (0.30 * WinPct) + (0.25 * AdjEfficiency) + (0.20 * SOS) 
-+ (0.15 * BestWins) + (0.10 * EyeTest) + VoterBias
-VoterBias introduces regional and conference bias: each voter has a +/- 3 point bias toward 1-2 
-conferences. 'EyeTest' is a composite of margin of victory, star player presence, and recent 
-momentum. This produces realistic poll inertia (teams don't drop fast enough, preseason bias 
-persists into November, etc.).
-12.2 NET Rating Simulation
-NET = (0.25 * TeamValue) + (0.25 * NetEfficiency) + (0.20 * 
-WinPctVsQuadrants) + (0.15 * AdjWinPct) + (0.15 * ScoringMargin)
-TeamValue is derived from game results weighted by opponent strength. NetEfficiency is 
-adjusted offensive efficiency minus adjusted defensive efficiency. The Quad system classifies 
-games by opponent NET rank and location.
-12.3 KenPom-Style Efficiency
-AdjOffEff = RawOffEff * (NationalAvgDefEff / OpponentAdjDefEff)
-AdjDefEff = RawDefEff * (NationalAvgOffEff / OpponentAdjOffEff)
+BaseHCA = +3.5 to home team effective rating
+FanIntensityBonus = (FanInterest - 50) × 0.06  [range -3 to +3]
+AltitudeBonus = factor for high-altitude venues (BYU, Air Force, etc.)
+```
+
+Total HCA: +1 to +7 rating points (consistent with real-world ~3–4 point spread advantage).
+
+### 11.9 Referee Bias Model
+
+Each game assigns a random ref crew with tendencies:
+```
+RefProfile = {
+  FoulCallRate: NormalRandom(1.0, 0.08),     [0.85–1.15 multiplier on foul calls]
+  HomeWhistleBias: NormalRandom(0.02, 0.01), [slight home team foul advantage]
+  TightnessLevel: NormalRandom(1.0, 0.10)    [loose vs tight game]
+}
+```
+
+Affects foul distribution, free throw attempts, and game flow. Occasionally produces "ref games" with abnormally high foul counts.
+
+### 11.10 Clutch and Upset Mechanics
+
+```
+ClutchMultiplier = 1.0 + (ClutchRating - 50) × 0.005  [final 5 min, margin < 8]
+UpsetBoost = max(0, (UnderdogCompetitiveness_avg - 60) × 0.3)
+```
+
+Produces ~20–25% upset rate for 5-vs-12 seed matchups, matching historical NCAA data.
+
+### 11.11 In-Game Injury
+
+```
+InGameInjuryProb = InjuryProneness × (MinutesPlayed / 40) × PhysicalPlayFactor × 0.5
+```
+
+Checked every 4 simulated minutes. Severity roll on injury:
+- 70% minor (returns after 2–5 min of game time)
+- 20% moderate (out for rest of game)
+- 10% serious (out for game + future games, see injury system in Phase 6)
+
+---
+
+### Phase 3 Deliverable Checklist
+
+- [ ] Coach attribute model with all 11 attributes
+- [ ] Assistant coach system (4 roles per team)
+- [ ] Coaching tree data structure
+- [ ] Firing/hiring logic with hot seat scoring
+- [ ] Buyout calculator
+- [ ] Coach development over time
+- [ ] 8 playstyle sliders per coach
+- [ ] FitScore calculator (player-to-scheme)
+- [ ] Possession-by-possession simulation engine
+- [ ] Shot quality and make probability formulas
+- [ ] Turnover, foul, rebound resolution
+- [ ] Home court advantage model
+- [ ] Referee bias model
+- [ ] Clutch and upset mechanics
+- [ ] In-game injury system
+- [ ] Fatigue tracking per player per game
+- [ ] Full box score generation per game
+
+---
+
+# PHASE 4: SCHEDULING, RANKINGS, AND POSTSEASON
+
+*Build the season structure, evaluation systems, and tournament.*
+
+---
+
+## 12. Scheduling System
+
+### 12.1 Conference Schedule
+
+Round-robin or partial round-robin by conference size. Conferences with 14+ teams play 18–20 games (unbalanced schedule). Rivalry games always scheduled home-and-away. Algorithm ensures every team plays every other team at least once with travel-balanced home/away distribution.
+
+### 12.2 Non-Conference Generation
+
+10–13 non-conference games per team. AI targets:
+
+```
+DesiredSOS = ConfAvgPrestige × 0.4 + TeamPrestige × 0.3 + AmbitionFactor × 0.3
+```
+
+- High-prestige programs schedule harder
+- Mid-majors balance 1–2 resume road games with winnable home games
+- **Multi-Team Events (MTEs):** 8–16 pre-season tournaments generated with prestige tiers (e.g., Maui tier vs low-major MTE)
+
+### 12.3 Rivalry System
+
+1–3 designated rivals per team with Rivalry Intensity (0–100):
+- Attendance bonus +10%
+- Home court boost +1.5
+- Media coverage multiplier
+- Intensity changes slowly based on competitive history, geography, conference membership
+
+### 12.4 Strength of Schedule
+
+```
+SOS = (0.60 × AvgOpponentRating) + (0.25 × AvgOpponentWinPct) + (0.15 × AvgOppSOS)
+```
+
+Recursive formula, stabilizes after 3–4 iterations. Produces 0–100 score for tournament selection.
+
+---
+
+## 13. Rankings & Metrics
+
+### 13.1 AP Poll Simulation
+
+65 simulated voters, each with individual bias:
+
+```
+VoterScore(team) = (0.30 × WinPct) + (0.25 × AdjEfficiency) + (0.20 × SOS)
+                 + (0.15 × BestWins) + (0.10 × EyeTest) + VoterBias
+```
+
+- `VoterBias`: ±3 point bias toward 1–2 conferences per voter
+- `EyeTest`: composite of MOV, star players, momentum
+- Produces realistic poll inertia and preseason bias
+
+### 13.2 Coaches Poll Simulation
+
+Similar to AP but with distinct biases:
+```
+CoachesPollBias = APVoterBias × 0.5 + OwnConferenceBias × 2.0 + BallotFatigue × 0.3
+```
+
+- `OwnConferenceBias`: coaches rank own-conference teams +2 to +5 higher
+- `BallotFatigue`: bottom-of-ballot rankings are near-random (±8 variance for ranks 20–25)
+- Generally lags AP by 1–2 weeks in reacting to results
+
+### 13.3 NET Rating
+
+```
+NET = (0.25 × TeamValue) + (0.25 × NetEfficiency) + (0.20 × WinPctVsQuadrants)
+    + (0.15 × AdjWinPct) + (0.15 × ScoringMargin)
+```
+
+Quad system:
+| Quad | Home | Neutral | Away |
+|------|------|---------|------|
+| Q1 | vs NET 1–30 | vs NET 1–50 | vs NET 1–75 |
+| Q2 | vs NET 31–75 | vs NET 51–100 | vs NET 76–135 |
+| Q3 | vs NET 76–160 | vs NET 101–200 | vs NET 136–240 |
+| Q4 | vs NET 161+ | vs NET 201+ | vs NET 241+ |
+
+### 13.4 KenPom-Style Efficiency
+
+```
+AdjOffEff = RawOffEff × (NationalAvgDefEff / OpponentAdjDefEff)
+AdjDefEff = RawDefEff × (NationalAvgOffEff / OpponentAdjOffEff)
 OverallRating = AdjOffEff - AdjDefEff
-This produces a single efficiency margin number per team that correlates strongly with actual 
-team quality. Typically ranges from -15 (worst teams) to +30 (elite teams).
-12.4 Bracketology Engine
-The selection committee AI evaluates teams using a holistic resume score:
-ResumeScore = (0.25 * Q1Wins) + (0.20 * NET) + (0.15 * SOS) + (0.15 * 
-Q1+Q2Record) + (0.10 * ConfRecord) + (0.10 * Last10) + (0.05 * 
-BonusPoints)
-BonusPoints include road wins, top-10 wins, and conference tournament performance. The top 
-36 at-large teams are selected. Seeding follows S-curve placement with geographic 
-considerations.
-Page 25
-13. Postseason System
-College Basketball Coach Simulation — System Architecture
-13.1 Conference Tournaments
-Every conference holds a tournament in the final week of the season. Format varies by 
-conference size (8-team single elimination, 12-team with byes, etc.). The tournament winner 
-receives the automatic bid. Conference tournament performance is the last major data point for 
-the selection committee.
-13.2 NCAA Tournament Selection
-The selection committee AI selects 68 teams: 32 auto-bids and 36 at-large. The Last Four In 
-and First Four Out are explicitly tracked. Bubble teams are ranked by ResumeScore with a 
-cutoff threshold that varies annually based on the strength of the at-large pool.
-13.3 Seeding and Bracket Construction
-Seeds 1-16 are assigned by S-curve (top 4 overall get #1 seeds, next 4 get #2, etc.). The 
-bracket AI then applies constraints: teams from the same conference cannot meet before the 
-Sweet 16 (or Elite 8 for large conferences), geographic proximity is considered for early rounds, 
-and the top 4 overall seeds are placed in pods closest to their region.
-13.4 Cinderella Probability
-CinderellaFactor = (TeamChemistry * 0.25) + (BestPlayerClutch * 0.20) + 
-(CoachTourneyExp * 0.15) + (DefensiveRating * 0.20) + (ScheduleTestedFlag 
-* 0.10) + (Randomness * 0.10)
-Mid-majors with elite defense, a clutch star, good chemistry, and a coach with tournament 
-experience have elevated Cinderella factors. Combined with the inherent variance of the sim 
-engine, this produces realistic upset rates: roughly 1-2 double-digit seeds reach the Sweet 16 
-per tournament.
-13.5 NIT and Other Tournaments
-Teams that narrowly miss the NCAA tournament are invited to the NIT (32 teams), CBI (16 
-teams), or CIT (16 teams). These tournaments offer prestige bonuses (+1-3), player 
-development bonuses (extra games), and recruiting visibility for mid-majors.
-Page 26
-College Basketball Coach Simulation — System Architecture
-14. Long-Term Dynasty System
-14.1 Record Books
-The simulation maintains comprehensive record books at the player, team, conference, and 
-national level. Records tracked include: single-game records (points, assists, rebounds, blocks, 
-steals, 3PM), single-season records, career records, team season records (wins, losses, margin 
-of victory, efficiency), tournament records, coaching records, and recruiting class rankings.
-14.2 Player Legacy Score
-LegacyScore = (CareerPER * 0.20) + (AllAmericanSelections * 15) + 
-(POYAwards * 25) + (TourneyPerformance * 0.15) + (NBADraftPosition * 0.10) 
-+ (TeamWins * 0.05) + (ConferenceTitles * 5) + (NatChampionships * 20)
-Players with LegacyScore above 85 are inducted into the program Hall of Fame. Above 95, they 
-receive jersey retirement consideration (probability = (LegacyScore - 95) * 20%).
-14.3 Blue Blood Evolution
-Program classifications are recalculated every 5 years. A mid-major that sustains 
-CurrentPrestige above 75 for 10+ years can rise to Elite status. A traditional blue blood that falls 
-below 60 CurrentPrestige for 15+ years loses blue blood status. This creates organic narrative 
-arcs where programs rise and fall across decades.
-14.4 Dynamic Rule Changes
-Every 5-10 years (randomized), the simulation introduces NCAA rule changes drawn from a 
-probability pool. Examples include: shot clock changes (30 sec to 24 sec), transfer eligibility 
-modifications, NIL regulation changes, scholarship limit changes, one-and-done rule elimination, 
-conference tournament format changes, and academic eligibility threshold adjustments. Each 
-rule change propagates through all affected systems.
-14.5 NIL Inflation and Correction
-NILInflationRate = 1.03 + (0.01 * CompetitivePressure) per year [3-4% 
-annual growth]
-CorrectionTrigger: if AvgNIL > 3 * BaselineNIL, RegulationEvent 
-probability = 0.30/year
-Over decades, NIL values inflate but are periodically corrected by regulation events that cap 
-spending or introduce transparency requirements, keeping the economy stable.
-Page 27
-College Basketball Coach Simulation — System Architecture
-15. Advanced Stats Engine
-15.1 Player Efficiency Rating (PER-Style)
-SimPER = (PTS + REB + AST + STL + BLK - (FGA-FGM) - (FTA-FTM) - TOV) * 
-(1 / MinPlayed) * LeagueAdjust
-Normalized so league average = 15.0. Elite players reach 28-35. This is the primary single
-number measure of player contribution.
-15.2 Box Plus/Minus (BPM)
+```
+
+Typical range: -15 (worst) to +30 (elite).
+
+### 13.5 Bracketology Engine
+
+```
+ResumeScore = (0.25 × Q1Wins) + (0.20 × NET) + (0.15 × SOS)
+            + (0.15 × Q1+Q2Record) + (0.10 × ConfRecord) + (0.10 × Last10) + (0.05 × BonusPoints)
+```
+
+BonusPoints: road wins, top-10 wins, conference tournament performance. Updated weekly for bracketology projections.
+
+---
+
+## 14. Postseason System
+
+### 14.1 Conference Tournaments
+
+Every conference holds end-of-season tournament. Format by size (8-team single elimination, 12-team with byes, etc.). Winner gets automatic bid.
+
+### 14.2 NCAA Tournament Selection
+
+68 teams: 32 auto-bids + 36 at-large. Selection committee AI explicitly tracks Last Four In / First Four Out. Bubble cutoff varies annually by pool strength.
+
+### 14.3 Seeding and Bracket
+
+S-curve seeding (top 4 overall → #1 seeds, next 4 → #2, etc.). Constraints:
+- Same conference can't meet before Sweet 16 (or Elite 8 for large conferences)
+- Geographic proximity for early rounds
+- Top 4 overall seeds placed in nearest pods
+
+### 14.4 Cinderella Probability
+
+```
+CinderellaFactor = (TeamChemistry × 0.25) + (BestPlayerClutch × 0.20)
+                 + (CoachTourneyExp × 0.15) + (DefensiveRating × 0.20)
+                 + (ScheduleTestedFlag × 0.10) + (Randomness × 0.10)
+```
+
+Produces ~1–2 double-digit seeds reaching Sweet 16 per tournament.
+
+### 14.5 NIT and Other Postseason
+
+- NIT: 32 teams (near-miss NCAA)
+- CBI: 16 teams
+- CIT: 16 teams
+
+Bonuses: prestige +1–3, player development (extra games), recruiting visibility for mid-majors.
+
+---
+
+### Phase 4 Deliverable Checklist
+
+- [ ] Conference schedule generator (round-robin / partial)
+- [ ] Non-conference schedule AI with SOS targeting
+- [ ] Multi-team event generation
+- [ ] Rivalry system with intensity tracking
+- [ ] SOS recursive calculation
+- [ ] AP Poll simulation with 65 voters + bias
+- [ ] Coaches Poll with own-conference bias
+- [ ] NET rating calculator
+- [ ] KenPom-style adjusted efficiency
+- [ ] Quad system classification
+- [ ] Bracketology engine with weekly projections
+- [ ] Conference tournament bracket generator
+- [ ] NCAA tournament selection committee AI
+- [ ] S-curve seeding with constraints
+- [ ] Cinderella factor calculation
+- [ ] NIT/CBI/CIT selection
+
+---
+
+# PHASE 5: AI, ADVANCED STATS, AND AWARDS
+
+*Build the CPU brain and the stat tracking layer.*
+
+---
+
+## 15. Advanced Stats Engine
+
+### 15.1 Player Efficiency Rating
+
+```
+SimPER = (PTS + REB + AST + STL + BLK - (FGA-FGM) - (FTA-FTM) - TOV) × (1 / MinPlayed) × LeagueAdjust
+```
+
+Normalized: league average = 15.0. Elite = 28–35.
+
+### 15.2 Box Plus/Minus
+
+```
 BPM = OffBPM + DefBPM
-OffBPM = (Usage * OffRtgAboveAvg * 0.2) + (AST% * 3) + (TOV% * -2) + (ORB% 
-* 1.5)
-DefBPM = (STL% * 2) + (BLK% * 1.5) + (DRB% * 1) + (DefRatingBelowAvg * 
-0.2)
-15.3 Lineup Synergy Rating
-SynergyScore = BaseEfficiency + SpacingBonus + TempoMatch + 
-DefComplementarity + ChemistryBonus
-The engine tracks every 5-man lineup combination and evaluates how well players complement 
-each other. A lineup of 5 ball-dominant guards has low synergy. A balanced lineup with a rim 
-protector, two shooters, a playmaker, and a slasher has high synergy. The user can view lineup 
-data to optimize rotations.
-15.4 Win Shares
+OffBPM = (Usage × OffRtgAboveAvg × 0.2) + (AST% × 3) + (TOV% × -2) + (ORB% × 1.5)
+DefBPM = (STL% × 2) + (BLK% × 1.5) + (DRB% × 1) + (DefRatingBelowAvg × -0.2)
+```
+
+### 15.3 On/Off Impact
+
+```
+OnCourtNetRating = TeamPtsScored_withPlayer - TeamPtsAllowed_withPlayer (per 100 possessions)
+OffCourtNetRating = TeamPtsScored_without - TeamPtsAllowed_without (per 100 possessions)
+OnOffDelta = OnCourtNetRating - OffCourtNetRating
+```
+
+Minimum 200 possessions for statistical significance flag.
+
+### 15.4 Lineup Synergy Rating
+
+```
+SynergyScore = BaseEfficiency + SpacingBonus + TempoMatch + DefComplementarity + ChemistryBonus
+```
+
+Tracks every 5-man combination. Balanced lineups (rim protector + 2 shooters + playmaker + slasher) score high. Five ball-dominant guards score low.
+
+### 15.5 Win Shares
+
+```
 WinShares = (OffWS + DefWS) / 2
-OffWS = (MarginalOffense / MarginalPtsPerWin)
-DefWS = (MarginalDefense / MarginalPtsPerWin)
-Credits wins proportionally to player contributions. Useful for evaluating role players who 
-contribute in non-scoring ways.
-Page 28
-College Basketball Coach Simulation — System Architecture
-16. AI Coach Decision Engine
-16.1 Recruiting AI
-CPU coaches target recruits using a needs-based evaluation system:
-TargetPriority = (PositionNeed * 0.35) + (TalentGap * 0.30) + (SchemesFit 
-* 0.20) + (Gettability * 0.15)
-PositionNeed is high if the team loses starters at that position. TalentGap is the difference 
-between the recruit's projected rating and the current roster average. SchemesFit evaluates 
-how well the recruit matches the coach's playstyle. Gettability factors in prestige, NIL, 
-geography, and existing interest. AI coaches with higher RecruitingSkill evaluate Gettability 
-more accurately.
-16.2 In-Game Adjustments
-AI coaches evaluate game state every 4 minutes and can make adjustments:
-If down by 10+: Increase pace, switch to zone, extend press frequency. If up by 10+: Slow pace, 
-conservative defense, bench starters for rest. If opponent hitting 40%+ from three: Switch to 
-man defense, extend perimeter defense. If foul trouble: Sub affected player, reduce defensive 
-aggression. The quality of adjustments scales with the coach's Adaptability and 
-GameManagement attributes. Low-rated coaches may make poor or delayed adjustments.
-16.3 Portal Decisions
-AI coaches evaluate portal players against their current roster:
-PortalTargetValue = (PlayerRating - RosterPositionAvg) * NeedWeight + 
-AgeFactor + ImmediateImpact
-Coaches with high Ambition target high-impact portal players aggressively. Development
-focused coaches prefer younger players with upside. Risk-averse coaches avoid players with 
-character concerns.
-16.4 Redshirt Decisions
-RedshirtProb = sigmoid((RosterDepthAtPosition - 8) * 0.5 + (PlayerRating - 
-RosterAvg) * -0.3 + FreshmanFactor)
-Freshmen on deep rosters are likely to redshirt unless they're significantly better than the 
-current depth. AI coaches with higher DevelopmentSkill redshirt more aggressively, recognizing 
-the long-term value.
-Page 29
-17. Database Structure
-College Basketball Coach Simulation — System Architecture
-17.1 Core Tables
-The simulation database uses a relational schema with the following primary tables. All IDs are 
-64-bit integers. Timestamps use Unix epoch seconds.
-Players Table
-players (id, first_name, last_name, team_id, position, class_year, age, 
-height, weight, wingspan,
-  hometown_state, hometown_city, hs_star_rating, overall_rating, 
-potential_rating, dev_curve_type,
-  [18 skill attributes], [8 tendencies], [7 personality traits], [6 hidden 
-attributes],
-  nil_value, nil_contract_id, injury_status, academic_gpa, 
-eligibility_years_remaining,
-  redshirt_used, portal_status, draft_declaration, created_season, 
-retired_season)
-Teams Table
-teams (id, name, mascot, conference_id, prestige_current, 
-prestige_historical, facility_rating,
-  nil_collective_strength, booster_budget, media_market, fan_intensity, 
-arena_capacity,
-  academic_rating, head_coach_id, [recruiting_region_ids], primary_color, 
-secondary_color)
-Conferences Table
-conferences (id, name, prestige, media_deal_value, tournament_format, 
-auto_bid_value,
-  member_count, tier, founded_season, dissolved_season)
-Coaches Table
-coaches (id, first_name, last_name, team_id, age, [11 coaching 
-attributes], salary,
-  contract_years_remaining, career_wins, career_losses, 
-tournament_appearances,
-  final_fours, championships, coaching_tree_parent_id, scheme_offense, 
-scheme_defense)
-Game Logs Table
-game_logs (id, season, week, home_team_id, away_team_id, home_score, 
-away_score,
-Page 30
-College Basketball Coach Simulation — System Architecture
-  home_off_eff, away_off_eff, home_def_eff, away_def_eff, pace, 
-overtime_periods,
-  attendance, is_conference, is_tournament, is_ncaa_tournament, 
-neutral_site,
-  [per-player stat lines as nested table])
-Additional Tables
-The schema also includes: recruits (pre-commitment recruit profiles), nil_contracts (active NIL 
-deals), transfers (portal activity log), awards (annual award winners), rankings_history (weekly 
-poll snapshots), season_records (team season summaries), draft_history (NBA draft results), 
-coaching_changes (hiring/firing log), conference_membership_history (realignment tracking), 
-sanctions (active penalties), and schedule (generated matchups with dates and locations).
-Page 31
-College Basketball Coach Simulation — System Architecture
-18. Balance & Edge Case Handling
-18.1 Anti-Dynasty Snowball Mechanisms
-Several interlocking systems prevent any single program from dominating indefinitely:
-Booster Fatigue reduces NIL spending after prolonged success. Roster Turnover from NBA 
-draft declarations removes your best players. Increased Opponent Motivation (underdog boost 
-scales with the dynasty's win streak). Coaching Poaching: successful assistants get hired away, 
-weakening your staff. Complacency Factor: teams on long win streaks develop a hidden 
-complacency modifier that slightly reduces effort in early-season games. Scheduling: dominant 
-teams are targeted by mid-majors seeking resume wins, resulting in tougher schedules.
-18.2 Mid-Major Viability
-Small programs have several viable paths to competitiveness: Elite coaching hires (high 
-Development + Recruiting coaches occasionally choose mid-majors for the challenge). 
-Undervalued portal players (3-star recruits and portal players that AI blue bloods pass on). 
-Home-court advantage multiplier for programs in hostile environments (small gyms with intense 
-fans). Conference tournament auto-bids ensure any team can make the NCAA tournament. 
-Cinderella Factor in the tournament gives well-coached defensive teams a realistic shot at 
-upsets.
-18.3 NIL Economic Stability
-The NIL economy is bounded by: Booster Fatigue (Section 7.4), NIL Inflation Correction events 
-(Section 14.5), a soft cap on individual player NIL deals (no player can receive more than 25% 
-of the collective budget), and diminishing returns on NIL spending in recruiting (after a 
-threshold, additional NIL money has logarithmic impact on recruit interest).
-18.4 Realignment Safety Rails
-Realignment events cannot: dissolve a conference below 6 members (triggers a merger event 
-instead), move more than 4 teams in a single cycle, or create a conference larger than 20 
-teams. If realignment would create orphaned teams, a safety algorithm forces them into the 
-nearest viable conference by geography and prestige.
-18.5 Simulation Health Checks
-Every 5 simulated years, the engine runs diagnostic checks: Is prestige distribution healthy 
-(standard deviation within expected range)? Are recruiting classes properly distributed across 
-tiers? Is NIL spending within 2 standard deviations of baseline? Are win distributions following 
-expected patterns? If any check fails, corrective adjustments are applied silently (e.g., boosting 
-underperforming mid-major recruiting pipelines).
-Page 32
-College Basketball Coach Simulation — System Architecture
-19. Optional Features & Events
-19.1 Dynamic Event System
-The simulation generates narrative events from a weighted probability pool each season. 
-Events are categorized by type and rarity:
-Event Category Examples Frequency Impact
-Academic Scandal Grade fraud, fake classes, eligibility 
-violations
-2-3% per team/yr Scholarship 
-reductions, 
-postseason ban, 
-prestige -10 to -20
-FBI Investigation Booster payments, recruiting 
-violations
-0.5-1% per 
-team/yr
-Severe sanctions, 
-coaching ban, 
-recruiting penalty 2-3 
-years
-Player Drama Suspension, arrest, social media 
-incident
-5-8% per 
-player/yr (scaled 
-by Maturity)
-1-10 game 
-suspension, morale 
-hit, media attention
-Coaching Feud Public rivalry between coaches 1% per coach 
-pair/yr
-Recruiting competition 
-bonus, rivalry intensity 
-boost
-Booster 
-Interference
-Booster demands playing time for 
-funded player
-3-5% at high-NIL 
-programs
-Morale disruption, 
-potential coaching 
-tension
-Conference TV 
-Deal
-Major media rights renegotiation Every 5-8 years 
-per conference
-Revenue shifts, 
-potential realignment 
-trigger
-Rule Change Shot clock, transfer rules, NIL 
-regulations
-Every 5-10 years System-wide formula 
-adjustments
-Facility Disaster Arena damage, construction delays 0.5% per team/yr Facility rating -5 to 
-15, temporary home 
-game relocation
-19.2 Injury System
-Players can suffer injuries during games and practices. Injury probability per game:
-InjuryProb = BaseInjuryRate * InjuryProneness * FatigueMultiplier * 
-PhysicalPlayMultiplier
-BaseInjuryRate = 0.015 (1.5% per game)
-Injury types include: minor (1-3 games), moderate (4-8 games), major (8-16+ games), and 
-season-ending (ACL, Achilles). Severity is drawn from a weighted distribution. Players returning 
-from major injuries have a -5 to -10 attribute penalty that recovers over 3-6 months.
-19.3 Academic Eligibility
-Page 33
-College Basketball Coach Simulation — System Architecture
-AcademicStandingProb = (AcademicRating * 0.40) + (Maturity * 0.25) + 
-(Discipline * 0.20) + (InstitutionAcademicRating * 0.15)
-Players with AcademicStanding below 2.0 GPA are ineligible. Each semester, GPA is 
-recalculated. The coach's Discipline attribute and the school's Academic Rating both influence 
-the probability of players maintaining eligibility. Academically at-risk players can be assigned 
-tutors (costs resources, improves odds).
-19.4 NBA Draft Logic
-After each season, players evaluate whether to declare for the NBA draft:
-DraftDeclarationProb = (ProjectedDraftPosition * 0.40) + (NILSatisfaction 
-* -0.15) + (Age * 0.10) + (Ambition * 0.15) + (CoachInfluence * -0.10) + 
-(LoyaltyAnchor * -0.10)
-ProjectedDraftPosition is calculated from a mock draft engine that evaluates player ratings, 
-measurables, age, and production against historical draft data. Projected lottery picks have 
->90% declaration probability. Projected second-rounders have 40-60%. Undrafted projections 
-have <15%. Players can test the waters (enter and withdraw) based on feedback.
-19.5 Redshirt System
-Freshmen can be redshirted to preserve a year of eligibility. Redshirting players still practice 
-and develop (at 70% of normal playing rate) but do not appear in games. The NCAA's 4-game 
-redshirt rule is implemented: freshmen can play up to 4 games and still redshirt. This creates 
-strategic decisions early in the season.
-19.6 Sanctions System
-Programs found in violation of NCAA rules receive sanctions scaled by severity:
-Severity
-Scholarship Reduction Postseason 
-Ban
-Recruiting Penalty
-Prestige Hit
-Minor
-0-1 for 1 year
-None
-2 fewer visits for 1 year-3 to -5
-Moderate
-1-3 for 2 years
-1 year
-Reduced contact period 
-2 years-8 to -12
-Major
-3-5 for 3 years
-1-2 years
-No official visits 2 years-15 to -25
-Death Penalty Program shut down 1-2 
-years
-2+ years
-Full recruiting ban-40 to -60
-Sanctions trigger portal exits (see Section 6.1) and decommitments (see Section 5.7). Recovery 
-from major sanctions takes 5-10 years of sustained rebuilding.
-19.7 Media Narrative Engine
-The game generates contextual media narratives based on simulation events: preseason 
-predictions, weekly power rankings commentary, upset reactions, Cinderella stories, coaching 
-hot seat articles, recruiting battle coverage, and dynasty retrospectives. These are generated 
-from templates filled with simulation data, providing immersive context without requiring an 
-external language model. Narratives affect public perception, which feeds back into poll voting 
-bias and recruit interest.
-Page 34
-College Basketball Coach Simulation — System Architecture
-Page 35
+OffWS = MarginalOffense / MarginalPtsPerWin
+DefWS = MarginalDefense / MarginalPtsPerWin
+```
+
+### 15.6 Usage Rate
+
+```
+Usage% = 100 × ((FGA + 0.44 × FTA + TOV) × (TeamMinutes / 5)) / (PlayerMinutes × TeamPossessions)
+```
+
+---
+
+## 16. AI Coach Decision Engine
+
+### 16.1 Recruiting AI
+
+```
+TargetPriority = (PositionNeed × 0.35) + (TalentGap × 0.30) + (SchemeFit × 0.20) + (Gettability × 0.15)
+```
+
+Higher RecruitingSkill → more accurate Gettability evaluation.
+
+### 16.2 In-Game Adjustments
+
+Evaluated every 4 simulated minutes:
+- Down 10+ → increase pace, switch to zone, extend press
+- Up 10+ → slow pace, conservative defense, bench starters
+- Opponent hitting 40%+ from three → switch to man, extend perimeter
+- Foul trouble → sub affected player, reduce defensive aggression
+
+Adjustment quality scales with Adaptability and GameManagement. Low-rated coaches make poor or delayed adjustments.
+
+### 16.3 Portal Decisions
+
+```
+PortalTargetValue = (PlayerRating - RosterPositionAvg) × NeedWeight + AgeFactor + ImmediateImpact
+```
+
+- High-Ambition coaches → target high-impact portal stars
+- Development coaches → prefer younger upside players
+- Risk-averse coaches → avoid character concerns
+
+### 16.4 Redshirt Decisions
+
+```
+RedshirtProb = sigmoid((RosterDepthAtPosition - 8) × 0.5 + (PlayerRating - RosterAvg) × -0.3 + FreshmanFactor)
+```
+
+High-DevelopmentSkill coaches redshirt more aggressively.
+
+### 16.5 Lineup Building
+
+```
+LineupScore = SUM(PlayerOverall × PositionFit) + SynergyBonus + ExperienceBonus - FatigueProjection
+```
+
+AI evaluates all viable 5-man combinations. Top 2–3 lineups are designated (starters, bench unit, closing lineup). AI coaches with low GameManagement may stick with suboptimal lineups too long.
+
+### 16.6 Player Development Focus
+
+Each offseason, AI coaches allocate development emphasis:
+```
+DevFocusPriority = (AttributeGap × 0.4) + (SchemeNeed × 0.3) + (PlayerRequest × 0.15) + (DraftProjection × 0.15)
+```
+
+The top 2–3 attributes are emphasized, receiving 1.3× development multiplier. Other attributes develop at 0.8×.
+
+### 16.7 Risk-Taking Personality
+
+Each AI coach has a hidden `RiskTolerance` (0–99) that affects:
+- Press usage in close games
+- 3-point shooting frequency when trailing
+- Portal vs recruiting emphasis
+- Willingness to play freshmen
+- Fouling strategy in endgame
+
+---
+
+## 17. Awards System
+
+### 17.1 Annual Awards
+
+| Award | Selection Method |
+|-------|-----------------|
+| National Player of the Year | Top SimPER + BPM + WinShares composite on Top-25 team |
+| All-American (1st, 2nd, 3rd team) | Top 15 by composite; positional balance |
+| Defensive POY | Top DefBPM + STL + BLK + DefRating composite |
+| Freshman of the Year | Top freshman by SimPER |
+| Coach of the Year | Highest WinImpact (actual vs expected) |
+| All-Conference teams | Per-conference selection by same composite |
+| Conference POY | Top player per conference |
+| Conference tournament MVP | Best performer in conf tournament |
+| NCAA Tournament MOP | Best performer through Final Four / title game |
+
+### 17.2 Selection Formula
+
+```
+AwardScore = (0.30 × SimPER) + (0.25 × BPM) + (0.20 × WinShares) + (0.15 × TeamSuccess) + (0.10 × MediaVisibility)
+```
+
+Media visibility correlates with prestige and market size, creating realistic bias toward high-profile programs.
+
+---
+
+### Phase 5 Deliverable Checklist
+
+- [ ] PER calculation engine
+- [ ] BPM (offensive + defensive) calculator
+- [ ] On/off court impact tracking
+- [ ] Lineup synergy scoring for all 5-man combos
+- [ ] Win shares calculator
+- [ ] Usage rate tracker
+- [ ] AI recruiting targeting logic
+- [ ] AI in-game adjustment engine
+- [ ] AI portal evaluation
+- [ ] AI redshirt decision making
+- [ ] AI lineup optimization
+- [ ] AI development focus allocation
+- [ ] Risk-tolerance personality for AI coaches
+- [ ] All awards selection (NPOY, All-American, DPOY, FOY, COY, all-conference, etc.)
+- [ ] Award history tracking in database
+
+---
+
+# PHASE 6: DYNASTY, BALANCE, AND EVENTS
+
+*Build the long-term simulation layer and all edge cases.*
+
+---
+
+## 18. Long-Term Dynasty System
+
+### 18.1 Record Books
+
+Maintained at player, team, conference, and national level:
+- Single-game records (points, assists, rebounds, blocks, steals, 3PM)
+- Single-season records
+- Career records
+- Team season records (wins, losses, MOV, efficiency)
+- Tournament records
+- Coaching records
+- Recruiting class rankings history
+
+### 18.2 Player Legacy Score
+
+```
+LegacyScore = (CareerPER × 0.20) + (AllAmericanSelections × 15) + (POYAwards × 25)
+            + (TourneyPerformance × 0.15) + (NBADraftPosition × 0.10)
+            + (TeamWins × 0.05) + (ConferenceTitles × 5) + (NatChampionships × 20)
+```
+
+- Above 85 → program Hall of Fame
+- Above 95 → jersey retirement consideration: probability = (LegacyScore - 95) × 20%
+
+### 18.3 Hall of Fame System
+
+**Player HOF:** LegacyScore ≥ 85 + minimum 3 seasons at program
+**Coach HOF:** CareerWins ≥ 500 OR Championships ≥ 2 OR FinalFours ≥ 5
+**Program-level and national-level halls maintained separately**
+
+### 18.4 Blue Blood Evolution
+
+Recalculated every 5 years. Mid-major sustaining CurrentPrestige > 75 for 10+ years → can rise to Elite. Blue blood below 60 for 15+ years → loses classification.
+
+### 18.5 Dynamic Rule Changes
+
+Every 5–10 years (randomized), from probability pool:
+
+| Possible Rule Change | Probability | System Impact |
+|---------------------|------------|---------------|
+| Shot clock 30→24 sec | 15% | Increases pace +5 for all teams |
+| Transfer sit-out rule added/removed | 20% | Portal volume ±30% |
+| NIL spending caps introduced | 15% | Max NIL per player reduced 40% |
+| Scholarship limit change (13→15 or 13→11) | 10% | Roster depth, recruiting volume |
+| One-and-done rule eliminated | 10% | HS recruits can go direct to NBA, reducing top talent |
+| Conference tournament format changes | 20% | Auto-bid drama adjustments |
+| Academic eligibility threshold raised | 10% | More ineligibility events |
+
+### 18.6 NIL Inflation and Correction
+
+```
+NILInflationRate = 1.03 + (0.01 × CompetitivePressure) per year  [3–4% annual growth]
+CorrectionTrigger: if AvgNIL > 3 × BaselineNIL → RegulationEvent probability = 0.30/year
+```
+
+### 18.7 NBA Draft Rule Changes
+
+Every 10–15 years, possible changes:
+- Age requirement removed (HS to NBA direct)
+- Age requirement increased to 20
+- Two-round vs three-round draft
+- G-League pathway emphasis changes
+
+Each propagates through NBADraftInterest calculations and recruiting dynamics.
+
+---
+
+## 19. Balance & Edge Case Handling
+
+### 19.1 Anti-Dynasty Snowball
+
+Multiple interlocking systems:
+- Booster fatigue after sustained high spending
+- NBA draft declarations remove best players
+- Underdog motivation boost (scales with opponent win streak)
+- Assistant coaching poaching weakens staff
+- Complacency factor: long win streaks → hidden -2% effort modifier in early season
+- Dominant teams get targeted for resume games → harder schedules
+
+### 19.2 Mid-Major Viability
+
+Paths to competitiveness:
+- Elite coaching hires (high Dev + Recruiting coaches occasionally choose mid-majors)
+- Undervalued portal players that blue blood AI passes on
+- Home court multiplier for intense small-gym environments
+- Conference tournament auto-bids
+- Cinderella factor in NCAA tournament
+
+### 19.3 NIL Economic Stability
+
+Bounded by:
+- Booster fatigue (Section 8.5)
+- Inflation correction events (Section 18.6)
+- 25% per-player soft cap of collective budget
+- Logarithmic diminishing returns on NIL recruiting impact
+
+### 19.4 Simulation Health Checks
+
+Every 5 simulated years, engine runs diagnostics:
+- Is prestige distribution standard deviation within expected range?
+- Are recruiting classes properly distributed?
+- Is NIL spending within 2σ of baseline?
+- Are win distributions following expected patterns?
+
+Silent corrective adjustments if checks fail (e.g., boosting underperforming mid-major pipelines).
+
+---
+
+## 20. Optional Features & Events
+
+### 20.1 Dynamic Event System
+
+| Event | Frequency | Impact |
+|-------|-----------|--------|
+| Academic Scandal | 2–3% per team/yr | Scholarship reductions, postseason ban, prestige -10 to -20 |
+| FBI Investigation | 0.5–1% per team/yr | Severe sanctions, coaching ban, recruiting penalty 2–3 yr |
+| Player Drama | 5–8% per player/yr (scaled by Maturity) | 1–10 game suspension, morale hit |
+| Coaching Feud | 1% per coach pair/yr | Recruiting competition bonus, rivalry intensity boost |
+| Booster Interference | 3–5% at high-NIL programs | Morale disruption, coaching tension |
+| Conference TV Deal | Every 5–8 yr per conference | Revenue shifts, realignment trigger |
+| Rule Change | Every 5–10 yr | System-wide formula adjustments |
+| Facility Disaster | 0.5% per team/yr | Facility rating -5 to -15, temporary relocation |
+
+### 20.2 Injury System
+
+```
+InjuryProb = BaseInjuryRate × InjuryProneness × FatigueMultiplier × PhysicalPlayMultiplier
+BaseInjuryRate = 0.015 per game (1.5%)
+```
+
+| Severity | Probability | Duration |
+|----------|------------|---------|
+| Minor | 55% | 1–3 games |
+| Moderate | 25% | 4–8 games |
+| Major | 15% | 8–16+ games |
+| Season-ending (ACL, Achilles) | 5% | Rest of season + recovery penalty |
+
+Players returning from major injuries: -5 to -10 attribute penalty recovering over 3–6 months.
+
+### 20.3 Academic Eligibility
+
+```
+AcademicStandingProb = (AcademicRating × 0.40) + (Maturity × 0.25) + (CoachDiscipline × 0.20) + (SchoolAcademicRating × 0.15)
+```
+
+Below 2.0 GPA → ineligible. Coach can assign tutors (costs resources, improves odds).
+
+### 20.4 NBA Draft Logic
+
+```
+DraftDeclarationProb = (ProjectedDraftPosition × 0.40) + (NILSatisfaction × -0.15)
+                     + (Age × 0.10) + (Ambition × 0.15) + (CoachInfluence × -0.10) + (LoyaltyAnchor × -0.10)
+```
+
+- Projected lottery → >90% declaration
+- Projected 2nd round → 40–60%
+- Undrafted projection → <15%
+- "Test the waters" option: enter and withdraw based on feedback
+
+### 20.5 Redshirt System
+
+- Freshmen can be redshirted (develop at 70% rate, no game appearances)
+- 4-game rule: play up to 4 games and still redshirt
+- Strategic early-season decision point
+
+### 20.6 Sanctions
+
+| Severity | Scholarships | Postseason Ban | Recruiting | Prestige Hit |
+|----------|-------------|---------------|-----------|-------------|
+| Minor | 0–1 for 1 yr | None | 2 fewer visits 1 yr | -3 to -5 |
+| Moderate | 1–3 for 2 yr | 1 year | Reduced contact 2 yr | -8 to -12 |
+| Major | 3–5 for 3 yr | 1–2 years | No official visits 2 yr | -15 to -25 |
+| Death Penalty | Program shut 1–2 yr | 2+ years | Full ban | -40 to -60 |
+
+### 20.7 Media Narrative Engine
+
+Template-based generation: preseason predictions, weekly power rankings commentary, upset reactions, Cinderella stories, hot seat articles, recruiting battles, dynasty retrospectives. Narratives affect poll voting bias and recruit interest.
+
+### 20.8 Weather/Travel Impact
+
+For games in certain regions during winter months:
+```
+TravelFatigue = max(0, (DistanceTraveled - 500) / 1000) × 1.5  [rating point penalty]
+```
+
+Teams traveling 2000+ miles for a road game suffer -3 to -4.5 effective rating penalty. Back-to-back road games compound this.
+
+---
+
+### Phase 6 Deliverable Checklist
+
+- [ ] Record book tracking (player, team, conference, national)
+- [ ] Player legacy score calculator
+- [ ] Jersey retirement logic
+- [ ] Hall of Fame induction system (player + coach)
+- [ ] Blue blood reclassification every 5 years
+- [ ] Dynamic rule change event system
+- [ ] NIL inflation tracking and correction events
+- [ ] NBA draft rule change events
+- [ ] Anti-dynasty snowball mechanisms active
+- [ ] Mid-major viability systems active
+- [ ] NIL economic stability guardrails
+- [ ] Simulation health checks (every 5 sim-years)
+- [ ] All event types generating (academic, FBI, drama, feuds, boosters, TV deals, facility)
+- [ ] Full injury system (in-game + season-long)
+- [ ] Academic eligibility checks each semester
+- [ ] NBA draft declaration and testing waters flow
+- [ ] Redshirt system with 4-game rule
+- [ ] Sanctions system (all 4 severity levels)
+- [ ] Media narrative template engine
+- [ ] Weather/travel fatigue system
+- [ ] 50-year simulation stability test passing
+
+---
+
+# APPENDIX A: Complete Formula Reference
+
+## Prestige & Team
+| Formula | Section |
+|---------|---------|
+| ConferencePrestige | 2.2 |
+| RealignmentTriggerProb | 2.3 |
+| MoveUtility | 2.3 |
+| PrestigeDelta | 3.2 |
+| DecayRate | 3.3 |
+| UpgradeCost | 3.4 |
+| FanInterest | 3.5 |
+| AnnualRevenue | 3.6 |
+
+## Player Development
+| Formula | Section |
+|---------|---------|
+| SeasonDevPoints | 4.6 |
+| BaseDev | 4.6 |
+| RegressionRate | 4.8 |
+| Overall Rating | 4.9 |
+
+## Recruiting
+| Formula | Section |
+|---------|---------|
+| CompositeScore (star rating) | 6.2 |
+| ScoutingUncertainty | 6.3 |
+| InterestDelta | 6.4 |
+| NBATrackRecord | 6.5 |
+| OfficialVisitBoost | 6.6 |
+| CommitProbability | 6.7 |
+| DecommitProb | 6.8 |
+
+## Portal & NIL
+| Formula | Section |
+|---------|---------|
+| PortalEntryProb | 7.1 |
+| PortalPlayerValue | 7.2 |
+| TamperRisk | 7.4 |
+| AnnualNILBudget | 8.1 |
+| PlayerNILValue | 8.2 |
+| SocialMediaDelta | 8.3 |
+| BoosterFatigue | 8.5 |
+| JealousyFactor | 8.6 |
+| NILRecruitingImpact | 8.7 |
+
+## Coaching
+| Formula | Section |
+|---------|---------|
+| HotSeatScore / FiringProb | 9.4 |
+| HireScore | 9.5 |
+| Buyout | 9.6 |
+| CoachDevRate | 9.7 |
+
+## Game Simulation
+| Formula | Section |
+|---------|---------|
+| ShotQuality | 11.3 |
+| MakeProbability | 11.4 |
+| TurnoverProb | 11.5 |
+| FoulProb | 11.6 |
+| OffRebProb | 11.7 |
+| HomeCourtBoost | 11.8 |
+| ClutchMultiplier | 11.10 |
+| InGameInjuryProb | 11.11 |
+
+## Rankings & Postseason
+| Formula | Section |
+|---------|---------|
+| VoterScore (AP) | 13.1 |
+| CoachesPollBias | 13.2 |
+| NET | 13.3 |
+| AdjOffEff / AdjDefEff | 13.4 |
+| ResumeScore | 13.5 |
+| CinderellaFactor | 14.4 |
+
+## Advanced Stats
+| Formula | Section |
+|---------|---------|
+| SimPER | 15.1 |
+| BPM | 15.2 |
+| OnOffDelta | 15.3 |
+| SynergyScore | 15.4 |
+| WinShares | 15.5 |
+| Usage% | 15.6 |
+
+## AI & Dynasty
+| Formula | Section |
+|---------|---------|
+| TargetPriority (recruiting AI) | 16.1 |
+| PortalTargetValue (AI) | 16.3 |
+| RedshirtProb (AI) | 16.4 |
+| LineupScore (AI) | 16.5 |
+| DevFocusPriority (AI) | 16.6 |
+| AwardScore | 17.2 |
+| LegacyScore | 18.2 |
+| NILInflationRate | 18.6 |
+| InjuryProb | 20.2 |
+| DraftDeclarationProb | 20.4 |
+| TravelFatigue | 20.8 |
+
+---
+
+# APPENDIX B: Phase Summary
+
+| Phase | Focus | Key Systems |
+|-------|-------|-------------|
+| **Phase 1** | Foundation | Universe, teams, players, database, prestige, facilities |
+| **Phase 2** | Acquisition | Recruiting, portal, NIL, scouting, economics |
+| **Phase 3** | Gameplay | Coaching, playstyle, game sim engine, refs, clutch |
+| **Phase 4** | Season | Scheduling, rankings, polls, bracketology, postseason |
+| **Phase 5** | Intelligence | AI coaches, advanced stats, awards |
+| **Phase 6** | Longevity | Dynasty, balance, events, injuries, sanctions, 50-yr stability |
+
+---
+
+*End of document. Hand any phase to an AI or developer with the instruction "Build Phase X" and they have the full specification.*
