@@ -211,62 +211,6 @@ const schedulePhaseGames = (
       .join("; ");
     throw new Error(`Schedule validation failed: ${detail}`);
   }
-};
-
-const buildStructuredSchedule = (teams: TeamProfile[]) => {
-  const teamIds = teams.map((team) => team.id);
-  const teamMap = new Map(teams.map((team) => [team.id, team]));
-  const homeCounts = new Map<string, number>();
-  teams.forEach((team) => homeCounts.set(team.id, 0));
-
-  const byConference = new Map<string, string[]>();
-  teams.forEach((team) => {
-    const list = byConference.get(team.conference) ?? [];
-    list.push(team.id);
-    byConference.set(team.conference, list);
-  });
-
-  const conferenceGames: PlannedGame[] = [];
-  byConference.forEach((conferenceTeamIds) => {
-    conferenceGames.push(
-      ...pairTeamsForTarget(
-        conferenceTeamIds,
-        CONFERENCE_GAMES_TARGET,
-        (a, b) => a !== b,
-        true,
-        homeCounts,
-      ),
-    );
-  });
-
-  const nonConferenceGames = pairTeamsForTarget(
-    teamIds,
-    NON_CONFERENCE_GAMES_TARGET,
-    (a, b) => {
-      if (a === b) {
-        return false;
-      }
-
-      const first = teamMap.get(a);
-      const second = teamMap.get(b);
-      if (!first || !second) {
-        return false;
-      }
-
-      if (first.conference !== second.conference) {
-        return true;
-      }
-
-      const uniqueConferences = new Set(teams.map((team) => team.conference));
-      return uniqueConferences.size === 1;
-    },
-    false,
-    homeCounts,
-  );
-
-  const allGames = [...conferenceGames, ...nonConferenceGames];
-  const schedule = assignDays(allGames, teams);
-  validateScheduleShape(schedule, teams);
 
   if (unscheduled.length > 0) {
     throw new Error(`Unable to place all ${games[0]?.conferenceGame ? "conference" : "non-conference"} games in calendar window.`);

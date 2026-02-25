@@ -16,6 +16,7 @@ const prisma = new PrismaClient();
 const app = Fastify({ logger: true });
 
 const LEAGUE_STATE_ID = "primary";
+const persistenceEnabled = Boolean(process.env.DATABASE_URL);
 
 let universe: UniverseSnapshot | null = null;
 let activeSeason: ActiveSeasonState | null = null;
@@ -56,23 +57,40 @@ const progressSchema = z.object({
   mode: z.enum(["day", "week", "season"]),
 });
 
+const withPersistence = async <T>(taskName: string, callback: () => Promise<T>): Promise<T | null> => {
+  if (!persistenceEnabled) {
+    return null;
+  }
+
+  try {
+    return await callback();
+  } catch (error) {
+    app.log.warn({ err: error, taskName }, "Persistence unavailable; continuing in memory mode.");
+    return null;
+  }
+};
+
 const saveLeagueState = async () => {
-  await prisma.leagueState.upsert({
-    where: { id: LEAGUE_STATE_ID },
-    update: {
-      universe: universe ?? Prisma.JsonNull,
-      season: activeSeason ?? Prisma.JsonNull,
-    },
-    create: {
-      id: LEAGUE_STATE_ID,
-      universe: universe ?? Prisma.JsonNull,
-      season: activeSeason ?? Prisma.JsonNull,
-    },
-  });
+  await withPersistence("saveLeagueState", async () =>
+    prisma.leagueState.upsert({
+      where: { id: LEAGUE_STATE_ID },
+      update: {
+        universe: universe ?? Prisma.JsonNull,
+        season: activeSeason ?? Prisma.JsonNull,
+      },
+      create: {
+        id: LEAGUE_STATE_ID,
+        universe: universe ?? Prisma.JsonNull,
+        season: activeSeason ?? Prisma.JsonNull,
+      },
+    }),
+  );
 };
 
 const loadLeagueState = async () => {
-  const state = await prisma.leagueState.findUnique({ where: { id: LEAGUE_STATE_ID } });
+  const state = await withPersistence("loadLeagueState", async () =>
+    prisma.leagueState.findUnique({ where: { id: LEAGUE_STATE_ID } }),
+  );
 
   if (!state) {
     return;
@@ -82,7 +100,11 @@ const loadLeagueState = async () => {
   activeSeason = (state.season as ActiveSeasonState | null) ?? null;
 };
 
-app.get("/api/health", async () => ({ ok: true, now: new Date().toISOString() }));
+app.get("/api/health", async () => ({
+  ok: true,
+  now: new Date().toISOString(),
+  persistenceEnabled,
+}));
 app.get("/api/state", async (): Promise<LeagueStateSnapshot> => ({
   universe,
   activeSeason,
@@ -99,34 +121,36 @@ app.post("/api/universe/bootstrap", async (request, reply) => {
   universe = bootstrapUniverse(payload);
   activeSeason = null;
 
-  await Promise.all(
-    universe.teams.map((team) =>
-      prisma.team.upsert({
-        where: { id: team.id },
-        update: {
-          name: team.name,
-          conference: team.conference,
-          currentPrestige: Math.round(team.prestige),
-          facilityRating: Math.round(team.facilities),
-          nilStrength: Math.round(team.nilStrength),
-          rosterTalent: Math.round(team.rosterTalent),
-          coachingRating: Math.round(team.coaching),
-          defenseDiscipline: Math.round(team.defenseDiscipline),
-          tempoControl: Math.round(team.tempoControl),
-        },
-        create: {
-          id: team.id,
-          name: team.name,
-          conference: team.conference,
-          currentPrestige: Math.round(team.prestige),
-          facilityRating: Math.round(team.facilities),
-          nilStrength: Math.round(team.nilStrength),
-          rosterTalent: Math.round(team.rosterTalent),
-          coachingRating: Math.round(team.coaching),
-          defenseDiscipline: Math.round(team.defenseDiscipline),
-          tempoControl: Math.round(team.tempoControl),
-        },
-      }),
+  await withPersistence("upsertTeams", async () =>
+    Promise.all(
+      universe!.teams.map((team) =>
+        prisma.team.upsert({
+          where: { id: team.id },
+          update: {
+            name: team.name,
+            conference: team.conference,
+            currentPrestige: Math.round(team.prestige),
+            facilityRating: Math.round(team.facilities),
+            nilStrength: Math.round(team.nilStrength),
+            rosterTalent: Math.round(team.rosterTalent),
+            coachingRating: Math.round(team.coaching),
+            defenseDiscipline: Math.round(team.defenseDiscipline),
+            tempoControl: Math.round(team.tempoControl),
+          },
+          create: {
+            id: team.id,
+            name: team.name,
+            conference: team.conference,
+            currentPrestige: Math.round(team.prestige),
+            facilityRating: Math.round(team.facilities),
+            nilStrength: Math.round(team.nilStrength),
+            rosterTalent: Math.round(team.rosterTalent),
+            coachingRating: Math.round(team.coaching),
+            defenseDiscipline: Math.round(team.defenseDiscipline),
+            tempoControl: Math.round(team.tempoControl),
+          },
+        }),
+      ),
     ),
   );
 
@@ -144,8 +168,11 @@ app.get("/api/universe", async () => {
     return { universe };
   }
 
-  const teams = await prisma.team.findMany({ orderBy: [{ conference: "asc" }, { name: "asc" }] });
-  if (teams.length === 0) {
+  const teams = await withPersistence("loadTeams", async () =>
+    prisma.team.findMany({ orderBy: [{ conference: "asc" }, { name: "asc" }] }),
+  );
+
+  if (!teams || teams.length === 0) {
     return { universe: null };
   }
 
@@ -227,7 +254,6 @@ app.post("/api/season/simulate", async (request, reply) => {
   return { result };
 });
 
-
 app.get("/api/offseason", async () => {
   if (!activeSeason) {
     await loadLeagueState();
@@ -258,6 +284,10 @@ app.post("/api/offseason/run", async (_request, reply) => {
 
 const start = async () => {
   try {
+    if (!persistenceEnabled) {
+      app.log.warn("DATABASE_URL is not set. Running in memory-only mode.");
+    }
+
     await loadLeagueState();
     await app.listen({ host: "0.0.0.0", port: 4000 });
   } catch (error) {
