@@ -14,13 +14,33 @@ export type TeamRatings = {
   nilStrength: number;
   defenseDiscipline: number;
   tempoControl: number;
+  boosterBudget: number;
+  mediaMarket: number;
+  fanIntensity: number;
+  arenaCapacity: number;
+  academicRating: number;
+  fanInterest: number;
 };
 
 export type TeamProfile = TeamIdentity &
   TeamRatings & {
     prestige: number;
+    historicalPrestige: number;
     expectedWins: number;
+    blueBloodTier: "Blue Blood" | "Elite" | "Upper Tier" | "Mid Tier" | "Lower Tier";
   };
+
+export type ConferenceProfile = {
+  id: string;
+  name: string;
+  prestige: number;
+  mediaDealValue: number;
+  historicalWeight: number;
+  tournamentSuccess3yr: number;
+  autoBidValue: number;
+  tier: "power4" | "upper_mid" | "mid" | "low";
+  teamIds: string[];
+};
 
 export type GameResult = {
   gameId: string;
@@ -81,6 +101,16 @@ export type RecruitProfile = {
   scoutedMin: number;
   scoutedMax: number;
   confidence: number;
+  scoutingUncertainty: number;
+  compositeScore: number;
+  personality: {
+    ego: number;
+    loyalty: number;
+    coachability: number;
+    nbaDraftInterest: number;
+    academicFocus: number;
+  };
+  recruitType: "HS" | "JUCO" | "INTL";
   committedTeamId: string;
 };
 
@@ -89,6 +119,7 @@ export type PortalPlayer = {
   name: string;
   originTeamId: string;
   overall: number;
+  marketValue: number;
   yearsRemaining: number;
   tamperingRisk: number;
   destinationTeamId: string;
@@ -105,6 +136,7 @@ export type TeamOffseasonSummary = {
   nilBudgetEnd: number;
   tamperingIncidents: number;
   projectedRosterCount: number;
+  boosterFatigue: number;
 };
 
 export type OffseasonState = {
@@ -114,6 +146,7 @@ export type OffseasonState = {
   portalEntrants: PortalPlayer[];
   portalCommitments: PortalPlayer[];
   teamSummaries: TeamOffseasonSummary[];
+  decommitments: Array<{ recruitId: string; fromTeamId: string }>;
   completedAt: string;
 };
 
@@ -166,4 +199,5 @@ export type UniverseSnapshot = {
   leagueName: string;
   generatedAt: string;
   teams: TeamProfile[];
+  conferences: ConferenceProfile[];
 };
